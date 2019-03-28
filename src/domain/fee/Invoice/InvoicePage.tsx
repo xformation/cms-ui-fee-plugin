@@ -202,27 +202,6 @@ const InvoicePage = ({ data: { students } }: StudentListPageProps) => (
         </div>
       </div>
     </div>
-    <div className="feeSetting">
-      <div className="fsOne">
-        <div className="fsHeading">
-          <h5>Due Date</h5>
-        </div>
-        <div className="fsCheckbox">
-
-          <select name="" id="">
-            <option value="">Select</option>
-          </select>
-
-
-          <select name="" id="">
-            <option value="">0</option>
-          </select>
-
-          <input type="date" name="" id="" />
-
-        </div>
-      </div>
-    </div>
   </section>
 );
 
