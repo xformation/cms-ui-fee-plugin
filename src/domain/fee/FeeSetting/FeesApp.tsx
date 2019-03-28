@@ -6,7 +6,8 @@ import { ApolloProvider } from 'react-apollo';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import { createGraphQLClient } from '../../../createGraphQLClient';
-import AddStudentPage from './AddStudentPage';
+import FeeSetting from './FeeSetting';
+import '../../../css/dark.css';
 
 const graphQLClient = createGraphQLClient();
 
@@ -17,13 +18,13 @@ export default function init() {
         <BrowserRouter>
           <Switch>
             <Route
-              path="/plugins/xformation-fee-panel/page/addstudent"
-              component={AddStudentPage}
+              path="/plugins/xformation-fee-panel/page/feesetting"
+              component={FeeSetting}
             />
           </Switch>
         </BrowserRouter>
       </ApolloProvider>,
-      document.getElementById('mountAddStudent')
+      document.getElementById('mountFeeSetting')
     );
   }, 100);
 }

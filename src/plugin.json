@@ -12,10 +12,7 @@
       "name": "Synectiks",
       "url": "https://xformation.com"
     },
-    "keywords": [
-      "fee",
-      "panel"
-    ],
+    "keywords": ["fee", "panel"],
     "version": "1.0",
     "updated": "2018-10-12",
     "logos": {
@@ -33,38 +30,24 @@
     },
     {
       "type": "page",
-      "name": "EditStudent",
-      "addToNav": false,
-      "defaultNav": false,
-      "component": "EditStudentPage"
-    },
-    {
-      "type": "page",
-      "name": "Students",
+      "name": "Invoice",
       "addToNav": true,
       "defaultNav": true,
-      "component": "StudentsPage"
+      "component": "Invoice"
     },
     {
       "type": "page",
-      "name": "Student",
-      "addToNav": false,
-      "defaultNav": false,
-      "component": "StudentPage"
-    },
-    {
-      "type": "page",
-      "name": "AddStudent",
+      "name": "FeeSetup",
       "addToNav": true,
       "defaultNav": false,
-      "component": "AddStudentPage"
+      "component": "FeeSetup"
     },
     {
       "type": "page",
-      "name": "StudentsProfile",
+      "name": "FeeSetting",
       "addToNav": true,
       "defaultNav": false,
-      "component": "StudentsProfile"
+      "component": "FeeSetting"
     }
   ],
   "dependencies": {
