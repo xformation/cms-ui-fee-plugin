@@ -54,18 +54,6 @@ function onClickHeader(e: any) {
   }
 }
 const FeeSetting = ({ data: { students } }: StudentListPageProps) => (
-
-
-  // <section className="customCss">
-  //   <h2 className="heading">
-  //     {students.length}
-  //     Students found
-  //   </h2>
-  //   <StudentsTable students={students} />
-  //   <Link to={`/plugins/xformation-fee-panel/page/addstudent`} className="btn customButton">
-  //     Add Student
-  //     </Link>
-  // </section>
   <section className="plugin-bg-white p-1">
     <h3 className="bg-heading p-1">
       <i className="fa fa-university stroke-transparent" aria-hidden="true" /> Admin
@@ -97,6 +85,7 @@ const FeeSetting = ({ data: { students } }: StudentListPageProps) => (
           </div>
         </div>
         <div className="border SecondRow p-1">
+          <h4 className="bg-heading">Reminder</h4>
           <div className="Reminder feeMy">
             {/* first row */}
 
@@ -111,7 +100,7 @@ const FeeSetting = ({ data: { students } }: StudentListPageProps) => (
           </div>
           {/* first row */}
           {/* second row */}
-          <h4 className="bg-heading">Reminder</h4>
+
           <div className="Srow">
             <div className="firstColumn">
               <div className="feeFlex">
@@ -171,6 +160,7 @@ const FeeSetting = ({ data: { students } }: StudentListPageProps) => (
           {/* second row */}
         </div>
         <div className="border ThirdRow p-1">
+          <h4 className="bg-heading">Late Fee</h4>
           <div className="Reminder feeMy">
             {/* first row */}
 
@@ -185,7 +175,7 @@ const FeeSetting = ({ data: { students } }: StudentListPageProps) => (
           </div>
           {/* first row */}
           {/* second row */}
-          <h4 className="bg-heading">Late Fee</h4>
+
           <div className="Srow">
             <div className="firstColumn">
               <div className="feeFlex">
