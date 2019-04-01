@@ -1,7 +1,7 @@
 
-#import "./student.graphql"
+#import "./fee.graphql"
 
 
-fragment studentDetails on Student {
-  ...student
+fragment feeDetails on Fee{
+  ...fee
 }

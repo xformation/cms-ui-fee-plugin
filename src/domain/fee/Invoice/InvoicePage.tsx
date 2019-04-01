@@ -3,8 +3,8 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { graphql, QueryProps } from 'react-apollo';
 
-import * as StudentListQueryGql from './StudentListQuery.graphql';
-import { StudentListQuery, StudentSummaryFragment } from '../../types';
+import * as FeeListQueryGql from './FeeListQuery.graphql';
+import { FeeListQuery, FeeSummaryFragment } from '../../types';
 import withLoadingHandler from '../../../components/withLoadingHandler';
 
 const w180 = {
@@ -12,31 +12,24 @@ const w180 = {
   marginRight: '10px',
 };
 
-const StudentRow = ({ student }: { student: StudentSummaryFragment }) => (
-  <tr key={student.id}>
+const FeeRow = ({ fee }: { fee: FeeSummaryFragment }) => (
+  <tr key={fee.id}>
     <td>
       <input type="checkbox" name="" id="" />
     </td>
     <td>
       <Link
         className="table-link"
-        to={`/plugins/xformation-petclinic-panel/page/student?id=${student.id}`}
+        to={`/plugins/xformation-petclinic-panel/page/fee?id=${fee.id}`}
       >
-        {student.studentName}
+        {fee.gender}
       </Link>
     </td>
-    <td>{student.rollNo}</td>
-    <td>{student.id}</td>
-    <td>{student.department.name}</td>
-    <td>{student.batch.batch}</td>
-    <td>{student.section.section}</td>
-    <td>{student.sex}</td>
-    <td>{student.studentType}</td>
-    <td>{student.contactNo}</td>
+
   </tr>
 );
 
-const StudentsTable = ({ students }: { students: StudentSummaryFragment[] }) => (
+const FeesTable = ({ fees }: { fees: FeeSummaryFragment[] }) => (
   <div>
     <div className="student-flex">
       <div>
@@ -109,18 +102,18 @@ const StudentsTable = ({ students }: { students: StudentSummaryFragment[] }) => 
         </tr>
       </thead>
       <tbody>
-        {students.map(student => <StudentRow key={student.id} student={student} />)}
+        {fees.map(fee => <FeeRow key={fee.id} fee={fee} />)}
       </tbody>
     </table>
   </div>
 );
 
-type StudentListPageOwnProps = RouteComponentProps<{}>;
-type StudentListPageProps = {
-  data: QueryProps & StudentListQuery;
+type FeeListPageOwnProps = RouteComponentProps<{}>;
+type FeeListPageProps = {
+  data: QueryProps & FeeListQuery;
 };
 
-const InvoicePage = ({ data: { students } }: StudentListPageProps) => (
+const InvoicePage = ({ data: { fees } }: FeeListPageProps) => (
   <section className="feeInvoice">
     <h1 className="bg-heading p-1">Admin-Fee Management</h1>
     <h2 className="bg-heading p-1">Invoices</h2>
@@ -205,6 +198,6 @@ const InvoicePage = ({ data: { students } }: StudentListPageProps) => (
   </section>
 );
 
-export default graphql<StudentListQuery, StudentListPageOwnProps, StudentListPageProps>(
-  StudentListQueryGql
+export default graphql<FeeListQuery, FeeListPageOwnProps, FeeListPageProps>(
+  FeeListQueryGql
 )(withLoadingHandler(InvoicePage));

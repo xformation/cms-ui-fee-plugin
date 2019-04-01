@@ -1,0 +1,11 @@
+#import "../../gqlfragments/fee.graphql"
+
+fragment feeSummary on Fee {
+  ...fee
+}
+
+query feeList {
+  fees {
+    ...feeSummary
+  }
+}

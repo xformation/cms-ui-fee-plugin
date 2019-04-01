@@ -1,52 +1,16 @@
-fragment student on Student {
+fragment fee on Fee {
   id
-  studentName
-  fatherName
-  fatherMiddleName
-  fatherLastName
-  motherName
-  motherMiddleName
-  motherLastName
-  aadharNo
-  dateOfBirth
-  placeOfBirth
-  religion
-  caste
-  subCaste
-  age
-  sex
-  bloodGroup
-  addressLineOne
-  addressLineTwo
-  addressLineThree
-  town
-  state
-  country
-  pincode
-  studentContactNumber
-  alternateContactNumber
-  studentEmailAddress
-  alternateEmailAddress
-  relationWithStudent
-  name
-  middleName
-  lastName
-  contactNo
-  emailAddress
-  uploadPhoto
-  admissionNo
-  rollNo
+  feeParticularsName
+  feeParticularDesc
   studentType
-  batch {
-    batch
-  }
-  section {
-    section
-  }
-  branch {
-    branchName
-  }
-  department {
-    name
-  }
+  gender
+  amount
+  feeCategory
+  batch
+  facility
+  transportRoute
+  college
+  department
+  branch
+  academicYear
 }

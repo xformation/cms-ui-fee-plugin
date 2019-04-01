@@ -1,0 +1,7 @@
+#import "../gqlfragments/feeDetails.graphql"
+
+query fee($feeId: Long!) {
+  fee(id: $feeId){
+  ...feeDetails
+  }
+}
