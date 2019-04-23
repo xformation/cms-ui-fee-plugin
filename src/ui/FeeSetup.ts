@@ -1,4 +1,4 @@
-import init from '../domain/fee/FeeSetup/FeesApp';
+import init from '../domain/fee/FeeSetup/FeeSetupApp';
 
 export class FeeSetup {
   static templateUrl = '/partials/feesetup.html';

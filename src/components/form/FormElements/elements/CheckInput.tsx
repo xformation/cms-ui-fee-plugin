@@ -20,7 +20,7 @@ type InputProps = {
   onBlur: (name: string) => void;
 };
 
-const Input = ({
+const CheckInput = ({
   object,
   fieldError,
   name,
@@ -43,21 +43,19 @@ const Input = ({
   return (
     <div className={className}>
       <label className="col-sm-2 control-label">{label}</label>
-
       <div className="col-sm-10">
         <input
-          type="text"
+          type="checkbox"
           name={name}
           className="form-control"
           value={value}
           onChange={handleOnChange}
           onBlur={e => onBlur(e.currentTarget.name)}
         />
-
         <FieldFeedbackPanel valid={valid} fieldError={fieldError} />
       </div>
     </div>
   );
 };
 
-export default Input;
+export default CheckInput;

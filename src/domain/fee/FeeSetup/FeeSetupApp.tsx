@@ -5,8 +5,7 @@ import { ApolloProvider } from 'react-apollo';
 
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-import { createGraphQLClient } from '../../createGraphQLClient';
-import InvoiceListPage from './InvoiceListPage';
+import { createGraphQLClient } from '../../../createGraphQLClient';
 import FeeSetup from './FeeSetup';
 
 const graphQLClient = createGraphQLClient();
@@ -18,17 +17,13 @@ export default function init() {
         <BrowserRouter>
           <Switch>
             <Route
-              path="/plugins/ems-fee/page/invoice"
-              component={InvoiceListPage}
-            />
-            <Route
               path="/plugins/ems-fee/page/feesetup"
               component={FeeSetup}
             />
           </Switch>
         </BrowserRouter>
       </ApolloProvider>,
-      document.getElementById('mount')
+      document.getElementById('mountFeeSetup')
     );
-  }, 50);
+  }, 100);
 }

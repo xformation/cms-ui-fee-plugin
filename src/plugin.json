@@ -1,23 +1,23 @@
 {
   "type": "app",
   "name": "Fee",
-  "id": "xformation-fee-panel",
+  "id": "ems-fee",
   "css": {
     "dark": "css/dark.css",
     "light": "css/light.css"
   },
   "info": {
-    "description": "fee for grafana",
+    "description": "EMS Fee Plugin",
     "author": {
       "name": "Synectiks",
       "url": "https://xformation.com"
     },
-    "keywords": ["fee", "panel"],
+    "keywords": ["cms", "panel"],
     "version": "1.0",
     "updated": "2018-10-12",
     "logos": {
-      "small": "img/Fee.png",
-      "large": "img/Fee.png"
+      "small": "img/fee.png",
+      "large": "img/fee.png"
     }
   },
   "includes": [
@@ -30,24 +30,17 @@
     },
     {
       "type": "page",
-      "name": "Invoice",
-      "addToNav": true,
-      "defaultNav": true,
-      "component": "Invoice"
-    },
-    {
-      "type": "page",
       "name": "FeeSetup",
       "addToNav": true,
-      "defaultNav": false,
+      "defaultNav": true,
       "component": "FeeSetup"
     },
     {
       "type": "page",
-      "name": "FeeSetting",
+      "name": "Invoice",
       "addToNav": true,
       "defaultNav": false,
-      "component": "FeeSetting"
+      "component": "Invoice"
     }
   ],
   "dependencies": {
