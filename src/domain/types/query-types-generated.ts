@@ -66,54 +66,102 @@ export type FeeQueryVariables = {
 export type FeeQuery = {
   fee: {
     id: number;
-    feeParticularsName: number;
-    feeParticularDesc: number;
-    studentType: number;
-    gender: number;
+    feeParticularsName: string;
+    feeParticularDesc: string;
+    studentType: string;
+    gender: string;
     amount: number;
-    feeCategory: number;
-    batch: number;
-    facility: number;
-    transportRoute: number;
-    college: number;
-    department: number;
-    branch: number;
-    academicYear: number;
+    feeCategory: {
+      feeCategory: number;
+    };
+    batch: {
+      batch: any;
+    };
+    facility: {
+      facility: string;
+    };
+    transportRoute: {
+      transportRoute: string;
+    };
+    college: {
+      college: string;
+    };
+    department: {
+      department: string;
+    };
+    branch: {
+      branch: string;
+    };
+    academicYear: {
+      academicYear: number;
+    };
   };
 };
 
 export type FeeFragment = {
   id: number;
-  feeParticularsName: number;
-  feeParticularDesc: number;
-  studentType: number;
-  gender: number;
+  feeParticularsName: string;
+  feeParticularDesc: string;
+  studentType: string;
+  gender: string;
   amount: number;
-  feeCategory: number;
-  batch: number;
-  facility: number;
-  transportRoute: number;
-  college: number;
-  department: number;
-  branch: number;
-  academicYear: number;
+  feeCategory: {
+    categoryName: number;
+  };
+  batch: {
+    batch: any;
+  };
+  facility: {
+    facility: string;
+  };
+  transportRoute: {
+    transportRoute: string;
+  };
+  college: {
+    college: string;
+  };
+  department: {
+    department: string;
+  };
+  branch: {
+    branch: string;
+  };
+  academicYear: {
+    academicYear: number;
+  };
 };
 
 export type FeeDetailsFragment = {
   id: number;
-  feeParticularsName: number;
-  feeParticularDesc: number;
-  studentType: number;
-  gender: number;
+  feeParticularsName: string;
+  feeParticularDesc: string;
+  studentType: string;
+  gender: string;
   amount: number;
-  feeCategory: number;
-  batch: number;
-  facility: number;
-  transportRoute: number;
-  college: number;
-  department: number;
-  branch: number;
-  academicYear: number;
+  feeCategory: {
+    feeCategory: number;
+  };
+  batch: {
+    batch: any;
+  };
+  facility: {
+    facility: string;
+  };
+  transportRoute: {
+    transportRoute: string;
+  };
+  college: {
+    college: string;
+  };
+  department: {
+    department: string;
+  };
+  branch: {
+    branch: string;
+  };
+  academicYear: {
+    academicYear: number;
+  };
 };
 
 export type FeeSummaryFragment = {
@@ -192,31 +240,14 @@ export type InvoiceQuery = {
     paymentStatus: string;
     comments: string;
     updatedBy: string;
+    student: {
+      studentName: any;
+    };
     feeCategory: {
       id: any;
     };
-    feeDetails: {
-      id: any;
-    };
-
     dueDate: {
-      id: any;
-    };
-    paymentRemainder: {
-      id: any;
-    };
-
-    college: {
-      id: any;
-    };
-    branch: {
-      id: any;
-    };
-    student: {
-      id: any;
-    };
-    academicYear: {
-      id: any;
+      paymentDate: any;
     };
   };
 };
@@ -236,30 +267,30 @@ export type InvoiceSummaryFragment = {
   comments: string;
   updatedBy: string;
   feeCategory: {
-    id: any;
+    feeCategory: any;
   };
   feeDetails: {
-    id: any;
+    feeDetails: any;
   };
 
   dueDate: {
-    id: any;
+    dueDate: any;
   };
   paymentRemainder: {
-    id: any;
+    paymentRemainder: any;
   };
 
   college: {
-    id: any;
+    college: any;
   };
   branch: {
-    id: any;
+    branch: any;
   };
   student: {
-    id: any;
+    student: any;
   };
   academicYear: {
-    id: any;
+    academicYear: any;
   };
 };
 
@@ -278,30 +309,30 @@ export type InvoiceDetailsFragment = {
   comments: string;
   updatedBy: string;
   feeCategory: {
-    id: any;
+    feeCategory: any;
   };
   feeDetails: {
-    id: any;
+    feeDetails: any;
   };
 
   dueDate: {
-    id: any;
+    dueDate: any;
   };
   paymentRemainder: {
-    id: any;
+    paymentRemainder: any;
   };
 
   college: {
-    id: any;
+    college: any;
   };
   branch: {
-    id: any;
+    branch: any;
   };
   student: {
-    id: any;
+    student: any;
   };
   academicYear: {
-    id: any;
+    academicYear: any;
   };
 };
 export type InvoiceFragment = {
@@ -319,30 +350,30 @@ export type InvoiceFragment = {
   comments: string;
   updatedBy: string;
   feeCategory: {
-    id: any;
+    feeCategory: any;
   };
   feeDetails: {
-    id: any;
+    feeDetails: any;
   };
 
   dueDate: {
-    id: any;
+    dueDate: any;
   };
   paymentRemainder: {
-    id: any;
+    paymentRemainder: any;
   };
 
   college: {
-    id: any;
+    college: any;
   };
   branch: {
-    id: any;
+    branch: any;
   };
   student: {
-    id: any;
+    student: any;
   };
   academicYear: {
-    id: any;
+    academicYear: any;
   };
 };
 
@@ -352,7 +383,7 @@ export type InvoiceQueryVariables = {
 export type InvoiceListQuery = {
   invoices: Array<{
     id: number;
-    invoiceNumber: any;
+    invoiceNumber: number;
     amountPaid: number;
     paymentDate: number;
     nextPaymentDate: number;
@@ -365,31 +396,76 @@ export type InvoiceListQuery = {
     comments: string;
     updatedBy: string;
     feeCategory: {
-      id: any;
+      feeCategory: any;
     };
     feeDetails: {
-      id: any;
+      feeDetails: any;
     };
 
     dueDate: {
-      id: any;
+      dueDate: any;
     };
     paymentRemainder: {
-      id: any;
+      paymentRemainder: any;
     };
 
     college: {
-      id: any;
+      college: any;
     };
     branch: {
-      id: any;
+      branch: any;
     };
     student: {
-      id: any;
+      student: any;
     };
     academicYear: {
-      id: any;
+      academicYear: any;
     };
+  }>;
+};
+// Invoice
+
+// Invoice
+export type getInvoiceDataQuery = {
+  getinvoicedata: {
+    totalInvoice: any;
+    totalPaidInvoice: any;
+    totalUnPaidInvoice: any;
+    totalCanceledInvoice: any;
+  };
+};
+
+export type getInvoiceDataSummaryFragment = {
+  totalInvoice: any;
+  totalPaidInvoice: any;
+  totalUnPaidInvoice: any;
+  totalCanceledInvoice: any;
+};
+
+export type getInvoiceDataDetailsFragment = {
+  totalInvoice: any;
+  totalPaidInvoice: any;
+  totalUnPaidInvoice: any;
+  totalCanceledInvoice: any;
+};
+export type getInvoiceDataFragment = {
+  totalInvoice: any;
+  totalPaidInvoice: any;
+  totalUnPaidInvoice: any;
+  totalCanceledInvoice: any;
+};
+
+export type getInvoiceDataQueryVariables = {
+  branchId: string;
+  academicYearId: string;
+  collegeId: string;
+};
+export type getInvoiceDataListQuery = {
+  getinvoicedatas: Array<{
+    totalInvoice: any;
+    totalPaidInvoice: any;
+    totalUnPaidInvoice: any;
+    totalCanceledInvoice: any;
   }>;
 };
 // Invoice

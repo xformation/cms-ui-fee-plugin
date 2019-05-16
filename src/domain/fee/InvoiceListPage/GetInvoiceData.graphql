@@ -1,0 +1,11 @@
+#import "../../gqlfragments/getinvoicedata.graphql"
+
+fragment getinvoicedataSummary on getInvoiceData {
+  ...getinvoicedata
+}
+
+query getinvoicedataList {
+ getinvoicedatas {
+    ...getinvoicedataSummary
+  }
+}

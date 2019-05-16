@@ -2,11 +2,7 @@ import * as React from 'react';
 import { graphql, MutationFunc } from 'react-apollo';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import * as AddFeeMutationGql from './FeeSetupMutation.graphql';
-// import PersonalData from './PersonalData';
-import ContactData from './ContactData';
-import OtherContactData from './OtherContactData';
-import FacilityData from './FacilityData';
-import { FeeServices } from './_services';
+
 import {
   AddFeeMutation,
   AddFeeInput,
@@ -130,7 +126,7 @@ class FeeSetup extends React.Component<AddFeePageProps, EditFeeProfileStates>{
     return batchesOptions;
   }
   createSections(sections: any, selectedBatchId: any) {
-    let sectionsOptions = [<option key={0} value="">Select Section</option>];
+    let sectionsOptions = [<option key={0} value="">Select</option>];
     for (let i = 0; i < sections.length; i++) {
       if (sections[i].batchId == selectedBatchId) {
         let id = sections[i].id;
@@ -307,10 +303,12 @@ class FeeSetup extends React.Component<AddFeePageProps, EditFeeProfileStates>{
                 </div>
               </div>
               <div className="fee-profile-form">
-
+                <button>Add Particulars to this category</button>
                 <div className="collapse-container">
                   <div className="collapse-header">
-                    <div className="collapse-title">Personal Details</div>
+                    <div className="collapse-title">
+
+                    </div>
                     <div className="collapse-icon" onClick={onClickHeader}>
                       <i className="fa fa-fw fa-plus"></i>
                       <i className="fa fa-fw fa-minus"></i>
@@ -319,13 +317,17 @@ class FeeSetup extends React.Component<AddFeePageProps, EditFeeProfileStates>{
                   </div>
                   <div className="gf-form-inline">
                     <div className="gf-form">
-                      <span className="gf-form-label width-8">Admission No</span>
-                      <input name="admissionNo" value={feeData.admissionNo} onChange={this.onChange} type="text" className="gf-form-input max-width-22" />
+                      <span className="gf-form-label width-8">Batch</span>
+                      <select name="batch" onChange={this.onChange} value={feeData.batch.id} className="gf-form-input max-width-22">
+                        {this.createBatches(batches, feeData.department.id)}
+                      </select>
                     </div>
-                    <div className="gf-form">
-                      <span className="gf-form-label width-8">Roll No</span>
-                      <input name="rollNo" type="text" className="gf-form-input max-width-22" value={feeData.rollNo} onChange={this.onChange} />
-                    </div>
+                    {
+                      submitted && !feeData.batch.id &&
+                      <div>
+                        Fee batch needed.
+										</div>
+                    }
                     <div className="gf-form">
                       <span className="gf-form-label width-8">Department</span>
                       <select name="department" onChange={this.onChange} value={feeData.department.id} className="gf-form-input max-width-22">
@@ -338,18 +340,7 @@ class FeeSetup extends React.Component<AddFeePageProps, EditFeeProfileStates>{
                         Fee department needed.
 										</div>
                     }
-                    <div className="gf-form">
-                      <span className="gf-form-label width-8">Year</span>
-                      <select name="batch" onChange={this.onChange} value={feeData.batch.id} className="gf-form-input max-width-22">
-                        {this.createBatches(batches, feeData.department.id)}
-                      </select>
-                    </div>
-                    {
-                      submitted && !feeData.batch.id &&
-                      <div>
-                        Fee batch needed.
-										</div>
-                    }
+                    {/*
                     <div className="gf-form">
                       <span className="gf-form-label width-8">Branch</span>
                       <select name="branch" onChange={this.onChange} value={feeData.branch.id} className="gf-form-input max-width-22">
@@ -361,9 +352,9 @@ class FeeSetup extends React.Component<AddFeePageProps, EditFeeProfileStates>{
                       <div>
                         Fee branch needed.
 										</div>
-                    }
+                    } */}
                     <div className="gf-form-inline">
-                      <span className="gf-form-label width-8">Section</span>
+                      <span className="gf-form-label width-8">Year</span>
                       <select name="section" onChange={this.onChange} value={feeData.section.id} className="gf-form-input max-width-22">
                         {this.createSections(sections, feeData.batch.id)}
                       </select>
@@ -384,48 +375,11 @@ class FeeSetup extends React.Component<AddFeePageProps, EditFeeProfileStates>{
 										});
 									}} /> */}
                 </div>
-                <div className="collapse-container">
-                  <div className="collapse-header">
-                    <div className="collapse-title">Contact Details</div>
-                    <div className="collapse-icon" onClick={onClickHeader}>
-                      <i className="fa fa-fw fa-plus"></i>
-                      <i className="fa fa-fw fa-minus"></i>
-                    </div>
-                    <div className="clear-both"></div>
-                  </div>
-                  <ContactData modelData={feeData} onChange={(name: any, value: any) => {
-                    this.setState({
-                      feeData: {
-                        ...feeData,
-                        [name]: value
-                      }
-                    });
-                  }} />
-                </div>
-                <div className="collapse-container">
-                  <div className="collapse-header">
-                    <div className="collapse-title">Primary and Emergency Contact Details</div>
-                    <div className="collapse-icon" onClick={onClickHeader}>
-                      <i className="fa fa-fw fa-plus"></i>
-                      <i className="fa fa-fw fa-minus"></i>
-                    </div>
-                    <div className="clear-both"></div>
-                  </div>
-                  <OtherContactData modelData={feeData} onChange={(name: any, value: any) => {
-                    this.setState({
-                      feeData: {
-                        ...feeData,
-                        [name]: value
-                      }
-                    });
-                  }} />
-                </div>
-
               </div>
             </div>
           </form>
         </div>
-      </section>
+      </section >
     );
   }
 }

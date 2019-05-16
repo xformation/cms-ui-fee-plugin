@@ -58,60 +58,89 @@ export type StudentData = {
   };
 };
 
-export type InvoiceData = {
-  // id: number;
-  invoiceNumber: any;
-  amountPaid: number;
-  paymentDate: number;
-  nextPaymentDate: number;
-  outStandingAmount: number;
-  modeOfPayment: string;
-  chequeNumber: number;
-  demandDraftNumber: number;
-  onlineTxnRefNumber: number;
-  paymentStatus: string;
-  comments: string;
-  updatedBy: string;
-  feeCategory: {
-    id: any;
-  };
-  feeDetails: {
-    id: any;
-  };
+// export type InvoiceData = {
+//   // id: number;
+//   invoiceNumber: any;
+//   amountPaid: number;
+//   paymentDate: number;
+//   nextPaymentDate: number;
+//   outStandingAmount: number;
+//   modeOfPayment: string;
+//   chequeNumber: number;
+//   demandDraftNumber: number;
+//   onlineTxnRefNumber: number;
+//   paymentStatus: string;
+//   comments: string;
+//   updatedBy: string;
+//   feeCategory: {
+//     feeCategory: any;
+//   };
+//   feeDetails: {
+//     feeDetails: any;
+//   };
 
-  dueDate: {
-    id: any;
-  };
-  paymentRemainder: {
-    id: any;
-  };
+//   dueDate: {
+//     dueDate: any;
+//   };
+//   paymentRemainder: {
+//     paymentRemainder: any;
+//   };
 
-  college: {
-    id: any;
-  };
-  branch: {
-    id: any;
-  };
-  student: {
-    id: any;
-  };
-  academicYear: {
-    id: any;
-  };
-};
-export type FeeData = {
-  id: number;
-  feeParticularsName: number;
-  feeParticularDesc: number;
-  studentType: number;
-  gender: number;
-  amount: number;
-  feeCategory: number;
-  batch: number;
-  facility: number;
-  transportRoute: number;
-  college: number;
-  department: number;
-  branch: number;
-  academicYear: number;
+//   college: {
+//     college: any;
+//   };
+//   branch: {
+//     branch: any;
+//   };
+//   student: {
+//     studentName: any
+//   };
+//   academicYear: {
+//     academicYear: any;
+//   };
+// };
+// export type FeeData = {
+//   id: number;
+//   feeParticularsName: number;
+//   feeParticularDesc: number;
+//   studentType: number;
+//   gender: number;
+//   amount: number;
+//   feeCategory: {
+//     feeCategory: any;
+//   }
+//   batch: {
+//     batch: any;
+//   }
+
+//   facility: {
+//     facility: any;
+//   }
+
+//   transportRoute: {
+//     transportRoute: any;
+//   }
+
+//   college: {
+//     college: any;
+//   }
+
+//   department: {
+//     department: any;
+//   }
+
+//   branch: {
+//     branch: any;
+//   }
+
+//   academicYear: {
+//     academicYear: any;
+//   }
+// };
+
+export type GetInvoiceData = {
+  totalInvoice: any;
+  totalPaidInvoice: any;
+  totalUnPaidInvoice: any;
+  totalCanceledInvoice: any;
 };
