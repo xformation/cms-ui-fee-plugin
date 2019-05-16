@@ -1,6 +1,0 @@
-#import "./fee.graphql"
-
-
-fragment feeDetails on Fee {
-  ...fee
-}
