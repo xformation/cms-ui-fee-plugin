@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { graphql, QueryProps } from "react-apollo";
 import * as moment from 'moment';
 import * as GetInvoiceDataGql from './GetInvoiceData.graphql';
-import { ReactFunctionOrComponentClass, getInvoiceDataQueryVariables } from '../../types';
+import { ReactFunctionOrComponentClass, getInvoiceDataQueryVariables, getInvoiceDataListQuery } from '../../types';
 import withLoadingHandler from '../../../components/withLoadingHandler';
 
 type withStudentAtndPageDataLoaderProps = RouteComponentProps<{
@@ -13,11 +13,11 @@ type withStudentAtndPageDataLoaderProps = RouteComponentProps<{
 }>;
 
 type TargetComponentProps = {
-  data: QueryProps & getInvoiceDataQueryVariables;
+  data: QueryProps & getInvoiceDataListQuery;
 };
 
 const withInvoiceDataloader = (TargetComponent: ReactFunctionOrComponentClass<TargetComponentProps>) => {
-  return graphql<getInvoiceDataQueryVariables, withStudentAtndPageDataLoaderProps, TargetComponentProps>(GetInvoiceDataGql, {
+  return graphql<getInvoiceDataListQuery, withStudentAtndPageDataLoaderProps, TargetComponentProps>(GetInvoiceDataGql, {
     options: ({ match }) => ({
       variables: {
         // branchId: match.params.branchId,

@@ -1,11 +1,16 @@
 #import "../../gqlfragments/getinvoicedata.graphql"
 
-fragment getinvoicedataSummary on getInvoiceData {
-  ...getinvoicedata
-}
+# fragment getinvoicedataSummary on getInvoiceData {
+#   ...getinvoicedata
+# }
 
-query getinvoicedataList {
- getinvoicedatas {
-    ...getinvoicedataSummary
+query getInvoiceData(  $branchId:Long, $academicYearId:Long,  $collegeId:Long
+) {
+ getInvoiceData(branchId:$branchId,  academicYearId:$academicYearId,  collegeId:$collegeId) {
+    # ...getinvoicedataSummary
+    totalInvoice
+    totalPaidInvoice
+    totalUnPaidInvoice
+    totalCanceledInvoice
   }
 }

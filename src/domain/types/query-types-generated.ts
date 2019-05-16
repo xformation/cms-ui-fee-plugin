@@ -461,11 +461,11 @@ export type getInvoiceDataQueryVariables = {
   collegeId: string;
 };
 export type getInvoiceDataListQuery = {
-  getinvoicedatas: Array<{
+  getinvoicedatas: {
     totalInvoice: any;
     totalPaidInvoice: any;
     totalUnPaidInvoice: any;
     totalCanceledInvoice: any;
-  }>;
+  };
 };
 // Invoice

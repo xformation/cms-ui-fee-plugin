@@ -62,7 +62,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
                 <a href=""><span className="ti-close m-r-1"></span></a>
                 <a href=""><span className="ti-download"></span></a>
               </div>
-              <h2 className="fee-red"><strong>41</strong></h2>
+              <h2 className="fee-red"><strong>{{}}</strong></h2>
             </div>
             <div className="invoiceDashboard">
               <div className="invoiceHeader">
@@ -97,11 +97,21 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
   }
 }
 
+// export default widthInvoiceDataloader(
+//   compose(
+//     graphql<getInvoiceDataListQuery, InvoiceDataRootProps>
+//       (GetInvoiceDataGql, {
+//       })
+//   )
+// );
+
+
 export default widthInvoiceDataloader(
-  compose(
-    graphql<getInvoiceDataListQuery, InvoiceDataRootProps>
-      (GetInvoiceDataGql, {
-        name: "mutate"
-      })
-  )
+
+  // compose(
+  //   graphql<GetInvoiceData, InvoiceDataRootProps>(GetInvoiceDataGql, {
+  //     // name: "mutate"
+  //   })
+  // )
+  (InvoiceListPage) as any
 );
