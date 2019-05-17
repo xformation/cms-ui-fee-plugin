@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as GetInvoiceDataGql from './GetInvoiceData.graphql';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { graphql, QueryProps, MutationFunc, compose } from "react-apollo";
-import { GetInvoiceData } from '../../types';
+import { InvoiceCountQueryType } from '../../types';
 import widthInvoiceDataloader from './withInvoiceDataloader';
 
 const w180 = {
@@ -11,11 +11,11 @@ const w180 = {
 };
 
 type InvoiceDataRootProps = RouteComponentProps<{
+  collegeId: string;
   branchId: string;
   academicYearId: string;
-  collegeId: string;
 }> & {
-  data: QueryProps & GetInvoiceData;
+  data: QueryProps & InvoiceCountQueryType;
 };
 
 type InvoiceDataState = {

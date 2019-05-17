@@ -1,23 +1,21 @@
-import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { graphql, QueryProps } from "react-apollo";
-import * as moment from 'moment';
 import * as GetInvoiceDataGql from './GetInvoiceData.graphql';
-import { ReactFunctionOrComponentClass, getInvoiceDataQueryVariables, getInvoiceDataListQuery } from '../../types';
+import { ReactFunctionOrComponentClass, InvoiceCountQueryType } from '../../types';
 import withLoadingHandler from '../../../components/withLoadingHandler';
 
-type withStudentAtndPageDataLoaderProps = RouteComponentProps<{
+type withInvoiceCountPageDataLoaderProps = RouteComponentProps<{
+  collegeId: string;
   branchId: string;
   academicYearId: string;
-  collegeId: string;
 }>;
 
 type TargetComponentProps = {
-  data: QueryProps & getInvoiceDataListQuery;
+  data: QueryProps & InvoiceCountQueryType;
 };
 
 const withInvoiceDataloader = (TargetComponent: ReactFunctionOrComponentClass<TargetComponentProps>) => {
-  return graphql<getInvoiceDataListQuery, withStudentAtndPageDataLoaderProps, TargetComponentProps>(GetInvoiceDataGql, {
+  return graphql<InvoiceCountQueryType, withInvoiceCountPageDataLoaderProps, TargetComponentProps>(GetInvoiceDataGql, {
     options: ({ match }) => ({
       variables: {
         // branchId: match.params.branchId,
