@@ -456,9 +456,9 @@ export type getInvoiceDataFragment = {
 };
 
 export type getInvoiceDataQueryVariables = {
-  branchId: string;
-  academicYearId: string;
-  collegeId: string;
+  branchId: any;
+  academicYearId: any;
+  collegeId: any;
 };
 export type getInvoiceDataListQuery = {
   getinvoicedatas: {
