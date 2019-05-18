@@ -14,22 +14,15 @@ type InvoiceDataRootProps = RouteComponentProps<{
   collegeId: string;
   branchId: string;
   academicYearId: string;
-  totalInvoice: string;
-  totalPaidInvoice: string;
-  totalUnpaidInvoice: string;
-  totalCanceledInvoice: string;
 }> & {
   data: QueryProps & InvoiceCountQueryType;
 };
 
 type InvoiceDataState = {
+  invoiceGetData: any,
   branches: any,
   academicYears: any,
   colleges: any,
-  totalInvoice: any;
-  totalPaidInvoice: any;
-  totalUnpaidInvoice: any;
-  totalCanceledInvoice: any;
 }
 
 type InvoiceDataPageProps = InvoiceDataRootProps;
@@ -38,79 +31,104 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
   constructor(props: InvoiceDataPageProps) {
     super(props);
     this.state = {
+      invoiceGetData: {
+        branch: {
+          id: 1851 //1001
+        },
+        academicYear: {
+          id: 1701 //1051
+        },
+        college: {
+          id: 1801
+        }
+      },
       branches: [],
       academicYears: [],
       colleges: [],
-      totalInvoice: [],
-      totalPaidInvoice: [],
-      totalUnpaidInvoice: [],
-      totalCanceledInvoice: []
     }
-  }
-  render() {
-    const {
-      branches,
-      academicYears,
-      colleges,
-      totalInvoice,
-      totalPaidInvoice,
-      totalUnpaidInvoice,
-      totalCanceledInvoice
-    } = this.state;
-    return (
 
-      <section className="customCss">
-        <h3 className="bg-heading p-1 m-b-0">
-          <i className="fa fa-university stroke-transparent mr-1" aria-hidden="true" />{' '}
-          Admin - Fee Management
+    this.createTotalInvoices = this.createTotalInvoices.bind(this);
+    this.createTotalPaidInvoices = this.createTotalPaidInvoices.bind(this);
+    this.createTotalUnpaidInvoices = this.createTotalUnpaidInvoices.bind(this);
+    this.createTotalCanceledInvoices = this.createTotalCanceledInvoices.bind(this);
+  }
+
+
+  createTotalInvoices(departments: any, selectedBranchId: any, selectedAcademicYearId: any) {
+    let departmentsOptions = [<option key={0} value="">Select department</option>];
+    for (let i = 0; i < departments.length; i++) {
+      departmentsOptions.push(
+        <option key={departments[i].id} value={departments[i].id}>{departments[i].name}</option>
+      );
+    }
+    return departmentsOptions;
+  }
+
+ let invoiceGetData = {
+  branchId: invoiceGetData.branch.id,
+  academicYearId: invoiceGetData.academicYear.id
+};
+
+render() {
+  const {
+    branches,
+    academicYears,
+    colleges,
+  } = this.state;
+  return (
+
+    <section className="customCss">
+      <h3 className="bg-heading p-1 m-b-0">
+        <i className="fa fa-university stroke-transparent mr-1" aria-hidden="true" />{' '}
+        Admin - Fee Management
       </h3>
-        <div className="plugin-bg-white p-1">
-          <div className="m-b-1 dflex bg-heading">
-            <h4 className="ptl-06">Invoices</h4>
-            <div>
-              <a className="btn btn-primary">Export</a>
-            </div>
-          </div>
-          <div className="inDashboard p-1">
-            <div className="invoiceDashboard">
-              <div className="invoiceHeader">
-                <h6 className="center">Invoice</h6>
-                <a href=""><span className="ti-close m-r-1"></span></a>
-                <a href=""><span className="ti-download"></span></a>
-              </div>
-              <h2 className="fee-red"><strong>{this.state.totalInvoice}</strong></h2>
-            </div>
-            <div className="invoiceDashboard">
-              <div className="invoiceHeader">
-                <h6 className="center">Paid Invoice</h6>
-                <a href=""><span className="ti-close m-r-1"></span></a>
-                <a href=""><span className="ti-download"></span></a>
-              </div>
-              <h2 className="fee-red"><strong>{this.state.totalPaidInvoice}</strong></h2>
-            </div>
-            <div className="invoiceDashboard">
-              <div className="invoiceHeader">
-                <h6 className="center">Unpaid Invoice</h6>
-                <a href=""><span className="ti-close m-r-1 "></span></a>
-                <a href=""><span className="ti-download"></span></a>
-              </div>
-              <h2 className="fee-orange"><strong>{this.state.totalUnpaidInvoice}</strong></h2>
-              <h6 className="center btn btn-primary w50 p05 remainder">Send Remainder</h6>
-            </div>
-            <div className="invoiceDashboard">
-              <div className="invoiceHeader">
-                <h6 className="center">Cancelled Invoice</h6>
-                <a href=""><span className="ti-close m-r-1"></span></a>
-                <a href=""><span className="ti-download"></span></a>
-              </div>
-              <h2 className="fee-red"><strong>{this.state.totalCanceledInvoice}</strong></h2>
-              <h6 className="btn btn-primary w50 p05 remainder">Send Remainder</h6>
-            </div>
+      <div className="plugin-bg-white p-1">
+        <div className="m-b-1 dflex bg-heading">
+          <h4 className="ptl-06">Invoices</h4>
+          <div>
+            <a className="btn btn-primary">Export</a>
           </div>
         </div>
-      </section >
-    );
-  }
+        <div className="inDashboard p-1">
+          <div className="invoiceDashboard">
+            <div className="invoiceHeader">
+              <h6 className="center">Invoice</h6>
+              <a href=""><span className="ti-close m-r-1"></span></a>
+              <a href=""><span className="ti-download"></span></a>
+            </div>
+            <h2 className="fee-red"><strong>{totalInvoice}</strong></h2>
+          </div>
+          <div className="invoiceDashboard">
+            <div className="invoiceHeader">
+              <h6 className="center">Paid Invoice</h6>
+              <a href=""><span className="ti-close m-r-1"></span></a>
+              <a href=""><span className="ti-download"></span></a>
+            </div>
+            <h2 className="fee-red"><strong>{totalPaidInvoice}</strong></h2>
+          </div>
+          <div className="invoiceDashboard">
+            <div className="invoiceHeader">
+              <h6 className="center">Unpaid Invoice</h6>
+              <a href=""><span className="ti-close m-r-1 "></span></a>
+              <a href=""><span className="ti-download"></span></a>
+            </div>
+            <h2 className="fee-orange"><strong>{totalUnpaidInvoice}</strong></h2>
+            <h6 className="center btn btn-primary w50 p05 remainder">Send Remainder</h6>
+          </div>
+          <div className="invoiceDashboard">
+            <div className="invoiceHeader">
+              <h6 className="center">Cancelled Invoice</h6>
+              <a href=""><span className="ti-close m-r-1"></span></a>
+              <a href=""><span className="ti-download"></span></a>
+            </div>
+            <h2 className="fee-red"><strong>{totalCanceledInvoice}</strong></h2>
+            <h6 className="btn btn-primary w50 p05 remainder">Send Remainder</h6>
+          </div>
+        </div>
+      </div>
+    </section >
+  );
+}
 }
 
 // export default widthInvoiceDataloader(
