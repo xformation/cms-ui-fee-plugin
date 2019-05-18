@@ -46,89 +46,67 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
       academicYears: [],
       colleges: [],
     }
-
-    this.createTotalInvoices = this.createTotalInvoices.bind(this);
-    this.createTotalPaidInvoices = this.createTotalPaidInvoices.bind(this);
-    this.createTotalUnpaidInvoices = this.createTotalUnpaidInvoices.bind(this);
-    this.createTotalCanceledInvoices = this.createTotalCanceledInvoices.bind(this);
   }
+  render() {
+    const {
+      branches,
+      academicYears,
+      colleges,
+    } = this.state;
+    return (
 
-
-  createTotalInvoices(departments: any, selectedBranchId: any, selectedAcademicYearId: any) {
-    let departmentsOptions = [<option key={0} value="">Select department</option>];
-    for (let i = 0; i < departments.length; i++) {
-      departmentsOptions.push(
-        <option key={departments[i].id} value={departments[i].id}>{departments[i].name}</option>
-      );
-    }
-    return departmentsOptions;
-  }
-
- let invoiceGetData = {
-  branchId: invoiceGetData.branch.id,
-  academicYearId: invoiceGetData.academicYear.id
-};
-
-render() {
-  const {
-    branches,
-    academicYears,
-    colleges,
-  } = this.state;
-  return (
-
-    <section className="customCss">
-      <h3 className="bg-heading p-1 m-b-0">
-        <i className="fa fa-university stroke-transparent mr-1" aria-hidden="true" />{' '}
-        Admin - Fee Management
+      <section className="customCss">
+        <h3 className="bg-heading p-1 m-b-0">
+          <i className="fa fa-university stroke-transparent mr-1" aria-hidden="true" />{' '}
+          Admin - Fee Management
       </h3>
-      <div className="plugin-bg-white p-1">
-        <div className="m-b-1 dflex bg-heading">
-          <h4 className="ptl-06">Invoices</h4>
-          <div>
-            <a className="btn btn-primary">Export</a>
+        <div className="plugin-bg-white p-1">
+          <div className="m-b-1 dflex bg-heading">
+            <h4 className="ptl-06">Invoices</h4>
+            <div>
+              <a className="btn btn-primary">Export</a>
+            </div>
+          </div>
+          <div className="inDashboard p-1">
+            <div className="invoiceDashboard">
+              <div className="invoiceHeader">
+                <h6 className="center">Invoice</h6>
+                <a href=""><span className="ti-close m-r-1"></span></a>
+                <a href=""><span className="ti-download"></span></a>
+              </div>
+              <h2 className="fee-red"><strong>{this.props.data.getInvoiceData.totalInvoice}</strong></h2>
+            </div>
+            <div className="invoiceDashboard">
+              <div className="invoiceHeader">
+                <h6 className="center">Paid Invoice</h6>
+                <a href=""><span className="ti-close m-r-1"></span></a>
+                <a href=""><span className="ti-download"></span></a>
+              </div>
+              <h2 className="fee-red"><strong>{this.props.data.getInvoiceData.totalPaidInvoice}</strong></h2>
+            </div>
+            <div className="invoiceDashboard">
+              <div className="invoiceHeader">
+                <h6 className="center">Unpaid Invoice</h6>
+                <a href=""><span className="ti-close m-r-1 "></span></a>
+                <a href=""><span className="ti-download"></span></a>
+              </div>
+              <h2 className="fee-orange"><strong>{this.props.data.getInvoiceData.totalUnPaidInvoice}</strong></h2>
+              <h6 className="center btn btn-primary w50 p05 remainder">Send Remainder</h6>
+            </div>
+            <div className="invoiceDashboard">
+              <div className="invoiceHeader">
+                <h6 className="center">Cancelled Invoice</h6>
+                <a href=""><span className="ti-close m-r-1"></span></a>
+                <a href=""><span className="ti-download"></span></a>
+              </div>
+              <h2 className="fee-red"><strong>{this.props.data.getInvoiceData.totalCanceledInvoice}</strong></h2>
+              <h6 className="btn btn-primary w50 p05 remainder">Send Remainder</h6>
+            </div>
           </div>
         </div>
-        <div className="inDashboard p-1">
-          <div className="invoiceDashboard">
-            <div className="invoiceHeader">
-              <h6 className="center">Invoice</h6>
-              <a href=""><span className="ti-close m-r-1"></span></a>
-              <a href=""><span className="ti-download"></span></a>
-            </div>
-            <h2 className="fee-red"><strong>{totalInvoice}</strong></h2>
-          </div>
-          <div className="invoiceDashboard">
-            <div className="invoiceHeader">
-              <h6 className="center">Paid Invoice</h6>
-              <a href=""><span className="ti-close m-r-1"></span></a>
-              <a href=""><span className="ti-download"></span></a>
-            </div>
-            <h2 className="fee-red"><strong>{totalPaidInvoice}</strong></h2>
-          </div>
-          <div className="invoiceDashboard">
-            <div className="invoiceHeader">
-              <h6 className="center">Unpaid Invoice</h6>
-              <a href=""><span className="ti-close m-r-1 "></span></a>
-              <a href=""><span className="ti-download"></span></a>
-            </div>
-            <h2 className="fee-orange"><strong>{totalUnpaidInvoice}</strong></h2>
-            <h6 className="center btn btn-primary w50 p05 remainder">Send Remainder</h6>
-          </div>
-          <div className="invoiceDashboard">
-            <div className="invoiceHeader">
-              <h6 className="center">Cancelled Invoice</h6>
-              <a href=""><span className="ti-close m-r-1"></span></a>
-              <a href=""><span className="ti-download"></span></a>
-            </div>
-            <h2 className="fee-red"><strong>{totalCanceledInvoice}</strong></h2>
-            <h6 className="btn btn-primary w50 p05 remainder">Send Remainder</h6>
-          </div>
-        </div>
-      </div>
-    </section >
-  );
-}
+      </section >
+    );
+  }
 }
 
 // export default widthInvoiceDataloader(

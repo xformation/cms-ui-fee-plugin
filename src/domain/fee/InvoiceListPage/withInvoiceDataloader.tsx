@@ -18,9 +18,6 @@ const withInvoiceDataloader = (TargetComponent: ReactFunctionOrComponentClass<Ta
   return graphql<InvoiceCountQueryType, withInvoiceCountPageDataLoaderProps, TargetComponentProps>(GetInvoiceDataGql, {
     options: ({ match }) => ({
       variables: {
-        // branchId: match.params.branchId,
-        // academicYearId: match.params.branchId,
-        // teacherId: match.params.branchId
         collegeId: 1801,
         branchId: 1851,
         academicYearId: 1701
