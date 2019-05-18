@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as GetInvoiceDataGql from './GetInvoiceData.graphql';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { graphql, QueryProps, MutationFunc, compose } from "react-apollo";
-import { GetInvoiceData } from '../../types';
+import { InvoiceCountQueryType } from '../../types';
 import widthInvoiceDataloader from './withInvoiceDataloader';
 
 const w180 = {
@@ -11,17 +11,25 @@ const w180 = {
 };
 
 type InvoiceDataRootProps = RouteComponentProps<{
+  collegeId: string;
   branchId: string;
   academicYearId: string;
-  collegeId: string;
+  totalInvoice: string;
+  totalPaidInvoice: string;
+  totalUnpaidInvoice: string;
+  totalCanceledInvoice: string;
 }> & {
-  data: QueryProps & GetInvoiceData;
+  data: QueryProps & InvoiceCountQueryType;
 };
 
 type InvoiceDataState = {
   branches: any,
   academicYears: any,
-  colleges: any
+  colleges: any,
+  totalInvoice: any;
+  totalPaidInvoice: any;
+  totalUnpaidInvoice: any;
+  totalCanceledInvoice: any;
 }
 
 type InvoiceDataPageProps = InvoiceDataRootProps;
@@ -32,14 +40,22 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
     this.state = {
       branches: [],
       academicYears: [],
-      colleges: []
+      colleges: [],
+      totalInvoice: [],
+      totalPaidInvoice: [],
+      totalUnpaidInvoice: [],
+      totalCanceledInvoice: []
     }
   }
   render() {
     const {
       branches,
       academicYears,
-      colleges
+      colleges,
+      totalInvoice,
+      totalPaidInvoice,
+      totalUnpaidInvoice,
+      totalCanceledInvoice
     } = this.state;
     return (
 
@@ -62,7 +78,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
                 <a href=""><span className="ti-close m-r-1"></span></a>
                 <a href=""><span className="ti-download"></span></a>
               </div>
-              <h2 className="fee-red"><strong>{{}}</strong></h2>
+              <h2 className="fee-red"><strong>{this.state.totalInvoice}</strong></h2>
             </div>
             <div className="invoiceDashboard">
               <div className="invoiceHeader">
@@ -70,7 +86,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
                 <a href=""><span className="ti-close m-r-1"></span></a>
                 <a href=""><span className="ti-download"></span></a>
               </div>
-              <h2 className="fee-red"><strong>4</strong></h2>
+              <h2 className="fee-red"><strong>{this.state.totalPaidInvoice}</strong></h2>
             </div>
             <div className="invoiceDashboard">
               <div className="invoiceHeader">
@@ -78,7 +94,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
                 <a href=""><span className="ti-close m-r-1 "></span></a>
                 <a href=""><span className="ti-download"></span></a>
               </div>
-              <h2 className="fee-orange"><strong>32</strong></h2>
+              <h2 className="fee-orange"><strong>{this.state.totalUnpaidInvoice}</strong></h2>
               <h6 className="center btn btn-primary w50 p05 remainder">Send Remainder</h6>
             </div>
             <div className="invoiceDashboard">
@@ -87,7 +103,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
                 <a href=""><span className="ti-close m-r-1"></span></a>
                 <a href=""><span className="ti-download"></span></a>
               </div>
-              <h2 className="fee-red"><strong>12</strong></h2>
+              <h2 className="fee-red"><strong>{this.state.totalCanceledInvoice}</strong></h2>
               <h6 className="btn btn-primary w50 p05 remainder">Send Remainder</h6>
             </div>
           </div>
@@ -106,12 +122,4 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
 // );
 
 
-export default widthInvoiceDataloader(
-
-  // compose(
-  //   graphql<GetInvoiceData, InvoiceDataRootProps>(GetInvoiceDataGql, {
-  //     // name: "mutate"
-  //   })
-  // )
-  (InvoiceListPage) as any
-);
+export default widthInvoiceDataloader((InvoiceListPage) as any);

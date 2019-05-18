@@ -455,17 +455,19 @@ export type getInvoiceDataFragment = {
   totalCanceledInvoice: any;
 };
 
-export type getInvoiceDataQueryVariables = {
-  branchId: any;
-  academicYearId: any;
-  collegeId: any;
-};
-export type getInvoiceDataListQuery = {
-  getinvoicedatas: {
-    totalInvoice: any;
-    totalPaidInvoice: any;
-    totalUnPaidInvoice: any;
-    totalCanceledInvoice: any;
+// export type getInvoiceDataQueryVariables = {
+//   collegeId: any;
+//   branchId: any;
+//   academicYearId: any;
+// };
+
+export type InvoiceCountQueryType = {
+  getInvoiceData: {
+    totalInvoice: number;
+    totalPaidInvoice: number;
+    totalUnPaidInvoice: number;
+    totalCanceledInvoice: number;
   };
 };
+
 // Invoice
