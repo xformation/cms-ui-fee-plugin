@@ -32,20 +32,21 @@ type InvoiceDataPageProps = InvoiceDataRootProps;
 // Invoice Count
 
 // Search Invoice Data
-type SearachInvoiceDataRootProps = RouteComponentProps<{
-  invoiceNumber: string;
-  studentId: string;
+type SearchInvoiceDataRootProps = RouteComponentProps<{
+  collegeId: string;
+  branchId: string;
+  academicYearId: string;
 }> & {
   data: QueryProps & InvoiceQuery;
 };
 
 type SearchInvoiceDataState = {
-  invoiceNumber: string;
-  studentId: string;
+  searchinvoiceData: any,
+  invoices: any,
+  students: any
 }
 
-type SearchInvoiceDataPageProps = InvoiceDataRootProps;
-
+type SearchInvoiceDataPageProps = SearchInvoiceDataRootProps;
 // Search Invoice Data
 
 class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataState> {
@@ -143,26 +144,26 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
                       </div>
                     </div>
                   </div>
-
+                  <h4>Invoice Details</h4>
                   <div className="row">
-                    <h4>Invoice Details</h4>
-                    <div className="col m-2">
+
+                    <div className="col m-1">
                       <label htmlFor="studentName">Student Name</label>
                       <input type="text" className="form-control" placeholder="Student name" />
                     </div>
-                    <div className="col m-2">
+                    <div className="col m-1">
                       <label htmlFor="primayContact">Primary Contact</label>
                       <input type="text" className="form-control" placeholder="Primary Contact" />
                     </div>
-                    <div className="col m-2">
+                    <div className="col m-1">
                       <label htmlFor="feeCategory">Fee Category</label>
                       <input type="text" className="form-control" placeholder="Fee Category" />
                     </div>
-                    <div className="col m-2">
+                    <div className="col m-1">
                       <label htmlFor="amount">Amount</label>
                       <input type="text" className="form-control" placeholder="Amount" />
                     </div>
-                    <div className="col m-2">
+                    <div className="col m-1">
                       <label htmlFor="date">Date</label>
                       <input type="text" className="form-control" placeholder="Date" />
                     </div>
@@ -176,6 +177,34 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
     );
   }
 }
+
+// class SearchInvoiceListPage extends React.Component<SearchInvoiceDataPageProps, SearchInvoiceDataState> {
+//   constructor(props: SearchInvoiceDataPageProps) {
+//     super(props);
+//     this.state = {
+//       searchinvoiceData: {
+//         invoiceNumber: "db45",
+//         studentId: 2051
+//       },
+//       invoices: [],
+//       students: [],
+//     }
+//   }
+//   render() {
+//     const {
+//       invoices,
+//       students
+//     } = this.state;
+//     return (
+
+//       <React.Fragment>
+//         <section className="customCss">
+
+//         </section>
+//       </React.Fragment >
+//     );
+//   }
+// }
 
 // export default widthInvoiceDataloader(
 //   compose(
