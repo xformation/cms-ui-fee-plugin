@@ -1,0 +1,4 @@
+
+fragment searchinvoicedataDetails on searchInvoiceData {
+  ...searchinvoicedata
+}

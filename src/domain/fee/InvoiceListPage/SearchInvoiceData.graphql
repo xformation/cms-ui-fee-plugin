@@ -1,0 +1,17 @@
+
+query{
+  searchInvoiceData($invoiceNumber:String, $studentId: String){
+ searchInvoiceData(invoiceNumber:$invoiceNumber, studentId: $studentId){
+    student{
+      studentName
+      studentContactNumber
+    }feeCategory{
+      categoryName
+    }feeDetails{
+      amount
+    }dueDate{
+      paymentDate
+    }
+  }
+}
+}

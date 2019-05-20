@@ -1,0 +1,13 @@
+
+fragment searchinvoicedata on searchInvoiceData {
+student{
+      studentName
+      studentContactNumber
+    }feeCategory{
+      categoryName
+    }feeDetails{
+      amount
+    }dueDate{
+      paymentDate
+    }
+}

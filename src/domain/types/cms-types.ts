@@ -58,47 +58,48 @@ export type StudentData = {
   };
 };
 
-// export type InvoiceData = {
-//   // id: number;
-//   invoiceNumber: any;
-//   amountPaid: number;
-//   paymentDate: number;
-//   nextPaymentDate: number;
-//   outStandingAmount: number;
-//   modeOfPayment: string;
-//   chequeNumber: number;
-//   demandDraftNumber: number;
-//   onlineTxnRefNumber: number;
-//   paymentStatus: string;
-//   comments: string;
-//   updatedBy: string;
-//   feeCategory: {
-//     feeCategory: any;
-//   };
-//   feeDetails: {
-//     feeDetails: any;
-//   };
+export type SearchInvoiceData = {
+  // id: number;
+  invoiceNumber: any;
+  amountPaid: number;
+  paymentDate: number;
+  nextPaymentDate: number;
+  outStandingAmount: number;
+  modeOfPayment: string;
+  chequeNumber: number;
+  demandDraftNumber: number;
+  onlineTxnRefNumber: number;
+  paymentStatus: string;
+  comments: string;
+  updatedBy: string;
+  feeCategory: {
+    feeCategory: any;
+  };
+  feeDetails: {
+    feeDetails: any;
+  };
 
-//   dueDate: {
-//     dueDate: any;
-//   };
-//   paymentRemainder: {
-//     paymentRemainder: any;
-//   };
+  dueDate: {
+    dueDate: any;
+  };
+  paymentRemainder: {
+    paymentRemainder: any;
+  };
 
-//   college: {
-//     college: any;
-//   };
-//   branch: {
-//     branch: any;
-//   };
-//   student: {
-//     studentName: any
-//   };
-//   academicYear: {
-//     academicYear: any;
-//   };
-// };
+  college: {
+    college: any;
+  };
+  branch: {
+    branch: any;
+  };
+  student: {
+    studentName: any;
+  };
+  academicYear: {
+    academicYear: any;
+  };
+};
+
 // export type FeeData = {
 //   id: number;
 //   feeParticularsName: number;

@@ -1,5 +1,7 @@
-query getInvoiceData($collegeId:String, $branchId:String, $academicYearId:String){
-  getInvoiceData(collegeId:$collegeId, branchId:$branchId, academicYearId:$academicYearId) {
+query getInvoiceData($collegeId:String, $branchId:String, $academicYearId:String)
+{
+  getInvoiceData(collegeId:$collegeId, branchId:$branchId, academicYearId:$academicYearId)
+  {
         totalInvoice,
         totalPaidInvoice,
         totalUnPaidInvoice,
