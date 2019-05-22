@@ -224,208 +224,8 @@ export type UpdateFeeMutation = {
 };
 
 /* tslint:enable */
-// Invoice
-export type InvoiceQuery = {
-  invoice: {
-    id: number;
-    invoiceNumber: any;
-    amountPaid: number;
-    paymentDate: number;
-    nextPaymentDate: number;
-    outStandingAmount: number;
-    modeOfPayment: string;
-    chequeNumber: number;
-    demandDraftNumber: number;
-    onlineTxnRefNumber: number;
-    paymentStatus: string;
-    comments: string;
-    updatedBy: string;
-    student: {
-      studentName: any;
-    };
-    feeCategory: {
-      id: any;
-    };
-    dueDate: {
-      paymentDate: any;
-    };
-  };
-};
 
-export type InvoiceSummaryFragment = {
-  id: number;
-  invoiceNumber: any;
-  amountPaid: number;
-  paymentDate: number;
-  nextPaymentDate: number;
-  outStandingAmount: number;
-  modeOfPayment: string;
-  chequeNumber: number;
-  demandDraftNumber: number;
-  onlineTxnRefNumber: number;
-  paymentStatus: string;
-  comments: string;
-  updatedBy: string;
-  feeCategory: {
-    feeCategory: any;
-  };
-  feeDetails: {
-    feeDetails: any;
-  };
-
-  dueDate: {
-    dueDate: any;
-  };
-  paymentRemainder: {
-    paymentRemainder: any;
-  };
-
-  college: {
-    college: any;
-  };
-  branch: {
-    branch: any;
-  };
-  student: {
-    student: any;
-  };
-  academicYear: {
-    academicYear: any;
-  };
-};
-
-export type InvoiceDetailsFragment = {
-  id: number;
-  invoiceNumber: any;
-  amountPaid: number;
-  paymentDate: number;
-  nextPaymentDate: number;
-  outStandingAmount: number;
-  modeOfPayment: string;
-  chequeNumber: number;
-  demandDraftNumber: number;
-  onlineTxnRefNumber: number;
-  paymentStatus: string;
-  comments: string;
-  updatedBy: string;
-  feeCategory: {
-    feeCategory: any;
-  };
-  feeDetails: {
-    feeDetails: any;
-  };
-
-  dueDate: {
-    dueDate: any;
-  };
-  paymentRemainder: {
-    paymentRemainder: any;
-  };
-
-  college: {
-    college: any;
-  };
-  branch: {
-    branch: any;
-  };
-  student: {
-    student: any;
-  };
-  academicYear: {
-    academicYear: any;
-  };
-};
-export type InvoiceFragment = {
-  id: number;
-  invoiceNumber: any;
-  amountPaid: number;
-  paymentDate: number;
-  nextPaymentDate: number;
-  outStandingAmount: number;
-  modeOfPayment: string;
-  chequeNumber: number;
-  demandDraftNumber: number;
-  onlineTxnRefNumber: number;
-  paymentStatus: string;
-  comments: string;
-  updatedBy: string;
-  feeCategory: {
-    feeCategory: any;
-  };
-  feeDetails: {
-    feeDetails: any;
-  };
-
-  dueDate: {
-    dueDate: any;
-  };
-  paymentRemainder: {
-    paymentRemainder: any;
-  };
-
-  college: {
-    college: any;
-  };
-  branch: {
-    branch: any;
-  };
-  student: {
-    student: any;
-  };
-  academicYear: {
-    academicYear: any;
-  };
-};
-
-export type InvoiceQueryVariables = {
-  invoiceId: number;
-};
-export type InvoiceListQuery = {
-  invoices: Array<{
-    id: number;
-    invoiceNumber: number;
-    amountPaid: number;
-    paymentDate: number;
-    nextPaymentDate: number;
-    outStandingAmount: number;
-    modeOfPayment: string;
-    chequeNumber: number;
-    demandDraftNumber: number;
-    onlineTxnRefNumber: number;
-    paymentStatus: string;
-    comments: string;
-    updatedBy: string;
-    feeCategory: {
-      feeCategory: any;
-    };
-    feeDetails: {
-      feeDetails: any;
-    };
-
-    dueDate: {
-      dueDate: any;
-    };
-    paymentRemainder: {
-      paymentRemainder: any;
-    };
-
-    college: {
-      college: any;
-    };
-    branch: {
-      branch: any;
-    };
-    student: {
-      student: any;
-    };
-    academicYear: {
-      academicYear: any;
-    };
-  }>;
-};
-// Invoice
-
-// Invoice
+// InvoiceCount
 export type getInvoiceDataQuery = {
   getinvoicedata: {
     totalInvoice: any;
@@ -455,12 +255,6 @@ export type getInvoiceDataFragment = {
   totalCanceledInvoice: any;
 };
 
-// export type getInvoiceDataQueryVariables = {
-//   collegeId: any;
-//   branchId: any;
-//   academicYearId: any;
-// };
-
 export type InvoiceCountQueryType = {
   getInvoiceData: {
     totalInvoice: number;
@@ -470,4 +264,59 @@ export type InvoiceCountQueryType = {
   };
 };
 
-// Invoice
+// Invoice Count
+
+// Search Invoice
+
+// export type SearchInvoiceListQuery = {
+//   searchInvoice: Array<{
+//     studentName: string;
+//     studentContactNumber: string;
+//     categoryName: string;
+//     amountPaid: number;
+//     paymentDate: any;
+//   }>;
+// };
+
+// export type SearchInvoiceListQueryOne = {
+//   searchInvoice: Array<{
+//     students: Array<{
+//       studentName: string;
+//       studentContactNumber: string;
+//     }>;
+//     feeCategory: Array<{
+//       categoryName: string;
+//     }>;
+//     amountPaid: number;
+//     paymentDate: any;
+//   }>;
+// }
+
+export type SearchInvoiceListQuery = {
+  searchInvoice: {
+    students: {
+      studentName: string;
+      studentContactNumber: string;
+    };
+    feeCategory: {
+      categoryName: string;
+    };
+    amountPaid: number;
+    paymentDate: any;
+  };
+};
+
+export type SearchInvoiceQueryType = {
+  searchInvoice: {
+    students: Array<{
+      studentName: string;
+      studentContactNumber: string;
+    }>;
+    feeCategory: Array<{
+      categoryName: string;
+    }>;
+    amountPaid: number;
+    paymentDate: any;
+  };
+};
+// Search Invoice
