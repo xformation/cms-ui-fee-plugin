@@ -1,48 +1,41 @@
 import * as React from 'react';
-import * as SearchInvoiceDataGql from './SearchInvoiceData.graphql';
-import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { graphql, QueryProps, MutationFunc, compose } from "react-apollo";
-import { SearchInvoiceQueryType, SearchInvoiceListQuery } from '../../types';
-import widthSearchInvoiceDataloader from './withSearchInvoiceDataloader';
+import { graphql, QueryProps, MutationFunc, compose } from 'react-apollo';
+import * as SearchInvoiceGql from './SearchInvoice.graphql';
+import { SearchInvoiceListQuery, SearchInvoiceQueryType } from '../../types';
+import withSearchInvoiceDataloader from './withSearchInvoiceDataloader';
+import { RouteComponentProps } from 'react-router-dom';
 
-const w180 = {
-  width: '180px',
-  marginRight: '10px',
-};
-
-// Search Invoice Data
-type SearchInvoiceDataRootProps = RouteComponentProps<{
+type SearchInvoiceRootProps = RouteComponentProps<{
   invoiceNumber: string;
   studentId: string;
-}> & {
-  data: QueryProps & SearchInvoiceQueryType;
-};
-
-type SearchInvoiceDataPageProps = SearchInvoiceDataRootProps & {
+}>
+  & {
+    data: QueryProps & SearchInvoiceQueryType;
+  }
+type SearchInvoicePageProps = SearchInvoiceRootProps & {
   mutate: MutationFunc<SearchInvoiceListQuery>;
 };
 
-type SearchInvoiceDataState = {
-  searchinvoiceData: any,
+
+type SearchInvoiceState = {
+  searchInvoiceData: any,
   invoices: any,
   students: any,
   submitted: any
 };
 
-// Search Invoice Data
-
-class SearchInvoicePage extends React.Component<SearchInvoiceDataPageProps, SearchInvoiceDataState> {
-  constructor(props: SearchInvoiceDataPageProps) {
+class SearchInvoicePage extends React.Component<SearchInvoicePageProps, SearchInvoiceState> {
+  constructor(props: any) {
     super(props);
     this.state = {
-      searchinvoiceData: {
+      searchInvoiceData: {
         invoices: {
           invoiceNumber: ""
         },
         students: {
           studentId: ""
         },
-        mutateResult: [],
+        mutateResult: []
       },
       invoices: [],
       students: [],
@@ -52,8 +45,7 @@ class SearchInvoicePage extends React.Component<SearchInvoiceDataPageProps, Sear
     this.createStudents = this.createStudents.bind(this);
   }
 
-
-  createInvoiceNumbers(invoiceNumber: any, studentId: any) {
+  createInvoiceNumbers(invoiceNumber: any) {
     let invoiceInputs = [<input key={0} value="" />];
     for (let i = 0; i < invoiceNumber.length; i++) {
       invoiceInputs.push(
@@ -74,116 +66,152 @@ class SearchInvoicePage extends React.Component<SearchInvoiceDataPageProps, Sear
     }
     return studentInputs;
   }
-
   onFormSubmit = (e: any) => {
     this.setState({
       submitted: true
     });
-
     const { mutate } = this.props;
-    const { searchinvoiceData } = this.state;
+    const { searchInvoiceData } = this.state;
     e.preventDefault();
 
-    if (searchinvoiceData.invoiceNumber && searchinvoiceData.studentId) {
-      e.target.querySelector("#invoicenumber").setAttribute("disabled", true);
-      e.target.querySelector("#studentid").setAttribute("disabled", true);
+    if (searchInvoiceData.invoice.invoiceNumber && searchInvoiceData.student.id) {
+      e.target.querySelector("#invoice").setAttribute("disabled", false);
+      e.target.querySelector("#studentid").setAttribute("disabled", false);
 
-      let searchinvoiceInputData: any = {
-        invoiceNumber: searchinvoiceData.invoiceNumber,
-        studentId: searchinvoiceData.student.id,
+      let searchInvoiceInputData = {
+        invoiceNumber: searchInvoiceData.invoice.invoiceNumber,
+        studentId: searchInvoiceData.student.id
       };
 
-      let btn = e.target.querySelector("button[type='submit']");
-
+      let btn = e.target.querySelector("button[type='submit]");
 
       return mutate({
-        variables: { filter: searchinvoiceInputData },
+        variables: { filter: searchInvoiceInputData },
       }).then(data => {
         const sdt = data;
-        searchinvoiceData.mutateResult = [];
-        searchinvoiceData.mutateResult.push(sdt);
+        searchInvoiceData.mutateResult = [];
+        searchInvoiceData.mutateResult.push(sdt);
         this.setState({
-          searchinvoiceData: searchinvoiceData
+          searchInvoiceData: searchInvoiceData
         });
-        console.log('Query Result ::::: ', searchinvoiceData.mutateResult);
-
+        console.log('Query Result :::::', searchInvoiceData.mutateResult);
       }).catch((error: any) => {
-
         console.log('there was an error sending the query result', error);
-        return Promise.reject(`Could not retrieve student attendance data: ${error}`);
+        return Promise.reject(`Could not retreive Invoice search data: ${error}`);
       });
-
     }
   }
-  render() {
-    const { data: { searchInvoice, refetch }, mutate
-    } = this.props;
-    const {
-      searchinvoiceData,
-      invoices,
-      students,
-      submitted
-    } = this.state;
-    return (
-      <React.Fragment>
-        <div className="">
-          <form action="" onSubmit={this.onFormSubmit}>
-            <div className="form-group row">
-              <div className="col-md-8">
-                <div className="btn-group">
-                  <input type="text" className="m-2" placeholder="Invoice Number" />
-                  <input type="text" placeholder="Student Id" />
-                </div>
-              </div>
-              <div className="col-md-4">
-                <div className="btn-grou">
-                  <button className="btn btn-primary btn-sm ">Search</button>
-                  <button className="btn btn-primary btn-sm m-2">Export</button>
-                  <button className="btn btn-primary btn-sm ">Print</button>
-                </div>
-              </div>
-            </div>
-            <h4>Invoice Details</h4>
-            <div className="row">
 
-              <div className="col m-1">
-                <label htmlFor="studentName">Student Name</label>
-                <input type="text" className="form-control" placeholder="Student name" />
-              </div>
-              <div className="col m-1">
-                <label htmlFor="primayContact">Primary Contact</label>
-                <input type="text" className="form-control" placeholder="Primary Contact" />
-              </div>
-              <div className="col m-1">
-                <label htmlFor="feeCategory">Fee Category</label>
-                <input type="text" className="form-control" placeholder="Fee Category" />
-              </div>
-              <div className="col m-1">
-                <label htmlFor="amount">Amount</label>
-                <input type="text" className="form-control" placeholder="Amount" />
-              </div>
-              <div className="col m-1">
-                <label htmlFor="date">Date</label>
-                <input type="text" className="form-control" placeholder="Date" />
+
+  onChange = (e: any) => {
+    const { name, value } = e.nativeEvent.target;
+    const { searchInvoiceData } = this.state;
+    if (name === "student") {
+      this.setState({
+        searchInvoiceData: {
+          ...searchInvoiceData,
+          student: {
+            id: value
+          }
+        }
+      });
+    } else if (name === "invoiceNumber") {
+      this.setState({
+        searchInvoiceData: {
+          ...searchInvoiceData,
+          invoice: {
+            id: value
+          }
+        }
+      });
+    };
+  };
+  handleChange = (e: any) => {
+    const { id, value } = e.nativeEvent.target;
+    const { searchInvoiceData } = this.state;
+    const key = id;
+    const val = value;
+    e.preventDefault();
+    searchInvoiceData.textValueMap[key] = val;
+    this.setState({
+      searchInvoiceData: searchInvoiceData
+    });
+
+  }
+
+  render() {
+    const { data: { searchInvoice, refetch }, mutate } = this.props;
+    const { searchInvoiceData, invoices, students } = this.state;
+    return (
+      <div className="">
+        <form action="" onSubmit={this.onFormSubmit}>
+          <div className="form-group row">
+            <div className="col-md-8">
+              <div className="btn-group">
+                <input type="text" className="m-2" name="invoiceNumber" id="invoice"
+                  onChange={this.onChange}
+                  value={searchInvoiceData.searchInvoice.invoiceNumber}
+                  {...this.state.invoices}
+                  placeholder="Invoice Number" />
+                <input type="text" name="invoiceNumber" id="students" onChange={this.onChange}
+                  value={searchInvoiceData.searchInvoice.studentId}
+                  {...this.state.students} placeholder="Student Id" />
               </div>
             </div>
-          </form>
-        </div>
-      </React.Fragment >
+            <div className="col-md-4">
+              <div className="btn-grou">
+                <button type="submit" id="btnTakeAtnd" name="btnTakeAtnd" className="btn btn-primary btn-sm ">Search</button>
+                <button className="btn btn-primary btn-sm m-2">Export</button>
+                <button className="btn btn-primary btn-sm ">Print</button>
+              </div>
+            </div>
+          </div>
+          <h4>Invoice Details</h4>
+          <div className="row">
+            {
+              this.state.students
+            }
+            <div className="col m-1">
+              <label htmlFor="studentName">Student Name</label>
+              <input type="text" className="form-control" placeholder="Student name" />
+            </div>
+            <div className="col m-1">
+              <label htmlFor="primayContact">Primary Contact</label>
+              <input type="text" className="form-control" placeholder="Primary Contact" />
+            </div>
+            <div className="col m-1">
+              <label htmlFor="feeCategory">Fee Category</label>
+              <input type="text" className="form-control" placeholder="Fee Category" />
+            </div>
+            <div className="col m-1">
+              <label htmlFor="amount">Amount</label>
+              <input type="text" className="form-control" placeholder="Amount" />
+            </div>
+            <div className="col m-1">
+              <label htmlFor="date">Date</label>
+              <input type="text" className="form-control" placeholder="Date" />
+            </div>
+          </div>
+        </form>
+      </div>
     );
   }
 }
 
 
+// export default withSearchInvoiceDataloader(
 
-export default widthSearchInvoiceDataloader(
-  compose(
-    graphql<SearchInvoiceListQuery, SearchInvoiceDataRootProps>
-      (SearchInvoiceDataGql, {
-      })
-  )
-    (SearchInvoicePage) as any
-);
+//   compose(
+//     graphql<SearchInvoiceListQuery, SearchInvoiceRootProps>
+//       (SearchInvoiceGql, {
+//         name: "mutate"
+//       }),
+//   )
+
+//     (InvoiceListPage) as any
+// );
+
+export default SearchInvoicePage;
+// export default SearchInvoicePage;SearchInvoiceGql
 
 
-// export default widthSearchInvoiceDataloader((SearchInvoiceListPage) as any);

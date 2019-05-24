@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { graphql, QueryProps, MutationFunc, compose } from "react-apollo";
-import { InvoiceCountQueryType, SearchInvoiceData } from '../../types';
+import { InvoiceCountQueryType, SearchInvoiceData, SearchInvoiceQueryType } from '../../types';
 import widthInvoiceDataloader from './withInvoiceDataloader';
-
-import * as SearchInvoiceDataGql from './SearchInvoiceData.graphql';
-import { InvoiceQuery } from '../../types';
-import widthSearchInvoiceDataloader from './withSearchInvoiceDataloader';
+// import * as SearchInvoiceDataGql from './SearchInvoiceData.graphql';
+// import widthSearchInvoiceDataloader from './withSearchInvoiceDataloader';
 
 const w180 = {
   width: '180px',
@@ -18,7 +16,7 @@ type InvoiceDataRootProps = RouteComponentProps<{
   branchId: string;
   academicYearId: string;
 }> & {
-  data: QueryProps & InvoiceCountQueryType & InvoiceQuery;
+  data: QueryProps & InvoiceCountQueryType;
 };
 
 type InvoiceDataState = {
@@ -29,7 +27,7 @@ type InvoiceDataState = {
 }
 
 type InvoiceDataPageProps = InvoiceDataRootProps & {
-  mutate: MutationFunc<InvoiceQuery>;
+  mutate: MutationFunc<SearchInvoiceQueryType>;
 };
 
 // Invoice Count
@@ -80,7 +78,6 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
       colleges,
     } = this.state;
     return (
-
       <React.Fragment>
         <section className="customCss">
           <h3 className="bg-heading p-1 m-b-0">
@@ -90,9 +87,6 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
           <div className="plugin-bg-white p-1">
             <div className="m-b-1 dflex bg-heading">
               <h4 className="ptl-06">Invoices</h4>
-              <div>
-                <a className="btn btn-primary">Export</a>
-              </div>
             </div>
             <div className="inDashboard p-1">
               <div className="invoiceDashboard">
@@ -130,7 +124,60 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
                 <h6 className="btn btn-primary w50 p05 remainder">Send Remainder</h6>
               </div>
             </div>
+           <div className="">
+        <form action="" 
+        // onSubmit={this.onFormSubmit}
+                >
+          <div className="form-group row">
+            <div className="col-md-8">
+              <div className="btn-group">
+                <input type="text" className="m-2" name="invoiceNumber" id="invoice"
+                  // onChange={this.onChange}
+                  // value={searchInvoiceData.searchInvoice.invoiceNumber}
+                  // {...this.state.invoices}
+                  placeholder="Invoice Number" />
+                <input type="text" name="invoiceNumber" id="students" 
+                // onChange={this.onChange}
+                //   value={searchInvoiceData.searchInvoice.studentId}
+                  // {...this.state.students} 
+                  placeholder="Student Id" />
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="btn-grou">
+                <button type="submit" id="btnTakeAtnd" name="btnTakeAtnd" className="btn btn-primary btn-sm ">Search</button>
+                <button className="btn btn-primary btn-sm m-2">Export</button>
+                <button className="btn btn-primary btn-sm ">Print</button>
+              </div>
+            </div>
           </div>
+          <h4>Invoice Details</h4>
+          <div className="row">
+            {/* {  this.state.students    } */}
+            <div className="col m-1">
+              <label htmlFor="studentName">Student Name</label>
+              <input type="text" className="form-control" placeholder="Student name" />
+            </div>
+            <div className="col m-1">
+              <label htmlFor="primayContact">Primary Contact</label>
+              <input type="text" className="form-control" placeholder="Primary Contact" />
+            </div>
+            <div className="col m-1">
+              <label htmlFor="feeCategory">Fee Category</label>
+              <input type="text" className="form-control" placeholder="Fee Category" />
+            </div>
+            <div className="col m-1">
+              <label htmlFor="amount">Amount</label>
+              <input type="text" className="form-control" placeholder="Amount" />
+            </div>
+            <div className="col m-1">
+              <label htmlFor="date">Date</label>
+              <input type="text" className="form-control" placeholder="Date" />
+            </div>
+          </div>
+        </form>
+        </div>
+      </div>
         </section>
       </React.Fragment >
     );
@@ -143,6 +190,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
 //       (GetInvoiceDataGql, {
 //       })
 //   )
+// (InvoiceListPage) as any)
 // );
 
 

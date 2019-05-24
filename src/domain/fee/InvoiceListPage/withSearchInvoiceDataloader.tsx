@@ -1,7 +1,7 @@
 import { RouteComponentProps } from 'react-router-dom';
 import { graphql, QueryProps } from "react-apollo";
-import * as SearchInvoiceDataGql from './SearchInvoiceDetail.graphql';
-import { ReactFunctionOrComponentClass, InvoiceQuery } from '../../types';
+import * as SearchInvoiceGql from './SearchInvoice.graphql';
+import { ReactFunctionOrComponentClass, SearchInvoiceQueryType } from '../../types';
 import withLoadingHandler from '../../../components/withLoadingHandler';
 
 type withInvoiceDetailPageDataLoaderProps = RouteComponentProps<{
@@ -10,11 +10,11 @@ type withInvoiceDetailPageDataLoaderProps = RouteComponentProps<{
 }>;
 
 type TargetComponentProps = {
-  data: QueryProps & InvoiceQuery;
+  data: QueryProps & SearchInvoiceQueryType;
 };
 
 const withInvoiceDataloader = (TargetComponent: ReactFunctionOrComponentClass<TargetComponentProps>) => {
-  return graphql<InvoiceQuery, withInvoiceDetailPageDataLoaderProps, TargetComponentProps>(SearchInvoiceDataGql, {
+  return graphql<SearchInvoiceQueryType, withInvoiceDetailPageDataLoaderProps, TargetComponentProps>(SearchInvoiceGql, {
     options: ({ match }) => ({
       variables: {
         invoiceNumber: "db45",
