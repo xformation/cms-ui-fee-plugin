@@ -27,14 +27,15 @@ type InvoiceDataState = {
 }
 
 type InvoiceDataPageProps = InvoiceDataRootProps & {
-  mutate: MutationFunc<SearchInvoiceQueryType>;
+  mutate: MutationFunc<SearchInvoiceListQuery>;
 };
 
 // Invoice Count
 
 // Search Invoice Data
-type SearchInvoiceDataState = {
-  searchinvoiceData: any,
+
+type SearchInvoiceState = {
+  searchInvoiceData: any,
   invoices: any,
   students: any,
   submitted: any
@@ -52,7 +53,7 @@ class SearchData {
 // Search Invoice Data
 
 class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataState> {
-  constructor(props: InvoiceDataPageProps) {
+  constructor(props: any) {
     super(props);
     this.state = {
       invoiceGetData: {
@@ -70,7 +71,105 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceDataS
       academicYears: [],
       colleges: [],
     }
+     this.createInvoiceNumbers = this.createInvoiceNumbers.bind(this);
+    this.createStudents = this.createStudents.bind(this);
   }
+
+
+  createInvoiceNumbers(invoiceNumber: any) {
+    let invoiceInputs = [<input key={0} value="" />];
+    for (let i = 0; i < invoiceNumber.length; i++) {
+      invoiceInputs.push(
+        <input key={invoiceNumber[i].id} value={invoiceNumber[i].id} />
+      );
+
+    }
+    return invoiceInputs;
+  }
+
+  createStudents(studentId: any) {
+    let studentInputs = [<input key={0} value="" />];
+    for (let i = 0; i < studentId.length; i++) {
+      studentInputs.push(
+        <input key={studentId[i].id} value={studentId[i].id} />
+      );
+
+    }
+    return studentInputs;
+  }
+  onFormSubmit = (e: any) => {
+    this.setState({
+      submitted: true
+    });
+    const { mutate } = this.props;
+    const { searchInvoiceData } = this.state;
+    e.preventDefault();
+
+    if (searchInvoiceData.invoice.invoiceNumber && searchInvoiceData.student.id) {
+      e.target.querySelector("#invoice").setAttribute("disabled", false);
+      e.target.querySelector("#studentid").setAttribute("disabled", false);
+
+      let searchInvoiceInputData = {
+        invoiceNumber: searchInvoiceData.invoice.invoiceNumber,
+        studentId: searchInvoiceData.student.id
+      };
+
+      let btn = e.target.querySelector("button[type='submit]");
+
+      return mutate({
+        variables: { filter: searchInvoiceInputData },
+      }).then(data => {
+        const sdt = data;
+        searchInvoiceData.mutateResult = [];
+        searchInvoiceData.mutateResult.push(sdt);
+        this.setState({
+          searchInvoiceData: searchInvoiceData
+        });
+        console.log('Query Result :::::', searchInvoiceData.mutateResult);
+      }).catch((error: any) => {
+        console.log('there was an error sending the query result', error);
+        return Promise.reject(`Could not retreive Invoice search data: ${error}`);
+      });
+    }
+  }
+
+
+  onChange = (e: any) => {
+    const { name, value } = e.nativeEvent.target;
+    const { searchInvoiceData } = this.state;
+    if (name === "student") {
+      this.setState({
+        searchInvoiceData: {
+          ...searchInvoiceData,
+          student: {
+            id: value
+          }
+        }
+      });
+    } else if (name === "invoiceNumber") {
+      this.setState({
+        searchInvoiceData: {
+          ...searchInvoiceData,
+          invoice: {
+            id: value
+          }
+        }
+      });
+    };
+  };
+  handleChange = (e: any) => {
+    const { id, value } = e.nativeEvent.target;
+    const { searchInvoiceData } = this.state;
+    const key = id;
+    const val = value;
+    e.preventDefault();
+    searchInvoiceData.textValueMap[key] = val;
+    this.setState({
+      searchInvoiceData: searchInvoiceData
+    });
+
+  }
+
   render() {
     const {
       branches,
