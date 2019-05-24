@@ -7,7 +7,6 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import { createGraphQLClient } from "../../../createGraphQLClient";
 import InvoiceListPage from "./InvoiceListPage";
-import SearchInvoicePage from "./SearchInvoicePage";
 import '../../../css/dark.css';
 
 const graphQLClient = createGraphQLClient();
@@ -19,7 +18,6 @@ export default function init() {
         <BrowserRouter>
           <Switch>
             <Route path="/plugins/ems-fee/page/invoice" component={InvoiceListPage} />
-            <Route path="/plugins/ems-fee/page/searchinvoice" component={SearchInvoicePage} />
           </Switch>
         </BrowserRouter>
       </ApolloProvider>,
