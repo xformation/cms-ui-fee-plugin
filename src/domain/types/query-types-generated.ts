@@ -292,31 +292,67 @@ export type InvoiceCountQueryType = {
 //   }>;
 // }
 
-export type SearchInvoiceListQuery = {
+export type SearchInvoiceListType = {
   searchInvoice: {
-    students: {
-      studentName: string;
-      studentContactNumber: string;
-    };
+    id: number;
+    amountPaid: number;
+    strPaymentDate: string;
     feeCategory: {
       categoryName: string;
     };
-    amountPaid: number;
-    paymentDate: any;
+    student: {
+      studentName: string;
+      studentContactNumber: string;
+    };
   };
 };
 
-export type SearchInvoiceQueryType = {
-  searchInvoice: {
-    students: Array<{
-      studentName: string;
-      studentContactNumber: string;
-    }>;
-    feeCategory: Array<{
-      categoryName: string;
-    }>;
-    amountPaid: number;
-    paymentDate: any;
+// Search Invoice
+export type GetInvoiceData = {
+  totalInvoice: any;
+  totalPaidInvoice: any;
+  totalUnPaidInvoice: any;
+  totalCanceledInvoice: any;
+};
+
+export type SearchInvoiceData = {
+  // id: number;
+  invoiceNumber: any;
+  amountPaid: number;
+  paymentDate: number;
+  nextPaymentDate: number;
+  outStandingAmount: number;
+  modeOfPayment: string;
+  chequeNumber: number;
+  demandDraftNumber: number;
+  onlineTxnRefNumber: number;
+  paymentStatus: string;
+  comments: string;
+  updatedBy: string;
+  feeCategory: {
+    feeCategory: any;
+  };
+  feeDetails: {
+    feeDetails: any;
+  };
+
+  dueDate: {
+    dueDate: any;
+  };
+  paymentRemainder: {
+    paymentRemainder: any;
+  };
+
+  college: {
+    college: any;
+  };
+  branch: {
+    branch: any;
+  };
+  student: {
+    studentName: any;
+  };
+  academicYear: {
+    academicYear: any;
   };
 };
-// Search Invoice

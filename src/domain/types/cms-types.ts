@@ -5,100 +5,58 @@ export type ReactFunctionOrComponentClass<P> =
 
 // --------------------------------------
 
-export type StudentData = {
-  // id: string;
-  studentName: string;
-  fatherName: string;
-  fatherMiddleName: string;
-  fatherLastName: string;
-  motherName: string;
-  motherMiddleName: string;
-  motherLastName: string;
-  aadharNo: number;
-  dateOfBirth: number;
-  placeOfBirth: string;
-  religion: string;
-  caste: string;
-  subCaste: string;
-  age: number;
-  sex: string;
-  bloodGroup: string;
-  addressLineOne: string;
-  addressLineTwo: string;
-  addressLineThree: string;
-  town: string;
-  state: string;
-  country: string;
-  pincode: number;
-  studentContactNumber: number;
-  alternateContactNumber: number;
-  studentEmailAddress: string;
-  alternateEmailAddress: string;
-  relationWithStudent: string;
-  emergencyContactName: string;
-  emergencyContactMiddleName: string;
-  emergencyContactLastName: string;
-  emergencyContactNo: string;
-  emergencyContactEmailAddress: string;
-  uploadPhoto: string;
-  admissionNo: number;
-  rollNo: number;
-  studentType: string;
-  batch: {
-    batch: any;
-  };
-  section: {
-    section: any;
-  };
-  branch: {
-    branchName: any;
-  };
-  department: {
-    name: any;
-  };
-};
-
-export type SearchInvoiceData = {
-  // id: number;
-  invoiceNumber: any;
-  amountPaid: number;
-  paymentDate: number;
-  nextPaymentDate: number;
-  outStandingAmount: number;
-  modeOfPayment: string;
-  chequeNumber: number;
-  demandDraftNumber: number;
-  onlineTxnRefNumber: number;
-  paymentStatus: string;
-  comments: string;
-  updatedBy: string;
-  feeCategory: {
-    feeCategory: any;
-  };
-  feeDetails: {
-    feeDetails: any;
-  };
-
-  dueDate: {
-    dueDate: any;
-  };
-  paymentRemainder: {
-    paymentRemainder: any;
-  };
-
-  college: {
-    college: any;
-  };
-  branch: {
-    branch: any;
-  };
-  student: {
-    studentName: any;
-  };
-  academicYear: {
-    academicYear: any;
-  };
-};
+// export type StudentData = {
+//   // id: string;
+//   studentName: string;
+//   fatherName: string;
+//   fatherMiddleName: string;
+//   fatherLastName: string;
+//   motherName: string;
+//   motherMiddleName: string;
+//   motherLastName: string;
+//   aadharNo: number;
+//   dateOfBirth: number;
+//   placeOfBirth: string;
+//   religion: string;
+//   caste: string;
+//   subCaste: string;
+//   age: number;
+//   sex: string;
+//   bloodGroup: string;
+//   addressLineOne: string;
+//   addressLineTwo: string;
+//   addressLineThree: string;
+//   town: string;
+//   state: string;
+//   country: string;
+//   pincode: number;
+//   studentContactNumber: number;
+//   alternateContactNumber: number;
+//   studentEmailAddress: string;
+//   alternateEmailAddress: string;
+//   relationWithStudent: string;
+//   emergencyContactName: string;
+//   emergencyContactMiddleName: string;
+//   emergencyContactLastName: string;
+//   emergencyContactNo: string;
+//   emergencyContactEmailAddress: string;
+//   uploadPhoto: string;
+//   admissionNo: number;
+//   rollNo: number;
+//   studentType: string;
+//   batch: {
+//     batch: any;
+//   };
+//   section: {
+//     section: any;
+//   };
+//   branch: {
+//     branchName: any;
+//   };
+//   department: {
+//     name: any;
+//   };
+// };
 
 // export type FeeData = {
 //   id: number;
@@ -139,9 +97,9 @@ export type SearchInvoiceData = {
 //   }
 // };
 
-export type GetInvoiceData = {
-  totalInvoice: any;
-  totalPaidInvoice: any;
-  totalUnPaidInvoice: any;
-  totalCanceledInvoice: any;
-};
+// export type GetInvoiceData = {
+//   totalInvoice: any;
+//   totalPaidInvoice: any;
+//   totalUnPaidInvoice: any;
+//   totalCanceledInvoice: any;
+// };

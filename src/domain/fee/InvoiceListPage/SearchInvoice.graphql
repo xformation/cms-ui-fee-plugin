@@ -1,16 +1,16 @@
-
-mutation{
-  searchInvoice($invoiceNumber:String, $studentId: String){
- searchInvoice(invoiceNumber:$invoiceNumber, studentId: $studentId){
- student {
-      studentName
-      studentContactNumber
-    }
-    feeCategory {
-      categoryName
-    }
-    amountPaid
-    paymentDate
-  }
+mutation searchInvoice($invoiceNumber:String, $studentId:Long, $collegeId:Long, $branchId:Long, $academicYearId:Long)
+{
+  searchInvoice(invoiceNumber:$invoiceNumber, studentId:$studentId, collegeId:$collegeId, branchId:$branchId, academicYearId:$academicYearId)
+  {
+        id,
+        amountPaid,
+        strPaymentDate,
+        feeCategory {
+          categoryName
+        },
+        student {
+          studentName
+          studentContactNumber
+        }
   }
 }
