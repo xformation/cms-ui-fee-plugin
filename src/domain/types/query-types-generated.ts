@@ -294,6 +294,7 @@ export type InvoiceCountQueryType = {
 
 export type SearchInvoiceListType = {
   searchInvoice: {
+    invoiceNumber: string;
     id: number;
     amountPaid: number;
     strPaymentDate: string;

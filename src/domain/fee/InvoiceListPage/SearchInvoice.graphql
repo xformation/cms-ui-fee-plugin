@@ -5,6 +5,7 @@ mutation searchInvoice($invoiceNumber:String, $studentId:Long, $collegeId:Long, 
         id,
         amountPaid,
         strPaymentDate,
+        invoiceNumber,
         feeCategory {
           categoryName
         },

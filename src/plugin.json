@@ -30,6 +30,13 @@
     },
     {
       "type": "page",
+      "name": "Invoice",
+      "addToNav": true,
+      "defaultNav": false,
+      "component": "Invoice"
+    },
+    {
+      "type": "page",
       "name": "FeeSetup",
       "addToNav": true,
       "defaultNav": true,
@@ -37,10 +44,10 @@
     },
     {
       "type": "page",
-      "name": "Invoice",
+      "name": "FeeSetting",
       "addToNav": true,
       "defaultNav": false,
-      "component": "Invoice"
+      "component": "FeeSetting"
     }
   ],
   "dependencies": {
