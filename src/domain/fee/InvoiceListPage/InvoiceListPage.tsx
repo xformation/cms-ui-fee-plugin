@@ -162,90 +162,93 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
           <div className="m-b-1 dflex bg-heading">
             <h4 className="ptl-06">Invoices</h4>
           </div>
-          <div className="inDashboard p-1">
-            <div className="invoiceDashboard">
-              <div className="invoiceHeader">
-                <h6 className="center">Total Invoice</h6>
-                <a href=""><span className="ti-close m-r-1"></span></a>
-                <a href=""><span className="ti-download"></span></a>
-              </div>
-              <h2 className="fee-red"><strong>{this.props.data.getInvoiceData.totalInvoice}</strong></h2>
-            </div>
-            <div className="invoiceDashboard">
-              <div className="invoiceHeader">
-                <h6 className="center">Paid Invoice</h6>
-                <a href=""><span className="ti-close m-r-1"></span></a>
-                <a href=""><span className="ti-download"></span></a>
-              </div>
-              <h2 className="fee-red"><strong>{this.props.data.getInvoiceData.totalPaidInvoice}</strong></h2>
-            </div>
-            <div className="invoiceDashboard">
-              <div className="invoiceHeader">
-                <h6 className="center">Unpaid Invoice</h6>
-                <a href=""><span className="ti-close m-r-1 "></span></a>
-                <a href=""><span className="ti-download"></span></a>
-              </div>
-              <h2 className="fee-orange"><strong>{this.props.data.getInvoiceData.totalUnPaidInvoice}</strong></h2>
-              <h6 className="center btn btn-primary w50 p05 remainder">Send Remainder</h6>
-            </div>
-            <div className="invoiceDashboard">
-              <div className="invoiceHeader">
-                <h6 className="center">Cancelled Invoice</h6>
-                <a href=""><span className="ti-close m-r-1"></span></a>
-                <a href=""><span className="ti-download"></span></a>
-              </div>
-              <h2 className="fee-red"><strong>{this.props.data.getInvoiceData.totalCanceledInvoice}</strong></h2>
-              <h6 className="btn btn-primary w50 p05 remainder">Send Remainder</h6>
-            </div>
-          </div>
-          <div className="">
-
-            <div className="form-group row">
-
-              <div className="col-md-8">
-                <div className="btn-group">
-                  <input type="text" className="m-2" name="invoiceNumber" id="invoiceNumber" placeholder="Invoice Number" />
-                  <input type="text" name="studentId" id="studentId" placeholder="Student Id" />
+          <div className="border p-1 pb-2">
+            <div className="inDashboard p-1">
+              <div className="invoiceDashboard">
+                <div className="invoiceHeader">
+                  <h6 className="center">Total Invoice</h6>
+                  <a href=""><span className="ti-close m-r-1"></span></a>
+                  <a href=""><span className="ti-download"></span></a>
                 </div>
+                <h2 className="fee-blue"><strong>{this.props.data.getInvoiceData.totalInvoice}</strong></h2>
               </div>
-              <div className="col-md-4">
-                <div className="btn-group">
-                  <button className="btn btn-primary btn-sm" id="btnFind" name="btnFind" onClick={this.onClick} >Search</button>
-                  <button className="btn btn-primary btn-sm m-2" disabled>Export</button>
-                  <button className="btn btn-primary btn-sm " disabled>Print</button>
+              <div className="invoiceDashboard">
+                <div className="invoiceHeader">
+                  <h6 className="center">Paid Invoice</h6>
+                  <a href=""><span className="ti-close m-r-1"></span></a>
+                  <a href=""><span className="ti-download"></span></a>
                 </div>
+                <h2 className="fee-green"><strong>{this.props.data.getInvoiceData.totalPaidInvoice}</strong></h2>
+              </div>
+              <div className="invoiceDashboard">
+                <div className="invoiceHeader">
+                  <h6 className="center">Unpaid Invoice</h6>
+                  <a href=""><span className="ti-close m-r-1 "></span></a>
+                  <a href=""><span className="ti-download"></span></a>
+                </div>
+                <h2 className="fee-orange"><strong>{this.props.data.getInvoiceData.totalUnPaidInvoice}</strong></h2>
+                <h6 className="center btn btn-primary w50 p05 remainder">Send Remainder</h6>
+              </div>
+              <div className="invoiceDashboard">
+                <div className="invoiceHeader">
+                  <h6 className="center">Cancelled Invoice</h6>
+                  <a href=""><span className="ti-close m-r-1"></span></a>
+                  <a href=""><span className="ti-download"></span></a>
+                </div>
+                <h2 className="fee-red"><strong>{this.props.data.getInvoiceData.totalCanceledInvoice}</strong></h2>
+                <h6 className="btn btn-primary w50 p05 remainder">Send Remainder</h6>
+              </div>
+            </div>
+            <hr id="invoiceHr" />
+            <div className="border">
+              <h4 className="bg-heading p-1">Search Invoice</h4>
+              <div className="form-group row">
+
+                <div className="col-md-8">
+                  <div className="btn-group">
+                    <input type="text" className="m-2" name="invoiceNumber" id="invoiceNumber" placeholder="Invoice Number" />
+                    <input type="text" name="studentId" id="studentId" placeholder="Student Id" />
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="btn-group">
+                    <button className="btn btn-primary btn-sm" id="btnFind" name="btnFind" onClick={this.onClick} >Search</button>
+                    <button className="btn btn-primary btn-sm m-2" disabled>Export</button>
+                    <button className="btn btn-primary btn-sm " disabled>Print</button>
+                  </div>
+                </div>
+
+              </div>
+
+              <div className="col-md-12">
+                <h4>Invoice Details</h4>
+                <table id="invoicelistpage" className="striped-table fwidth bg-white m-1 text-center">
+                  <thead className="text-center">
+                    <tr>
+                      <th>
+                        <input type="checkbox" onClick={(e: any) => this.checkAllStudents(e)} value="checkedall" name="" id="chkCheckedAll" />
+                      </th>
+                      <th>Student Name</th>
+                      <th>Primary Contact</th>
+                      <th>Fee Category</th>
+                      <th>Invoice Number</th>
+                      <th>Amount</th>
+                      <th>Date</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      this.createInvoiceRows(this.state.invoiceData.mutateResult)
+                    }
+                  </tbody>
+                </table>
+                {
+                  this.createNoRecordMessage(this.state.invoiceData.mutateResult)
+                }
               </div>
 
             </div>
-
-            <div className="col-md-12">
-              <h4>Invoice Details</h4>
-              <table id="invoicelistpage" className="striped-table fwidth bg-white">
-                <thead>
-                  <tr>
-                    <th>
-                      <input type="checkbox" onClick={(e: any) => this.checkAllStudents(e)} value="checkedall" name="" id="chkCheckedAll" />
-                    </th>
-                    <th>Student Name</th>
-                    <th>Primary Contact</th>
-                    <th>Fee Category</th>
-                    <th>Invoice Number</th>
-                    <th>Amount</th>
-                    <th>Date</th>
-
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    this.createInvoiceRows(this.state.invoiceData.mutateResult)
-                  }
-                </tbody>
-              </table>
-              {
-                this.createNoRecordMessage(this.state.invoiceData.mutateResult)
-              }
-            </div>
-
           </div>
         </div>
       </section>

@@ -523,7 +523,9 @@ td {
   grid-template-columns: 1fr 2fr;
   grid-gap: 20px;
 }
-
+hr#invoiceHr {
+  border-top: 1px solid #419df0;
+}
 /* Fee Setup */
 .inDashboard {
   display: flex;
@@ -725,3 +727,9 @@ td {
   justify-content: flex-end;
 }
 /* Fee Setup */
+.border {
+  border: 1px solid #bdb7b7;
+}
+table#invoicelistpage th {
+  text-align: center;
+}
