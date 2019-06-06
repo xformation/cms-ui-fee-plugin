@@ -1,0 +1,6 @@
+query getAllBranches($branchName:String, $collegeId:Long){
+  getAllBranches(branchName:$branchName, collegeId:$collegeId) {
+    id,
+    branchName
+  }
+}

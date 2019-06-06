@@ -357,3 +357,34 @@ export type SearchInvoiceData = {
     academicYear: any;
   };
 };
+
+export type LoadBranchQueryType = {
+  getAllBranches: {
+    id: number;
+    branchName: string;
+  };
+};
+
+export type DueDateAddMutationType = {
+  addDueDate: {
+    dueDate: {
+      id: number;
+    };
+  };
+};
+
+export type PaymentRemainderAddMutationType = {
+  addPaymentRemainder: {
+    paymentRemainder: {
+      id: number;
+    };
+  };
+};
+
+export type LateFeeAddMutationType = {
+  addLateFee: {
+    lateFee: {
+      id: number;
+    };
+  };
+};
