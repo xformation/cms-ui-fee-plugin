@@ -373,8 +373,24 @@ export type DueDateAddMutationType = {
   };
 };
 
+export type DueDateUpdateMutationType = {
+  updateDueDate: {
+    dueDate: {
+      id: number;
+    };
+  };
+};
+
 export type PaymentRemainderAddMutationType = {
   addPaymentRemainder: {
+    paymentRemainder: {
+      id: number;
+    };
+  };
+};
+
+export type PaymentRemainderUpdateMutationType = {
+  updatePaymentRemainder: {
     paymentRemainder: {
       id: number;
     };
@@ -385,6 +401,22 @@ export type LateFeeAddMutationType = {
   addLateFee: {
     lateFee: {
       id: number;
+    };
+  };
+};
+
+export type LateFeeUpdateMutationType = {
+  updateLateFee: {
+    lateFee: {
+      id: number;
+    };
+  };
+};
+
+export type AddAllMutationType = {
+  addDueDatePaymentRemLateFee: {
+    QueryResult: {
+      statusDesc: string;
     };
   };
 };

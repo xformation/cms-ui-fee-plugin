@@ -2,16 +2,24 @@ import * as React from 'react';
 import { graphql, QueryProps, MutationFunc, compose } from 'react-apollo';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import * as DueDateAddMutationGql from './DueDateAddMutation.graphql';
+import * as DueDateUpdateMutationGql from './DueDateUpdateMutation.graphql';
 import * as PaymentRemainderAddMutationGql from './PaymentRemainderAddMutation.graphql';
+import * as PaymentRemainderUpdateMutationGql from './PaymentRemainderUpdateMutation.graphql';
 import * as LateFeeAddMutationGql from './LateFeeAddMutation.graphql';
-import * as AddFeeMutationGql from './FeeSetupMutation.graphql';
+import * as LateFeeUpdateMutationGql from './LateFeeUpdateMutation.graphql';
+import * as AddAllMutationGql from './AddAllMutation.graphql';
+// import * as AddFeeMutationGql from './FeeSetupMutation.graphql';
 import withBranchDataLoader from "../withBranchDataLoader";
 
 import {
   LoadBranchQueryType,
   DueDateAddMutationType,
+  DueDateUpdateMutationType,
   PaymentRemainderAddMutationType,
+  PaymentRemainderUpdateMutationType,
   LateFeeAddMutationType,
+  LateFeeUpdateMutationType,
+  AddAllMutationType,
   AddFeeMutation,
   AddFeeInput,
   AddFeeMutationVariables,
@@ -30,8 +38,13 @@ type FeeSettingRootProps = RouteComponentProps<{
 
 type FeeSettingPageProps = FeeSettingRootProps & {
   addDueDateMutation: MutationFunc<DueDateAddMutationType>;
+  updateDueDateMutation: MutationFunc<DueDateUpdateMutationType>;
   addPaymentRemainderMutation: MutationFunc<PaymentRemainderAddMutationType>;
+  updatePaymentRemainderMutation: MutationFunc<PaymentRemainderUpdateMutationType>;
   addLateFeeMutation: MutationFunc<LateFeeAddMutationType>;
+  updateLateFeeMutation: MutationFunc<LateFeeUpdateMutationType>;
+  addAllMutation: MutationFunc<AddAllMutationType>;
+  
   
   // mutate: MutationFunc<DailyStudentAttendanceListQuery>;
   
@@ -57,6 +70,9 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
           id: ""
         },
         installments: {
+          id: ""
+        },
+        dayOfInstallment:{
           id: ""
         },
         frequency: {
@@ -126,12 +142,17 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
         },
         lateFee: {
           id: ""
+        },
+        ddIds: {
+          key_installment: "",
+          key_onetime: ""
         }
       },
       branches: []
     };
     this.createBranches = this.createBranches.bind(this);
     this.checkFeeCheckbox = this.checkFeeCheckbox.bind(this);
+    
   }
 
   createBranches(branches: any) {
@@ -165,7 +186,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
           }
         }
       });
-      if(value === "OneTime"){
+      if(value === "ONETIME"){
         let ins: any = document.querySelector("#installments");
         ins.options.selectedIndex = 1;
         ins.setAttribute("disabled", true);
@@ -202,11 +223,11 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
           }
         }
       });
-    }else if (name === "dueDate") {
+    }else if (name === "dayOfInstallment") {
       this.setState({
         feeSettingData: {
           ...feeSettingData,
-          dueDate: {
+          dayOfInstallment: {
             id: value
           }
         }
@@ -336,12 +357,11 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
         }
       });
     }
-    
-
   }
 
   saveDueDate = (e: any) => {
-    const { addDueDateMutation } = this.props;
+    const { id } = e.nativeEvent.target;
+    const { addDueDateMutation, updateDueDateMutation } = this.props;
     const { feeSettingData } = this.state;
     e.preventDefault();
 
@@ -354,18 +374,18 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     }
 
     let dayDescription: any;
-    if(feeSettingData.paymentOption.id === "Installments"){
+    if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
         if(feeSettingData.installments.id === ""){
           alert("Please select installment option");
           return;
-        }else if(feeSettingData.dueDate.id === ""){
+        }else if(feeSettingData.dayOfInstallment.id === ""){
           alert("Please select day of installment");
           return;
         }else if(feeSettingData.frequency.id === ""){
           alert("Please select frequency of installment");
           return;
         }
-        dayDescription = feeSettingData.dueDate.id + " of every ";
+        dayDescription = feeSettingData.dayOfInstallment.id + " of every ";
         if(feeSettingData.frequency.id === "WEEKLY"){
           dayDescription = "WEEKLY"
         }else if(feeSettingData.frequency.id === "MONTHLY"){
@@ -377,13 +397,12 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
         }else if(feeSettingData.frequency.id === "ANNUALLY"){
           dayDescription = "ANNUALLY"
         }
-    }else if(feeSettingData.paymentOption.id === "OneTime"){
+    }else if(feeSettingData.paymentOption.id === "ONETIME"){
         feeSettingData.installments.id = "1";
-        feeSettingData.dueDate.id = null;
+        feeSettingData.dayOfInstallment.id = null;
         feeSettingData.frequency.id = null;
         dayDescription = null;
     }
-
 
     let addDueDateInput = {
       branchId: feeSettingData.branch.id,
@@ -391,23 +410,74 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       paymentMethod: feeSettingData.paymentOption.id,
       installments: feeSettingData.installments.id,
       dayDesc: dayDescription,
-      paymentDay: feeSettingData.dueDate.id,
+      paymentDay: feeSettingData.dayOfInstallment.id,
       frequency: feeSettingData.frequency.id
     };
 
-    return addDueDateMutation({
-      variables: { input: addDueDateInput },
-    }).then(data => {
-      feeSettingData.dueDate.id = data.data.addDueDate.dueDate.id;
-      this.setState({
-        feeSettingData: feeSettingData
-      });
-      console.log('Add due date result ::::: ', data);
-      alert("Due date added successfully!");
-    }).catch((error: any) => {
-      console.log('there was an error sending the add due date mutation result', error);
-      return Promise.reject(`Could not retrieve add due date data: ${error}`);
-    });
+    let selId = 0;
+    if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
+      selId = feeSettingData.ddIds.key_installment;
+    }else{
+      selId = feeSettingData.ddIds.key_onetime;
+    }
+    let updateDueDateInput = {
+      id: selId,
+      branchId: feeSettingData.branch.id,
+      collegeId: feeSettingData.college.id,
+      paymentMethod: feeSettingData.paymentOption.id,
+      installments: feeSettingData.installments.id,
+      dayDesc: dayDescription,
+      paymentDay: feeSettingData.dayOfInstallment.id,
+      frequency: feeSettingData.frequency.id
+    };
+
+    if(id === "btnSaveDueDate"){
+        if((feeSettingData.paymentOption.id === "INSTALLMENTS" && feeSettingData.ddIds.key_installment === "")
+              || (feeSettingData.paymentOption.id === "ONETIME" && feeSettingData.ddIds.key_onetime === "")){
+            return addDueDateMutation({
+              variables: { input: addDueDateInput },
+            }).then(data => {
+
+              if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
+                feeSettingData.ddIds.key_installment = data.data.addDueDate.dueDate.id;
+              }else{
+                feeSettingData.ddIds.key_onetime = data.data.addDueDate.dueDate.id;
+              }
+              
+              this.setState({
+                feeSettingData: feeSettingData
+              });
+              console.log('Add due date result ::::: ', data);
+              alert("Due date added successfully!");
+            }).catch((error: any) => {
+              alert("Due to some error due date could not be added");
+              console.log('there was an error sending the add due date mutation result', error);
+              return Promise.reject(`Could not retrieve add due date data: ${error}`);
+            });
+        }else{
+            return updateDueDateMutation({
+              variables: { input: updateDueDateInput },
+            }).then(data => {
+              feeSettingData.dueDate.id = data.data.updateDueDate.dueDate.id;
+              this.setState({
+                feeSettingData: feeSettingData
+              });
+              console.log('Update due date result ::::: ', data);
+              alert("Due date updated successfully!");
+            }).catch((error: any) => {
+              alert("Due to some error due date could not be updated");
+              console.log('there was an error sending the update due date mutation result', error);
+              return Promise.reject(`Could not retrieve update due date data: ${error}`);
+            });
+        }
+    }else{
+      if((feeSettingData.paymentOption.id === "INSTALLMENTS" && feeSettingData.ddIds.key_installment === "")
+      || (feeSettingData.paymentOption.id === "ONETIME" && feeSettingData.ddIds.key_onetime === "")){
+        return addDueDateInput;
+      }
+      return updateDueDateInput;
+    }
+    
   }
 
   checkFeeCheckbox(e: any) {
@@ -477,7 +547,8 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
   }
 
   savePaymentRem= (e: any) => {
-    const { addPaymentRemainderMutation } = this.props;
+    const { id } = e.nativeEvent.target;
+    const { addPaymentRemainderMutation, updatePaymentRemainderMutation } = this.props;
     const { feeSettingData } = this.state;
     e.preventDefault();
     let txtfpd : any = document.querySelector("#txtFpPmtDays");
@@ -566,21 +637,58 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       branchId: feeSettingData.branch.id
     };
 
-    return addPaymentRemainderMutation({
-      variables: { input: addPmtRemInput },
-    }).then(data => {
-      feeSettingData.paymentRemainder.id = data.data.addPaymentRemainder.paymentRemainder.id;
-      console.log('Add payment remainder result ::::: ', data);
-      alert("Payment remainder added successfully!");
-    }).catch((error: any) => {
-      console.log('there was an error sending the add payment remainder mutation result', error);
-      return Promise.reject(`Could not retrieve add payment remainder data: ${error}`);
-    });
+    let updatePmtRemInput = {
+      id: feeSettingData.paymentRemainder.id,
+      isAutoRemainder: autRem,
+      isFirstPaymentRemainder: fpR,
+      firstPaymentRemainderDays: fpRDy,
+      isSecondPaymentRemainder: scR,
+      secondPaymentRemainderDays: scRdy,
+      isOverDuePaymentRemainder: isOdPr,
+      overDuePaymentRemainderAfterDueDateOrUntilPaid: odP,
+      isRemainderRecipients: isRr,
+      remainderRecipients: rr,
+      collegeId: feeSettingData.college.id,
+      branchId: feeSettingData.branch.id
+    };
+
+    if(id === "btnSavePmtRem"){
+      if(feeSettingData.paymentRemainder.id === ""){
+        return addPaymentRemainderMutation({
+          variables: { input: addPmtRemInput },
+        }).then(data => {
+          feeSettingData.paymentRemainder.id = data.data.addPaymentRemainder.paymentRemainder.id;
+          console.log('Add payment remainder result ::::: ', data);
+          alert("Payment remainder added successfully!");
+        }).catch((error: any) => {
+          console.log('there was an error sending the add payment remainder mutation result', error);
+          return Promise.reject(`Could not retrieve add payment remainder data: ${error}`);
+        });
+      }else{
+        return updatePaymentRemainderMutation({
+          variables: { input: updatePmtRemInput },
+        }).then(data => {
+          feeSettingData.paymentRemainder.id = data.data.updatePaymentRemainder.paymentRemainder.id;
+          console.log('Update payment remainder result ::::: ', data);
+          alert("Payment remainder updated successfully!");
+        }).catch((error: any) => {
+          console.log('there was an error sending the update payment remainder mutation result', error);
+          return Promise.reject(`Could not retrieve update payment remainder data: ${error}`);
+        });
+      }
+      
+    }else {
+      if(feeSettingData.paymentRemainder.id === ""){
+        return addPmtRemInput;
+      }
+      return updatePmtRemInput;
+    }
+    
   }
 
   saveLateFee= (e: any) => {
-    
-    const { addLateFeeMutation } = this.props;
+    const { id } = e.nativeEvent.target;
+    const { addLateFeeMutation, updateLateFeeMutation } = this.props;
     const { feeSettingData } = this.state;
     e.preventDefault();
     let txtLtFdays : any = document.querySelector("#txtLtFDays");
@@ -668,22 +776,84 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       branchId: feeSettingData.branch.id
     };
 
-    return addLateFeeMutation({
-      variables: { input: addLateFeeInput },
-    }).then(data => {
-      feeSettingData.lateFee.id = data.data.addLateFee.lateFee.id;
-      console.log('Add late fee result ::::: ', data);
-      alert("Late fee added successfully!");
-    }).catch((error: any) => {
-      console.log('there was an error sending the add late fee mutation result', error);
-      return Promise.reject(`Could not retrieve add late fee data: ${error}`);
-    });
+    let updateLateFeeInput = {
+      id: feeSettingData.lateFee.id,
+      isAutoLateFee: isLtFee,
+      lateFeeDays: ltFeeD,
+      chargeType: chrgType,
+      fixedCharges: fxChrg,
+      percentCharges: prChrg,
+      lateFeeFrequency: ltFeeFrq,
+      lateFeeRepeatDays: lfFeeRd,
+      collegeId: feeSettingData.college.id,
+      branchId: feeSettingData.branch.id
+    };
+
+    if(id === "btnSaveLateFee"){
+      if(feeSettingData.lateFee.id === ""){
+        return addLateFeeMutation({
+          variables: { input: addLateFeeInput },
+        }).then(data => {
+          feeSettingData.lateFee.id = data.data.addLateFee.lateFee.id;
+          console.log('Add late fee result ::::: ', data);
+          alert("Late fee added successfully!");
+        }).catch((error: any) => {
+          console.log('there was an error sending the add late fee mutation result', error);
+          return Promise.reject(`Could not retrieve add late fee data: ${error}`);
+        });
+      }else{
+        return updateLateFeeMutation({
+          variables: { input: updateLateFeeInput },
+        }).then(data => {
+          feeSettingData.lateFee.id = data.data.updateLateFee.lateFee.id;
+          console.log('Update late fee result ::::: ', data);
+          alert("Late fee updated successfully!");
+        }).catch((error: any) => {
+          console.log('there was an error sending the update late fee mutation result', error);
+          return Promise.reject(`Could not retrieve update late fee data: ${error}`);
+        });
+      }
+      
+    }else{
+      if(feeSettingData.lateFee.id === ""){
+        return addLateFeeInput;
+      }
+      return updateLateFeeInput;
+    }
+    
 
   }
 
+  saveAll= (e: any) => {
+    const { id } = e.nativeEvent.target;
+    const { addAllMutation } = this.props;
+    const { feeSettingData } = this.state;
+    let ddInput = this.saveDueDate(e);
+    if(ddInput == null || ddInput === undefined){
+        return;
+    }
+    let prInput = this.savePaymentRem(e);
+    if(prInput == null || prInput === undefined){
+      return;
+    }
+    let lfInput = this.saveLateFee(e);
+    if(lfInput == null || lfInput === undefined){
+      return;
+    }
+    return addAllMutation({
+      variables: { inputd: ddInput,  inputp: prInput, inputl: lfInput}
+    }).then(data => {
+      console.log('Add all result ::::: ', data);
+      alert("Due date, payment remainder and late fee added successfully");
+    }).catch((error: any) => {
+      console.log('there was an error sending the add all mutation result', error);
+      alert("Due to some error due date, payment remainder and late fee could not be saved");
+      return Promise.reject(`Could not retrieve add all data: ${error}`);
+    });
+  }
 
   render() {
-    const { data: { getAllBranches, refetch }, addDueDateMutation, addPaymentRemainderMutation, addLateFeeMutation } = this.props;
+    const { data: { getAllBranches, refetch }, addDueDateMutation, updateDueDateMutation, addPaymentRemainderMutation, updatePaymentRemainderMutation, addLateFeeMutation, updateLateFeeMutation, addAllMutation } = this.props;
     const { feeSettingData, branches } = this.state;
 
     return (
@@ -711,8 +881,8 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
                 <label htmlFor="">Payment Method</label>
                 <select name="paymentOption" id="paymentOption" onChange={this.onChange}>
                   <option value="">Select</option>
-                  <option value="Installments">Installments</option>
-                  <option value="OneTime">One Time</option>
+                  <option value="INSTALLMENTS">Installments</option>
+                  <option value="ONETIME">One Time</option>
                 </select>
               </div>
               <div className="mx-2">
@@ -735,7 +905,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
               </div>
               <div className="mx-2">
                 <label htmlFor="">Day of Installment</label>
-                <select name="dueDate" id="dueDate" onChange={this.onChange}>
+                <select name="dayOfInstallment" id="dayOfInstallment" onChange={this.onChange}>
                   <option value="">Select</option>
                   <option value="1">1</option>
                   <option value="2">2</option>
@@ -930,8 +1100,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
               </div>
             </div>
             <div className="feeFlexEnd">
-              <a href="" className="btn btn-primary feeMr">Save</a>
-              <a href="" className="btn btn-primary">Cancel</a>
+                <button className="btn btn-primary" type="button" id="btnSaveAll" name="btnSaveAll" onClick={this.saveAll} style={{width: '188px'}}>Save All</button>
             </div>
           </form>
         </div>
@@ -949,11 +1118,23 @@ export default withBranchDataLoader(
     graphql<DueDateAddMutationType, FeeSettingRootProps>(DueDateAddMutationGql, {
       name: "addDueDateMutation",
     }),
+    graphql<DueDateUpdateMutationType, FeeSettingRootProps>(DueDateUpdateMutationGql, {
+      name: "updateDueDateMutation",
+    }),
     graphql<PaymentRemainderAddMutationType, FeeSettingRootProps>(PaymentRemainderAddMutationGql, {
       name: "addPaymentRemainderMutation",
     }),
+    graphql<PaymentRemainderUpdateMutationType, FeeSettingRootProps>(PaymentRemainderUpdateMutationGql, {
+      name: "updatePaymentRemainderMutation",
+    }),
     graphql<LateFeeAddMutationType, FeeSettingRootProps>(LateFeeAddMutationGql, {
       name: "addLateFeeMutation",
+    }),
+    graphql<LateFeeUpdateMutationType, FeeSettingRootProps>(LateFeeUpdateMutationGql, {
+      name: "updateLateFeeMutation",
+    }),    
+    graphql<AddAllMutationType, FeeSettingRootProps>(AddAllMutationGql, {
+      name: "addAllMutation",
     })
 
   )

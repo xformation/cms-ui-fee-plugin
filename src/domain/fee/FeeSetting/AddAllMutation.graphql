@@ -1,0 +1,8 @@
+mutation addDueDatePaymentRemLateFee($inputd: AddDueDateInput, $inputp: AddPaymentRemainderInput, $inputl: AddLateFeeInput) {
+  addDueDatePaymentRemLateFee(inputd:$inputd, inputp:$inputp, inputl:$inputl){
+    statusDesc
+  }
+}
+
+
+
