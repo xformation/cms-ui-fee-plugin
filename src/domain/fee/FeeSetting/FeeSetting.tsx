@@ -1099,8 +1099,8 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
                 <button className="btn btn-primary" type="button" id="btnSaveLateFee" name="btnSaveLateFee" onClick={this.saveLateFee} style={{width: '188px'}}>Save Late Fee</button>
               </div>
             </div>
-            <div className="feeFlexEnd">
-                <button className="btn btn-primary" type="button" id="btnSaveAll" name="btnSaveAll" onClick={this.saveAll} style={{width: '188px'}}>Save All</button>
+            <div className="hide">
+                <button className="btn btn-primary" type="button" id="btnSaveAll" name="btnSaveAll" disabled onClick={this.saveAll} style={{width: '188px'}}>Save All</button>
             </div>
           </form>
         </div>
