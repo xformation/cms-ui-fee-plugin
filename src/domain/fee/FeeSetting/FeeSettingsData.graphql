@@ -1,0 +1,16 @@
+
+mutation getFeeSettingData($branchId: Long){
+  getFeeSettingData(branchId:$branchId){
+    lateFeeId,
+    isAutoLateFee,
+    lateFeeDays,
+    chargeType,
+    fixedCharges,
+    percentCharges,
+    lateFeeFrequency,
+    lateFeeRepeatDays
+  }
+}
+
+
+

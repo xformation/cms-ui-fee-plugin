@@ -413,10 +413,23 @@ export type LateFeeUpdateMutationType = {
   };
 };
 
-export type AddAllMutationType = {
-  addDueDatePaymentRemLateFee: {
-    QueryResult: {
-      statusDesc: string;
-    };
+export type SaveAllMutationType = {
+  saveDueDatePaymentRemLateFee: {
+    // QueryResult: {
+    statusDesc: string;
+    // };
+  };
+};
+
+export type FeeSettingsType = {
+  getFeeSettingData: {
+    lateFeeId: number;
+    isAutoLateFee: string;
+    lateFeeDays: number;
+    chargeType: string;
+    fixedCharges: number;
+    percentCharges: string;
+    lateFeeFrequency: string;
+    lateFeeRepeatDays: number;
   };
 };

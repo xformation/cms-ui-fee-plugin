@@ -7,7 +7,8 @@ import * as PaymentRemainderAddMutationGql from './PaymentRemainderAddMutation.g
 import * as PaymentRemainderUpdateMutationGql from './PaymentRemainderUpdateMutation.graphql';
 import * as LateFeeAddMutationGql from './LateFeeAddMutation.graphql';
 import * as LateFeeUpdateMutationGql from './LateFeeUpdateMutation.graphql';
-import * as AddAllMutationGql from './AddAllMutation.graphql';
+import * as SaveAllMutationGql from './SaveAllMutation.graphql';
+import * as FeeSettingsDataGql from './FeeSettingsData.graphql';
 // import * as AddFeeMutationGql from './FeeSetupMutation.graphql';
 import withBranchDataLoader from "../withBranchDataLoader";
 
@@ -19,7 +20,8 @@ import {
   PaymentRemainderUpdateMutationType,
   LateFeeAddMutationType,
   LateFeeUpdateMutationType,
-  AddAllMutationType,
+  SaveAllMutationType,
+  FeeSettingsType,
   AddFeeMutation,
   AddFeeInput,
   AddFeeMutationVariables,
@@ -43,7 +45,8 @@ type FeeSettingPageProps = FeeSettingRootProps & {
   updatePaymentRemainderMutation: MutationFunc<PaymentRemainderUpdateMutationType>;
   addLateFeeMutation: MutationFunc<LateFeeAddMutationType>;
   updateLateFeeMutation: MutationFunc<LateFeeUpdateMutationType>;
-  addAllMutation: MutationFunc<AddAllMutationType>;
+  saveAllMutation: MutationFunc<SaveAllMutationType>;
+  getFeeSettingsDataMutation: MutationFunc<FeeSettingsType>;
   
   
   // mutate: MutationFunc<DailyStudentAttendanceListQuery>;
@@ -152,9 +155,32 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     };
     this.createBranches = this.createBranches.bind(this);
     this.checkFeeCheckbox = this.checkFeeCheckbox.bind(this);
-    
+    this.getFeeSettingsData = this.getFeeSettingsData.bind(this);
+    this.initPage = this.initPage.bind(this);
+    this.initLateFee = this.initLateFee.bind(this);
   }
 
+  getFeeSettingsData(bid: any){
+    const { getFeeSettingsDataMutation } = this.props;
+    if(bid === ""){
+      bid = -1;
+    }
+    return getFeeSettingsDataMutation({
+      variables: { branchId: bid },
+    }).then(data => {
+      console.log('FeeSettings data ::::: ', data);
+      let fsdt = data.data.getFeeSettingData;
+      this.initPage(fsdt);
+    }).catch((error: any) => {
+      console.log('there was an error sending the fee settings data', error);
+      return Promise.reject(`Could not retrieve fee settings data: ${error}`);
+    });
+  }
+
+  initPage(data: any){
+    this.initLateFee(data);
+  }
+  
   createBranches(branches: any) {
     let branchesOptions = [<option key={0} value="">Select Branch</option>];
     for (let i = 0; i < branches.length; i++) {
@@ -177,6 +203,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
           }
         }
       });
+      this.getFeeSettingsData(value);
     }else if (name === "paymentOption") {
       this.setState({
         feeSettingData: {
@@ -280,14 +307,65 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     }
     
     else if (name === "rdAutoLateFee") { 
-      this.setState({
-        feeSettingData: {
-          ...feeSettingData,
-          autoLateFeeOption: {
-            autoLateFeeValue: value
+      let txtLtFdays : any = document.querySelector("#txtLtFDays");
+      let txtFlFee : any = document.querySelector("#txtFixedLateFee");
+      let txtPlFee : any = document.querySelector("#txtPercentLateFee");
+      let txtLtFRpdays : any = document.querySelector("#txtLtFeeRptDays");
+      let clfc : any = document.querySelector("#chkLtFeeCalc");
+      let clff : any = document.querySelector("#chkLateFeeFrq");
+      
+      if(value === "NO"){
+        clfc.checked = false;
+        clff.checked = false;
+        txtLtFdays.value = "";
+        txtFlFee.value = "";
+        txtPlFee.value = "";
+        txtLtFRpdays.value = "";
+        txtLtFdays.disabled = true;
+        txtFlFee.disabled = true;
+        txtPlFee.disabled = true;
+        txtLtFRpdays.disabled = true;
+        this.setState({
+          feeSettingData: {
+            ...feeSettingData,
+            autoLateFeeOption: {
+              autoLateFeeValue: value
+            },
+            lateFeeDays: {
+              lateFeeDaysValue: null
+            },
+            lateFeeCalcOption:{
+              lateFeeCalcOptionValue: null
+            },
+            fixedLateFee:{
+              fixedLateFeeValue: null
+            },
+            percentLateFee:{
+              percentLateFeeValue: null
+            },
+            lateFeeFrqOption:{
+              lateFeeFrqOptionValue: null
+            },
+            lateFeeRepeatDays:{
+              lfrdValue: null
+            }
           }
-        }
-      });
+        });
+      }else{
+        txtLtFdays.disabled = false;
+        txtFlFee.disabled = false;
+        txtPlFee.disabled = false;
+        txtLtFRpdays.disabled = false;
+        this.setState({
+          feeSettingData: {
+            ...feeSettingData,
+            autoLateFeeOption: {
+              autoLateFeeValue: value
+            }
+          }
+        });
+      }
+      
     }else if (name === "txtLtFDays") { 
       this.setState({
         feeSettingData: {
@@ -299,25 +377,46 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       });
     } 
     else if (name === "rdLateFeeCalc") { 
-      this.setState({
-        feeSettingData: {
-          ...feeSettingData,
-          lateFeeCalcOption:{
-            lateFeeCalcOptionValue: value
-          }
-        }
-      });
       let txtFLtFee : any = document.querySelector("#txtFixedLateFee");
       let txtPLtFee : any = document.querySelector("#txtPercentLateFee");
+      
       if(value === "FIXEDLATEFEE"){
+        this.setState({
+          feeSettingData: {
+            ...feeSettingData,
+            lateFeeCalcOption:{
+              lateFeeCalcOptionValue: value
+            },
+            percentLateFee:{
+              percentLateFeeValue: null
+            }
+          }
+        });
         txtFLtFee.disabled = false; 
         txtPLtFee.disabled = true; 
         txtPLtFee.value = "";
       }else if(value === "PERCENTLATEFEE"){
+        
+        this.setState({
+          feeSettingData: {
+            ...feeSettingData,
+            lateFeeCalcOption:{
+              lateFeeCalcOptionValue: value
+            },
+            fixedLateFee:{
+              fixedLateFeeValue: null
+            }
+          }
+        });
         txtFLtFee.disabled = true; 
         txtFLtFee.value = "";
         txtPLtFee.disabled = false; 
       }
+      // this.setState({
+      //   feeSettingData: {
+      //     ...feeSettingData
+      //   }
+      // });
     }else if (name === "txtFixedLateFee") {
       this.setState({
         feeSettingData: {
@@ -339,14 +438,33 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       });
     }
     else if (name === "rdLateFeeFrq") { 
-      this.setState({
-        feeSettingData: {
-          ...feeSettingData,
-          lateFeeFrqOption:{
-            lateFeeFrqOptionValue: value
+      let lfds : any = document.querySelector("#txtLtFeeRptDays");
+      if(value === "ONETIMELATEFEE"){
+        this.setState({
+          feeSettingData: {
+            ...feeSettingData,
+            lateFeeFrqOption:{
+              lateFeeFrqOptionValue: value
+            },
+            lateFeeRepeatDays:{
+              lfrdValue: null
+            }
           }
-        }
-      });
+        });
+        lfds.value = "";
+        lfds.disabled = true;
+      }else{
+        this.setState({
+          feeSettingData: {
+            ...feeSettingData,
+            lateFeeFrqOption:{
+              lateFeeFrqOptionValue: value
+            }
+          }
+        });
+        lfds.disabled = false;
+      }
+      
     }else if (name === "txtLtFeeRptDays") {
       this.setState({
         feeSettingData: {
@@ -414,12 +532,26 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       frequency: feeSettingData.frequency.id
     };
 
-    let selId = 0;
-    if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
+    let selId = -1;
+
+    // let selPrId = -1;
+    // if(feeSettingData.paymentRemainder.id !== ""){
+    //   selPrId = feeSettingData.paymentRemainder.id;
+    // }
+
+
+    // if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
+    //   selId = feeSettingData.ddIds.key_installment;
+    // }else{
+    //   selId = feeSettingData.ddIds.key_onetime;
+    // }
+    
+    if(feeSettingData.paymentOption.id === "INSTALLMENTS" && feeSettingData.ddIds.key_installment !== ""){
       selId = feeSettingData.ddIds.key_installment;
-    }else{
+    }else if(feeSettingData.paymentOption.id === "ONETIME" && feeSettingData.ddIds.key_onetime !== ""){
       selId = feeSettingData.ddIds.key_onetime;
     }
+
     let updateDueDateInput = {
       id: selId,
       branchId: feeSettingData.branch.id,
@@ -458,7 +590,12 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
             return updateDueDateMutation({
               variables: { input: updateDueDateInput },
             }).then(data => {
-              feeSettingData.dueDate.id = data.data.updateDueDate.dueDate.id;
+              // feeSettingData.dueDate.id = data.data.updateDueDate.dueDate.id;
+              if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
+                feeSettingData.ddIds.key_installment = data.data.updateDueDate.dueDate.id;
+              }else{
+                feeSettingData.ddIds.key_onetime = data.data.updateDueDate.dueDate.id;
+              }
               this.setState({
                 feeSettingData: feeSettingData
               });
@@ -471,10 +608,10 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
             });
         }
     }else{
-      if((feeSettingData.paymentOption.id === "INSTALLMENTS" && feeSettingData.ddIds.key_installment === "")
-      || (feeSettingData.paymentOption.id === "ONETIME" && feeSettingData.ddIds.key_onetime === "")){
-        return addDueDateInput;
-      }
+      // if((feeSettingData.paymentOption.id === "INSTALLMENTS" && feeSettingData.ddIds.key_installment === "")
+      // || (feeSettingData.paymentOption.id === "ONETIME" && feeSettingData.ddIds.key_onetime === "")){
+      //   return addDueDateInput;
+      // }
       return updateDueDateInput;
     }
     
@@ -637,8 +774,13 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       branchId: feeSettingData.branch.id
     };
 
+    let selPrId = -1;
+    if(feeSettingData.paymentRemainder.id !== ""){
+      selPrId = feeSettingData.paymentRemainder.id;
+    }
+
     let updatePmtRemInput = {
-      id: feeSettingData.paymentRemainder.id,
+      id: selPrId,
       isAutoRemainder: autRem,
       isFirstPaymentRemainder: fpR,
       firstPaymentRemainderDays: fpRDy,
@@ -678,12 +820,69 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       }
       
     }else {
-      if(feeSettingData.paymentRemainder.id === ""){
-        return addPmtRemInput;
-      }
+      // if(feeSettingData.paymentRemainder.id === ""){
+      //   return addPmtRemInput;
+      // }
       return updatePmtRemInput;
     }
     
+  }
+
+  initLateFee(data: any){
+    const { feeSettingData } = this.state;
+    let chkLtFClc : any = document.querySelector("#chkLtFeeCalc");
+    let chkLtFfq : any = document.querySelector("#chkLateFeeFrq");
+    let lfdys : any = document.querySelector("#txtLtFDays");
+    let flf : any = document.querySelector("#txtFixedLateFee");
+    let plf : any = document.querySelector("#txtPercentLateFee");
+    let lfrdys : any = document.querySelector("#txtLtFeeRptDays");
+    
+    feeSettingData.lateFee.id = data.lateFeeId;
+    feeSettingData.autoLateFeeOption.autoLateFeeValue = data.isAutoLateFee;
+    if(data.lateFeeDays === null || data.lateFeeDays === ""){
+      lfdys.value = "";
+    }
+    feeSettingData.lateFeeDays.lateFeeDaysValue = data.lateFeeDays;
+    feeSettingData.lateFeeCalcOption.lateFeeCalcOptionValue = data.chargeType;
+    
+    if(data.fixedCharges === null || data.fixedCharges === ""){
+      flf.value = "";
+      flf.disabled = true;
+      feeSettingData.fixedLateFee.fixedLateFeeValue = null;
+    }else{
+      feeSettingData.fixedLateFee.fixedLateFeeValue = data.fixedCharges;
+      flf.disabled = false;
+    }
+    
+
+    if(data.percentCharges === null || data.percentCharges === ""){
+      plf.value = "";
+      plf.disabled = true;
+      feeSettingData.percentLateFee.percentLateFeeValue = null;
+    }else{
+      feeSettingData.percentLateFee.percentLateFeeValue = data.percentCharges;
+      plf.disabled = false;
+    }
+    
+    feeSettingData.lateFeeFrqOption.lateFeeFrqOptionValue = data.lateFeeFrequency;
+
+    if(data.lateFeeRepeatDays === null || data.lateFeeRepeatDays === ""){
+      lfrdys.value = "";
+      lfrdys.disabled = true;
+    }else{
+      lfrdys.disabled = false;
+    }
+    feeSettingData.lateFeeRepeatDays.lfrdValue = data.lateFeeRepeatDays;
+    if(data.isAutoLateFee === "YES"){
+      chkLtFClc.checked = true;
+      chkLtFfq.checked = true;
+    }else{
+      chkLtFClc.checked = false;
+      chkLtFfq.checked = false;
+    }
+    this.setState({
+      feeSettingData: feeSettingData
+    });
   }
 
   saveLateFee= (e: any) => {
@@ -754,8 +953,10 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       chrgType = feeSettingData.lateFeeCalcOption.lateFeeCalcOptionValue;
       if(feeSettingData.lateFeeCalcOption.lateFeeCalcOptionValue === "FIXEDLATEFEE"){
         fxChrg = txtFlFee.value.trim();
+        prChrg = null;
       }else {
         prChrg = txtPlFee.value.trim();
+        fxChrg = null;
       }
       ltFeeFrq = feeSettingData.lateFeeFrqOption.lateFeeFrqOptionValue;
 
@@ -776,8 +977,12 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       branchId: feeSettingData.branch.id
     };
 
+    let selLfId = -1;
+    if(feeSettingData.lateFee.id !== null && feeSettingData.lateFee.id !== ""){
+      selLfId = feeSettingData.lateFee.id;
+    }
     let updateLateFeeInput = {
-      id: feeSettingData.lateFee.id,
+      id: selLfId,
       isAutoLateFee: isLtFee,
       lateFeeDays: ltFeeD,
       chargeType: chrgType,
@@ -790,7 +995,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     };
 
     if(id === "btnSaveLateFee"){
-      if(feeSettingData.lateFee.id === ""){
+      if(feeSettingData.lateFee.id === null || feeSettingData.lateFee.id === ""){
         return addLateFeeMutation({
           variables: { input: addLateFeeInput },
         }).then(data => {
@@ -815,9 +1020,9 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       }
       
     }else{
-      if(feeSettingData.lateFee.id === ""){
-        return addLateFeeInput;
-      }
+      // if(feeSettingData.lateFee.id === ""){
+      //   return addLateFeeInput;
+      // }
       return updateLateFeeInput;
     }
     
@@ -826,7 +1031,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
 
   saveAll= (e: any) => {
     const { id } = e.nativeEvent.target;
-    const { addAllMutation } = this.props;
+    const { saveAllMutation } = this.props;
     const { feeSettingData } = this.state;
     let ddInput = this.saveDueDate(e);
     if(ddInput == null || ddInput === undefined){
@@ -840,11 +1045,25 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     if(lfInput == null || lfInput === undefined){
       return;
     }
-    return addAllMutation({
+    
+    
+    return saveAllMutation({
       variables: { inputd: ddInput,  inputp: prInput, inputl: lfInput}
     }).then(data => {
+      let msg = data.data.saveDueDatePaymentRemLateFee.statusDesc;
+      let msgAry = msg.split(",");
+      if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
+        feeSettingData.ddIds.key_installment = msgAry[0].split(":")[1].trim();
+      }else{
+        feeSettingData.ddIds.key_onetime = msgAry[0].split(":")[1].trim();
+      }
+      feeSettingData.paymentRemainder.id = msgAry[1].split(":")[1].trim();
+      feeSettingData.lateFee.id = msgAry[2].split(":")[1].trim();
+      this.setState({
+        feeSettingData: feeSettingData
+      });
       console.log('Add all result ::::: ', data);
-      alert("Due date, payment remainder and late fee added successfully");
+      alert("Due date, payment remainder and late fee data saved successfully");
     }).catch((error: any) => {
       console.log('there was an error sending the add all mutation result', error);
       alert("Due to some error due date, payment remainder and late fee could not be saved");
@@ -853,7 +1072,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
   }
 
   render() {
-    const { data: { getAllBranches, refetch }, addDueDateMutation, updateDueDateMutation, addPaymentRemainderMutation, updatePaymentRemainderMutation, addLateFeeMutation, updateLateFeeMutation, addAllMutation } = this.props;
+    const { data: { getAllBranches, refetch }, addDueDateMutation, updateDueDateMutation, addPaymentRemainderMutation, updatePaymentRemainderMutation, addLateFeeMutation, updateLateFeeMutation, saveAllMutation } = this.props;
     const { feeSettingData, branches } = this.state;
 
     return (
@@ -1041,11 +1260,11 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
                 {/* first row */}
 
                 <div className="feeFlex">
-                  <input type="radio" className="feeMr" name="rdAutoLateFee" id="rdAutoLateFee" value="NO" onChange={this.onChange}/>
+                  <input type="radio" className="feeMr" name="rdAutoLateFee" id="rdAutoLateFee" value="NO" onChange={this.onChange} checked={feeSettingData.autoLateFeeOption.autoLateFeeValue === 'NO'}/>
                   <label htmlFor="">Do Not Assign Late Fee Automatically</label>
                 </div>
                 <div className="feeFlex">
-                  <input type="radio" className="feeMr" name="rdAutoLateFee" id="rdAutoLateFee" value="YES" onChange={this.onChange}/>
+                  <input type="radio" className="feeMr" name="rdAutoLateFee" id="rdAutoLateFee" value="YES" onChange={this.onChange} checked={feeSettingData.autoLateFeeOption.autoLateFeeValue === 'YES'}/>
                   <label htmlFor="">Assign Late Fee Automatically to OverDue Balance</label>
                 </div>
               </div>
@@ -1057,25 +1276,25 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
                   <div className="feeFlex">
                     {/* <input type="checkbox" className="feeMr" name="" id="" /> */}
                     <label htmlFor="">Assign Late Fee Days(s) After Due Date</label>
-                    <input type="text" className="gf-form-input" name="txtLtFDays" id="txtLtFDays" onChange={this.onChange} style={{width: '38px', height:'22px'}}/>
+                    <input type="text" className="gf-form-input" name="txtLtFDays" id="txtLtFDays" onChange={this.onChange} value={feeSettingData.lateFeeDays.lateFeeDaysValue} style={{width: '38px', height:'22px'}}/>
                   </div>
                 </div>
 
                 <div className="secondColumn">
                   <div className="feeFlex" >
                     <input type="checkbox" className="feeMr" name="chkLtFeeCalc" id="chkLtFeeCalc" onClick={(e: any) => this.checkFeeCheckbox(e)}/>
-                    <label htmlFor="">Late Fee Calculation Method</label>
+                    <label htmlFor="">Late Fee Calculation Method</label>   
                   </div>
 
                   <div className="feeFlex">
-                    <input type="radio" className="feeMr" name="rdLateFeeCalc" id="rdLateFeeCalc" value="FIXEDLATEFEE" onChange={this.onChange} />
+                    <input type="radio" className="feeMr" name="rdLateFeeCalc" id="rdLateFeeCalc" value="FIXEDLATEFEE" onChange={this.onChange} checked={feeSettingData.lateFeeCalcOption.lateFeeCalcOptionValue === 'FIXEDLATEFEE'}/>
                     <label htmlFor="">Flat Fee of Rs</label>
-                    <input type="text" className="gf-form-input" name="txtFixedLateFee" id="txtFixedLateFee" disabled onChange={this.onChange} style={{width: '73px', height:'22px'}}/>
+                    <input type="text" className="gf-form-input" name="txtFixedLateFee" id="txtFixedLateFee" disabled onChange={this.onChange} value={feeSettingData.fixedLateFee.fixedLateFeeValue} style={{width: '73px', height:'22px'}}/>
                   </div>
                   <div className="feeFlex">
-                    <input type="radio" className="feeMr" name="rdLateFeeCalc" id="rdLateFeeCalc" value="PERCENTLATEFEE"  onChange={this.onChange} />
+                    <input type="radio" className="feeMr" name="rdLateFeeCalc" id="rdLateFeeCalc" value="PERCENTLATEFEE"  onChange={this.onChange} checked={feeSettingData.lateFeeCalcOption.lateFeeCalcOptionValue === 'PERCENTLATEFEE'} />
                     <label htmlFor="">% of invoice Total</label>
-                    <input type="text" className="gf-form-input" name="txtPercentLateFee" id="txtPercentLateFee" disabled onChange={this.onChange} style={{width: '52px', height:'22px'}}/>
+                    <input type="text" className="gf-form-input" name="txtPercentLateFee" id="txtPercentLateFee" disabled onChange={this.onChange} value={feeSettingData.percentLateFee.percentLateFeeValue} style={{width: '52px', height:'22px'}}/>
                   </div>
                 </div>
 
@@ -1085,13 +1304,13 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
                     <label htmlFor="">Late Fee Assignment Frequency</label>
                   </div>
                   <div className="feeFlex">
-                    <input type="radio" className="feeMr" name="rdLateFeeFrq" id="rdLateFeeFrq" value="ONETIMELATEFEE"  onChange={this.onChange} />
+                    <input type="radio" className="feeMr" name="rdLateFeeFrq" id="rdLateFeeFrq" value="ONETIMELATEFEE"  onChange={this.onChange} checked={feeSettingData.lateFeeFrqOption.lateFeeFrqOptionValue === 'ONETIMELATEFEE'}/>
                     <label htmlFor="">One Time Only</label>
                   </div>
                   <div className="feeFlex">
-                    <input type="radio" className="feeMr" name="rdLateFeeFrq" id="rdLateFeeFrq" value="REPEATEDLATEFEE"  onChange={this.onChange} />
+                    <input type="radio" className="feeMr" name="rdLateFeeFrq" id="rdLateFeeFrq" value="REPEATEDLATEFEE"  onChange={this.onChange} checked={feeSettingData.lateFeeFrqOption.lateFeeFrqOptionValue === 'REPEATEDLATEFEE'} />
                     <label htmlFor="">Repeat Every Days</label>
-                    <input type="text" className="gf-form-input" name="txtLtFeeRptDays" id="txtLtFeeRptDays" onChange={this.onChange} style={{width: '38px', height:'22px'}}/>
+                    <input type="text" className="gf-form-input" name="txtLtFeeRptDays" id="txtLtFeeRptDays" disabled onChange={this.onChange} value={feeSettingData.lateFeeRepeatDays.lfrdValue} style={{width: '38px', height:'22px'}}/>
                   </div>
                 </div>
               </div>
@@ -1099,8 +1318,8 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
                 <button className="btn btn-primary" type="button" id="btnSaveLateFee" name="btnSaveLateFee" onClick={this.saveLateFee} style={{width: '188px'}}>Save Late Fee</button>
               </div>
             </div>
-            <div className="hide">
-                <button className="btn btn-primary" type="button" id="btnSaveAll" name="btnSaveAll" disabled onClick={this.saveAll} style={{width: '188px'}}>Save All</button>
+            <div className="feeFlexEnd">
+                <button className="btn btn-primary" type="button" id="btnSaveAll" name="btnSaveAll"  onClick={this.saveAll} style={{width: '188px'}}>Save All</button>
             </div>
           </form>
         </div>
@@ -1133,10 +1352,13 @@ export default withBranchDataLoader(
     graphql<LateFeeUpdateMutationType, FeeSettingRootProps>(LateFeeUpdateMutationGql, {
       name: "updateLateFeeMutation",
     }),    
-    graphql<AddAllMutationType, FeeSettingRootProps>(AddAllMutationGql, {
-      name: "addAllMutation",
+    graphql<SaveAllMutationType, FeeSettingRootProps>(SaveAllMutationGql, {
+      name: "saveAllMutation",
+    }),
+    graphql<FeeSettingsType, FeeSettingRootProps>(FeeSettingsDataGql, {
+      name: "getFeeSettingsDataMutation",
     })
-
+    
   )
 
     (FeeSetting) as any
