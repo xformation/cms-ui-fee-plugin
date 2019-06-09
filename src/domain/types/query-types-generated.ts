@@ -431,5 +431,17 @@ export type FeeSettingsType = {
     percentCharges: string;
     lateFeeFrequency: string;
     lateFeeRepeatDays: number;
+
+    prId: number;
+    isAutoRemainder: string;
+    isFirstPaymentRemainder: string;
+    firstPaymentRemainderDays: number;
+    isSecondPaymentRemainder: string;
+    secondPaymentRemainderDays: number;
+    isOverDuePaymentRemainder: string;
+    overDuePaymentRemainderAfterDueDateOrUntilPaid: string;
+    overDuePaymentRemainderDays: number;
+    isRemainderRecipients: string;
+    remainderRecipients: string;
   };
 };

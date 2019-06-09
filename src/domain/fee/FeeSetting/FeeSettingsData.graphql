@@ -8,7 +8,20 @@ mutation getFeeSettingData($branchId: Long){
     fixedCharges,
     percentCharges,
     lateFeeFrequency,
-    lateFeeRepeatDays
+    lateFeeRepeatDays,
+
+    prId,
+    isAutoRemainder,
+    isFirstPaymentRemainder,
+    firstPaymentRemainderDays,
+    isSecondPaymentRemainder,
+    secondPaymentRemainderDays,
+    isOverDuePaymentRemainder,
+    overDuePaymentRemainderAfterDueDateOrUntilPaid,
+    overDuePaymentRemainderDays,
+    isRemainderRecipients,
+    remainderRecipients
+
   }
 }
 

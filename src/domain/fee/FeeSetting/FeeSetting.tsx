@@ -158,6 +158,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     this.getFeeSettingsData = this.getFeeSettingsData.bind(this);
     this.initPage = this.initPage.bind(this);
     this.initLateFee = this.initLateFee.bind(this);
+    this.initPaymentRemainder = this.initPaymentRemainder.bind(this);
   }
 
   getFeeSettingsData(bid: any){
@@ -179,6 +180,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
 
   initPage(data: any){
     this.initLateFee(data);
+    this.initPaymentRemainder(data);
   }
   
   createBranches(branches: any) {
@@ -260,14 +262,52 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
         }
       });
     }else if (name === "pmtRemOpt") {
-      this.setState({
-        feeSettingData: {
-          ...feeSettingData,
-          autoPaymentRemainderOption: {
-            optVal: value
+      if(value === "NO"){
+        let chkFrem : any = document.querySelector("#chkFpRem");
+        let chkSrem : any = document.querySelector("#chkScRem");
+        let chkOrem : any = document.querySelector("#chkOdRem");
+        let chkRrcp : any = document.querySelector("#remRcp");
+        let txtFremDys : any = document.querySelector("#txtFpPmtDays");
+        let txtSremDys : any = document.querySelector("#txtScPmtDays");
+        chkFrem.checked = false;
+        chkSrem.checked = false;
+        chkOrem.checked = false;
+        chkRrcp.checked = false;
+        txtFremDys.value = "";
+        txtFremDys.disabled = true;
+        txtSremDys.value = "";
+        txtSremDys.disabled = true;
+        this.setState({
+          feeSettingData: {
+            ...feeSettingData,
+            autoPaymentRemainderOption: {
+              optVal: value
+            },
+            odPaymentRemainderOption: {
+              odPmtRemVal: null
+            },
+            remainderRcpOption: {
+              remRcpVal: null
+            },
+            firstPaymentRemainderDays: {
+              fpRevVal: null
+            },
+            secondPaymentRemainderDays: {
+              scRevVal: null
+            }
           }
-        }
-      });
+        });
+      }else{
+        this.setState({
+          feeSettingData: {
+            ...feeSettingData,
+            autoPaymentRemainderOption: {
+              optVal: value
+            }
+          }
+        });
+      }
+      
     }else if (name === "rdOdPrem") {
       this.setState({
         feeSettingData: {
@@ -412,11 +452,6 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
         txtFLtFee.value = "";
         txtPLtFee.disabled = false; 
       }
-      // this.setState({
-      //   feeSettingData: {
-      //     ...feeSettingData
-      //   }
-      // });
     }else if (name === "txtFixedLateFee") {
       this.setState({
         feeSettingData: {
@@ -628,6 +663,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
           fpPD.disabled = false; 
         }else{
           feeSettingData.firstPaymentRemainder.value = "NO"
+          feeSettingData.firstPaymentRemainderDays.fpRevVal = null;
           fpPD.disabled = true; 
           fpPD.value = "";
         }
@@ -639,6 +675,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
         scPD.disabled = false; 
       }else{
         feeSettingData.secondPaymentRemainder.value = "NO"
+        feeSettingData.secondPaymentRemainderDays.scRevVal = null;
         scPD.disabled = true; 
         scPD.value = "";
       }
@@ -678,6 +715,63 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     }
     
     
+    this.setState({
+      feeSettingData: feeSettingData
+    });
+  }
+
+  initPaymentRemainder(data: any){
+    const { feeSettingData } = this.state;
+    let chkFrem : any = document.querySelector("#chkFpRem");
+    chkFrem.checked = false;
+    let chkSrem : any = document.querySelector("#chkScRem");
+    chkSrem.checked = false;
+    let chkOrem : any = document.querySelector("#chkOdRem");
+    chkOrem.checked = false;
+    let chkRrcp : any = document.querySelector("#remRcp");
+    chkRrcp.checked = false;
+    let txtFremDys : any = document.querySelector("#txtFpPmtDays");
+    let txtSremDys : any = document.querySelector("#txtScPmtDays");
+       
+    feeSettingData.paymentRemainder.id = data.prId;
+    feeSettingData.autoPaymentRemainderOption.optVal = data.isAutoRemainder;
+    feeSettingData.firstPaymentRemainder.value = data.isFirstPaymentRemainder;
+    if(data.isFirstPaymentRemainder === "YES"){
+      chkFrem.checked = true;
+    }
+    feeSettingData.secondPaymentRemainder.value = data.isSecondPaymentRemainder;
+    if(data.isSecondPaymentRemainder === "YES"){
+      chkSrem.checked = true;
+    }
+    feeSettingData.odPaymentRemainder.value = data.isOverDuePaymentRemainder;
+    if(data.isOverDuePaymentRemainder === "YES"){
+      chkOrem.checked = true;
+    }
+    feeSettingData.remainderRecipient.value = data.isRemainderRecipients;
+    if(data.isRemainderRecipients === "YES"){
+      chkRrcp.checked = true;
+    }
+    feeSettingData.odPaymentRemainderOption.odPmtRemVal = data.overDuePaymentRemainderAfterDueDateOrUntilPaid;
+    feeSettingData.remainderRcpOption.remRcpVal = data.remainderRecipients;
+
+    if(data.firstPaymentRemainderDays === null || data.firstPaymentRemainderDays === ""){
+      txtFremDys.value = "";
+      txtFremDys.disabled = true;
+      feeSettingData.firstPaymentRemainderDays.fpRevVal = null;
+    }else{
+      feeSettingData.firstPaymentRemainderDays.fpRevVal = data.firstPaymentRemainderDays;
+      txtFremDys.disabled = false;
+    }
+    
+    if(data.secondPaymentRemainderDays === null || data.secondPaymentRemainderDays === ""){
+      txtSremDys.value = "";
+      txtSremDys.disabled = true;
+      feeSettingData.secondPaymentRemainderDays.scRevVal = null;
+    }else {
+      feeSettingData.secondPaymentRemainderDays.scRevVal = data.secondPaymentRemainderDays;
+      txtSremDys.disabled = false;
+    } 
+  
     this.setState({
       feeSettingData: feeSettingData
     });
@@ -795,7 +889,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     };
 
     if(id === "btnSavePmtRem"){
-      if(feeSettingData.paymentRemainder.id === ""){
+      if(feeSettingData.paymentRemainder.id === null || feeSettingData.paymentRemainder.id === ""){
         return addPaymentRemainderMutation({
           variables: { input: addPmtRemInput },
         }).then(data => {
@@ -1181,11 +1275,11 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
                 {/* first row */}
 
                 <div className="feeFlex">
-                  <input type="radio" className="feeMr" name="pmtRemOpt" id="pmtRemOpt" value="NO" onChange={this.onChange}/>
+                  <input type="radio" className="feeMr" name="pmtRemOpt" id="pmtRemOpt" value="NO" onChange={this.onChange} checked={feeSettingData.autoPaymentRemainderOption.optVal === 'NO'}/>
                   <label htmlFor="">Do Not Send Payment Reminder Automatically</label>
                 </div>
                 <div className="feeFlex">
-                  <input type="radio" className="feeMr" name="pmtRemOpt" id="pmtRemOpt" value="YES" onChange={this.onChange}/>
+                  <input type="radio" className="feeMr" name="pmtRemOpt" id="pmtRemOpt" value="YES" onChange={this.onChange} checked={feeSettingData.autoPaymentRemainderOption.optVal === 'YES'}/>
                   <label htmlFor="">Send Automatic Payment Reminder </label>
                 </div>
               </div>
@@ -1195,14 +1289,14 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
               <div className="Srow">
                 <div className="firstColumn">
                   <div className="feeFlex">
-                    <input type="checkbox" className="feeMr" name="chkFpRem" id="chkFpRem" onClick={(e: any) => this.checkFeeCheckbox(e)}/>
+                    <input type="checkbox" className="feeMr" name="chkFpRem" id="chkFpRem" onClick={(e: any) => this.checkFeeCheckbox(e)} />
                     <label htmlFor="">First Payment Reminder</label>
                   </div>
 
                   <div className="feeFlex">
                     {/* <input type="radio" className="feeMr" name="" id="" /> */}
                     <label htmlFor="">Send Day(s) Before Due Date </label>
-                    <input type="text" className="gf-form-input" name="txtFpPmtDays" id="txtFpPmtDays" disabled onChange={this.onChange} style={{width: '38px', height:'22px'}}/>
+                    <input type="text" className="gf-form-input" name="txtFpPmtDays" id="txtFpPmtDays" disabled onChange={this.onChange} value={feeSettingData.firstPaymentRemainderDays.fpRevVal} style={{width: '38px', height:'22px'}}/>
                   </div>
                 </div>
 
@@ -1215,7 +1309,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
                   <div className="feeFlex">
                     {/* <input type="radio" className="feeMr" name="" id="" /> */}
                     <label htmlFor="">Send Day(s) Before Due Date </label>
-                    <input type="text" className="gf-form-input" name="txtScPmtDays" id="txtScPmtDays" disabled onChange={this.onChange} style={{width: '38px', height:'22px'}}/>
+                    <input type="text" className="gf-form-input" name="txtScPmtDays" id="txtScPmtDays" disabled onChange={this.onChange} value={feeSettingData.secondPaymentRemainderDays.scRevVal} style={{width: '38px', height:'22px'}}/>
                   </div>
                 </div>
 
@@ -1225,11 +1319,11 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
                     <label htmlFor="">Overdue Payment Reminder</label>
                   </div>
                   <div className="feeFlex">
-                    <input type="radio" className="feeMr" name="rdOdPrem" id="rdOdPrem" value="AFTERDUEDATE" onChange={this.onChange}/>
+                    <input type="radio" className="feeMr" name="rdOdPrem" id="rdOdPrem" value="AFTERDUEDATE" onChange={this.onChange} checked={feeSettingData.odPaymentRemainderOption.odPmtRemVal === 'AFTERDUEDATE'}/>
                     <label htmlFor="">Send Day(s) After Due Date</label>
                   </div>
                   <div className="feeFlex">
-                    <input type="radio" className="feeMr" name="rdOdPrem" id="rdOdPrem" value="UNTILPAID" onChange={this.onChange}/>
+                    <input type="radio" className="feeMr" name="rdOdPrem" id="rdOdPrem" value="UNTILPAID" onChange={this.onChange} checked={feeSettingData.odPaymentRemainderOption.odPmtRemVal === 'UNTILPAID'}/>
                     <label htmlFor="">Send Day(s) Until Paid</label>
                   </div>
                 </div>
@@ -1240,11 +1334,11 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
                     <label htmlFor="">Reminder Recipients</label>
                   </div>
                   <div className="feeFlex">
-                    <input type="radio" className="feeMr" name="rdRemRcp" id="rdRemRcp" value="PRIMARYCONTACT" onChange={this.onChange}/>
+                    <input type="radio" className="feeMr" name="rdRemRcp" id="rdRemRcp" value="PRIMARYCONTACT" onChange={this.onChange} checked={feeSettingData.remainderRcpOption.remRcpVal === 'PRIMARYCONTACT'}/>
                     <label htmlFor="">Send to Primary Contact Only</label>
                   </div>
                   <div className="feeFlex">
-                    <input type="radio" className="feeMr" name="rdRemRcp" id="rdRemRcp" value="BOTH" onChange={this.onChange}/>
+                    <input type="radio" className="feeMr" name="rdRemRcp" id="rdRemRcp" value="BOTH" onChange={this.onChange} checked={feeSettingData.remainderRcpOption.remRcpVal === 'BOTH'}/>
                     <label htmlFor="">Send to Primary and Secondary Contact Only</label>
                   </div>
                 </div>
