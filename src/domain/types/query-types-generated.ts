@@ -308,6 +308,22 @@ export type SearchInvoiceListType = {
   };
 };
 
+export type SearchInvoiceOnTypeListType = {
+  searchInvoiceOnType: {
+    invoiceNumber: string;
+    id: number;
+    amountPaid: number;
+    strPaymentDate: string;
+    feeCategory: {
+      categoryName: string;
+    };
+    student: {
+      studentName: string;
+      studentContactNumber: string;
+    };
+  };
+};
+
 // Search Invoice
 export type GetInvoiceData = {
   totalInvoice: any;
