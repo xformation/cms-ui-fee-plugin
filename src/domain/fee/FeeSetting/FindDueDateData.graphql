@@ -1,0 +1,15 @@
+
+mutation getFeeSettingDueDateData($branchId: Long, $paymentType: String){
+  getFeeSettingDueDateData(branchId:$branchId, paymentType:$paymentType){
+    
+    dueDateId,
+    paymentMethod,
+    installments,
+    paymentDay,
+    frequency
+
+  }
+}
+
+
+

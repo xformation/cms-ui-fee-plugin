@@ -369,6 +369,7 @@ export type DueDateAddMutationType = {
   addDueDate: {
     dueDate: {
       id: number;
+      paymentMethod: string;
     };
   };
 };
@@ -377,6 +378,7 @@ export type DueDateUpdateMutationType = {
   updateDueDate: {
     dueDate: {
       id: number;
+      paymentMethod: string;
     };
   };
 };
@@ -443,5 +445,15 @@ export type FeeSettingsType = {
     overDuePaymentRemainderDays: number;
     isRemainderRecipients: string;
     remainderRecipients: string;
+  };
+};
+
+export type FindDueDateDataType = {
+  getFeeSettingDueDateData: {
+    dueDateId: number;
+    paymentMethod: string;
+    installments: number;
+    paymentDay: number;
+    frequency: any;
   };
 };

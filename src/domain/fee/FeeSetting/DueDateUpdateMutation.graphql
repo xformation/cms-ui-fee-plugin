@@ -2,7 +2,8 @@
 mutation updateDueDate($input: UpdateDueDateInput!){
   updateDueDate(input:$input){
     dueDate{
-      id
+      id,
+      paymentMethod
     }
   }
 }

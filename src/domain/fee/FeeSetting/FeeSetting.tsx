@@ -9,6 +9,7 @@ import * as LateFeeAddMutationGql from './LateFeeAddMutation.graphql';
 import * as LateFeeUpdateMutationGql from './LateFeeUpdateMutation.graphql';
 import * as SaveAllMutationGql from './SaveAllMutation.graphql';
 import * as FeeSettingsDataGql from './FeeSettingsData.graphql';
+import * as FindDueDateDataGql from './FindDueDateData.graphql';
 // import * as AddFeeMutationGql from './FeeSetupMutation.graphql';
 import withBranchDataLoader from "../withBranchDataLoader";
 
@@ -22,6 +23,7 @@ import {
   LateFeeUpdateMutationType,
   SaveAllMutationType,
   FeeSettingsType,
+  FindDueDateDataType,
   AddFeeMutation,
   AddFeeInput,
   AddFeeMutationVariables,
@@ -47,9 +49,7 @@ type FeeSettingPageProps = FeeSettingRootProps & {
   updateLateFeeMutation: MutationFunc<LateFeeUpdateMutationType>;
   saveAllMutation: MutationFunc<SaveAllMutationType>;
   getFeeSettingsDataMutation: MutationFunc<FeeSettingsType>;
-  
-  
-  // mutate: MutationFunc<DailyStudentAttendanceListQuery>;
+  getDueDateMutation: MutationFunc<FindDueDateDataType>;
   
 };
 
@@ -159,8 +159,71 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     this.initPage = this.initPage.bind(this);
     this.initLateFee = this.initLateFee.bind(this);
     this.initPaymentRemainder = this.initPaymentRemainder.bind(this);
+    this.getDueDate = this.getDueDate.bind(this);
+    this.initDueDate = this.initDueDate.bind(this);
   }
 
+  getDueDate(bid: any, paymentOption: any){
+    const { getDueDateMutation } = this.props;
+    if(bid === ""){
+      bid = -1;
+    }
+    return getDueDateMutation({
+      variables: { branchId: bid, paymentType: paymentOption },
+    }).then(data => {
+      console.log('DueDate data ::::: ', data);
+      let ddd = data.data.getFeeSettingDueDateData;
+      this.initDueDate(ddd);
+    }).catch((error: any) => {
+      console.log('there was an error sending the DueDate data', error);
+      return Promise.reject(`Could not retrieve DueDate data: ${error}`);
+    });
+  }
+
+  initDueDate(data: any){
+    const { feeSettingData } = this.state;
+    // feeSettingData.dueDate.id = data.dueDateId;
+
+    let pos: any = document.querySelector("#paymentOption");
+    let ins: any = document.querySelector("#installments");
+    let dd : any = document.querySelector("#dayOfInstallment");
+    let fr : any = document.querySelector("#frequency");
+
+    if(pos.options[pos.selectedIndex].value === "INSTALLMENTS"){
+      feeSettingData.ddIds.key_installment = data.dueDateId;
+    }else if(pos.options[pos.selectedIndex].value === "ONETIME"){ 
+      feeSettingData.ddIds.key_onetime = data.dueDateId;
+    }
+
+    feeSettingData.installments.id = data.installments;
+    feeSettingData.dayOfInstallment.id = data.paymentDay;
+    feeSettingData.frequency.id = data.frequency;
+    if(pos.options[pos.selectedIndex].value === "ONETIME"){
+      ins.setAttribute("disabled", true);
+      dd.setAttribute("disabled", true);
+      fr.setAttribute("disabled", true);
+      ins.options.selectedIndex = 1;
+      dd.options.selectedIndex = 0;
+      fr.options.selectedIndex = 0;
+    }else if(pos.options[pos.selectedIndex].value === ""){
+      ins.removeAttribute("disabled");
+      dd.removeAttribute("disabled");
+      fr.removeAttribute("disabled");
+      ins.options.selectedIndex = 0;
+      dd.options.selectedIndex = 0;
+      fr.options.selectedIndex = 0;
+    }
+    else{
+      ins.removeAttribute("disabled");
+      dd.removeAttribute("disabled");
+      fr.removeAttribute("disabled");
+    }
+    
+    this.setState({
+      feeSettingData: feeSettingData
+    });
+
+  }
   getFeeSettingsData(bid: any){
     const { getFeeSettingsDataMutation } = this.props;
     if(bid === ""){
@@ -207,31 +270,47 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       });
       this.getFeeSettingsData(value);
     }else if (name === "paymentOption") {
-      this.setState({
-        feeSettingData: {
-          ...feeSettingData,
-          paymentOption: {
-            id: value
-          }
-        }
-      });
+      let ins: any = document.querySelector("#installments");
+      let dd : any = document.querySelector("#dayOfInstallment");
+      let fr : any = document.querySelector("#frequency");
       if(value === "ONETIME"){
-        let ins: any = document.querySelector("#installments");
-        ins.options.selectedIndex = 1;
+        // ins.options.selectedIndex = 1;
         ins.setAttribute("disabled", true);
-        let dd : any = document.querySelector("#dueDate");
-        dd.options.selectedIndex = 0;
+        // dd.options.selectedIndex = 0;
         dd.setAttribute("disabled", true);
-        let fr : any = document.querySelector("#frequency");
-        fr.options.selectedIndex = 0;
+        // fr.options.selectedIndex = 0;
         fr.setAttribute("disabled", true);
+        this.setState({
+          feeSettingData: {
+            ...feeSettingData,
+            paymentOption: {
+              id: value
+            },
+            // installments: {
+            //   id: 1
+            // },
+            // dayOfInstallment: {
+            //   id: null
+            // },
+            // frequency: {
+            //   id: null
+            // }
+          }
+        });
+        this.getDueDate(feeSettingData.branch.id, value);
       }else{
-        let ins : any = document.querySelector("#installments");
         ins.removeAttribute("disabled");
-        let dd : any = document.querySelector("#dueDate");
         dd.removeAttribute("disabled");
-        let fr : any = document.querySelector("#frequency");
         fr.removeAttribute("disabled");
+        this.setState({
+          feeSettingData: {
+            ...feeSettingData,
+            paymentOption: {
+              id: value
+            }
+          }
+        });
+        this.getDueDate(feeSettingData.branch.id, value);
       }
       
     }else if (name === "installments") {
@@ -528,13 +607,13 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
 
     let dayDescription: any;
     if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
-        if(feeSettingData.installments.id === ""){
+        if(feeSettingData.installments.id === null || feeSettingData.installments.id === ""){
           alert("Please select installment option");
           return;
-        }else if(feeSettingData.dayOfInstallment.id === ""){
+        }else if(feeSettingData.dayOfInstallment.id === null || feeSettingData.dayOfInstallment.id === ""){
           alert("Please select day of installment");
           return;
-        }else if(feeSettingData.frequency.id === ""){
+        }else if(feeSettingData.frequency.id === null || feeSettingData.frequency.id === ""){
           alert("Please select frequency of installment");
           return;
         }
@@ -568,22 +647,10 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     };
 
     let selId = -1;
-
-    // let selPrId = -1;
-    // if(feeSettingData.paymentRemainder.id !== ""){
-    //   selPrId = feeSettingData.paymentRemainder.id;
-    // }
-
-
-    // if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
-    //   selId = feeSettingData.ddIds.key_installment;
-    // }else{
-    //   selId = feeSettingData.ddIds.key_onetime;
-    // }
     
-    if(feeSettingData.paymentOption.id === "INSTALLMENTS" && feeSettingData.ddIds.key_installment !== ""){
+    if(feeSettingData.paymentOption.id === "INSTALLMENTS" && (feeSettingData.ddIds.key_installment !== null || feeSettingData.ddIds.key_installment !== "")){
       selId = feeSettingData.ddIds.key_installment;
-    }else if(feeSettingData.paymentOption.id === "ONETIME" && feeSettingData.ddIds.key_onetime !== ""){
+    }else if(feeSettingData.paymentOption.id === "ONETIME" && (feeSettingData.ddIds.key_onetime !== null || feeSettingData.ddIds.key_onetime !== "")){
       selId = feeSettingData.ddIds.key_onetime;
     }
 
@@ -599,15 +666,14 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     };
 
     if(id === "btnSaveDueDate"){
-        if((feeSettingData.paymentOption.id === "INSTALLMENTS" && feeSettingData.ddIds.key_installment === "")
-              || (feeSettingData.paymentOption.id === "ONETIME" && feeSettingData.ddIds.key_onetime === "")){
+        if(selId === null  || selId === -1){
             return addDueDateMutation({
               variables: { input: addDueDateInput },
             }).then(data => {
 
-              if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
+              if(data.data.addDueDate.dueDate.paymentMethod === "INSTALLMENTS"){
                 feeSettingData.ddIds.key_installment = data.data.addDueDate.dueDate.id;
-              }else{
+              }else if(data.data.addDueDate.dueDate.paymentMethod === "ONETIME"){
                 feeSettingData.ddIds.key_onetime = data.data.addDueDate.dueDate.id;
               }
               
@@ -626,9 +692,9 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
               variables: { input: updateDueDateInput },
             }).then(data => {
               // feeSettingData.dueDate.id = data.data.updateDueDate.dueDate.id;
-              if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
+              if(data.data.updateDueDate.dueDate.paymentMethod === "INSTALLMENTS"){
                 feeSettingData.ddIds.key_installment = data.data.updateDueDate.dueDate.id;
-              }else{
+              }else if(data.data.updateDueDate.dueDate.paymentMethod === "ONETIME"){
                 feeSettingData.ddIds.key_onetime = data.data.updateDueDate.dueDate.id;
               }
               this.setState({
@@ -1166,7 +1232,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
   }
 
   render() {
-    const { data: { getAllBranches, refetch }, addDueDateMutation, updateDueDateMutation, addPaymentRemainderMutation, updatePaymentRemainderMutation, addLateFeeMutation, updateLateFeeMutation, saveAllMutation } = this.props;
+    const { data: { getAllBranches, refetch }, addDueDateMutation, updateDueDateMutation, addPaymentRemainderMutation, updatePaymentRemainderMutation, addLateFeeMutation, updateLateFeeMutation, saveAllMutation, getDueDateMutation } = this.props;
     const { feeSettingData, branches } = this.state;
 
     return (
@@ -1200,7 +1266,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
               </div>
               <div className="mx-2">
                 <label htmlFor="">Installments</label>
-                <select name="installments" id="installments" onChange={this.onChange}>
+                <select name="installments" id="installments" onChange={this.onChange} value={feeSettingData.installments.id}>
                   <option value="">Select</option>
                   <option value="1">1</option>
                   <option value="2">2</option>
@@ -1218,7 +1284,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
               </div>
               <div className="mx-2">
                 <label htmlFor="">Day of Installment</label>
-                <select name="dayOfInstallment" id="dayOfInstallment" onChange={this.onChange}>
+                <select name="dayOfInstallment" id="dayOfInstallment" onChange={this.onChange} value={feeSettingData.dayOfInstallment.id}>
                   <option value="">Select</option>
                   <option value="1">1</option>
                   <option value="2">2</option>
@@ -1255,7 +1321,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
               </div>
               <div className="mx-2">
                 <label htmlFor="">Frequency</label>
-                <select name="frequency" id="frequency" onChange={this.onChange}>
+                <select name="frequency" id="frequency" onChange={this.onChange} value={feeSettingData.frequency.id}>
                   <option value="">Select</option>
                   <option value="WEEKLY">Weekly</option>
                   <option value="MONTHLY">Monthly</option>
@@ -1451,7 +1517,11 @@ export default withBranchDataLoader(
     }),
     graphql<FeeSettingsType, FeeSettingRootProps>(FeeSettingsDataGql, {
       name: "getFeeSettingsDataMutation",
-    })
+    }),
+    graphql<FindDueDateDataType, FeeSettingRootProps>(FindDueDateDataGql, {
+      name: "getDueDateMutation",
+    }),
+   
     
   )
 
