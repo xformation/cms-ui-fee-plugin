@@ -305,6 +305,7 @@ export type SearchInvoiceListType = {
       studentName: string;
       studentContactNumber: string;
     };
+    paymentStatus: any;
   };
 };
 
@@ -321,6 +322,7 @@ export type SearchInvoiceOnTypeListType = {
       studentName: string;
       studentContactNumber: string;
     };
+    paymentStatus: any;
   };
 };
 

@@ -12,6 +12,7 @@ mutation searchInvoice($invoiceNumber:String, $studentId:Long, $collegeId:Long, 
         student {
           studentName
           studentContactNumber
-        }
+        },
+        paymentStatus
   }
 }

@@ -40,7 +40,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
           id: 1701 //1051
         },
         college: {
-          id: 1801
+          id: 1801 //951
         },
         search: {
           type: ""
@@ -127,6 +127,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
             <td>{invoice.invoiceNumber}</td>
             <td>{invoice.amountPaid}</td>
             <td>{invoice.strPaymentDate}</td>
+            <td>{invoice.paymentStatus}</td>
           </tr>
         );
       }
@@ -135,32 +136,6 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
     return retVal;
   }
 
-  // createInvoiceRows(objAry: any) {
-  //   const mutateResLength = objAry.length;
-  //   const retVal = [];
-  //   for (let x = 0; x < mutateResLength; x++) {
-  //     const tempObj = objAry[x];
-  //     const invoiceArray = tempObj.data.searchInvoice;
-  //     const length = invoiceArray.length;
-  //     for (let i = 0; i < length; i++) {
-  //       const invoice = invoiceArray[i];
-  //       retVal.push(
-  //         <tr >
-  //           <td>
-  //             <input onClick={(e: any) => this.onClickCheckbox(i, e)} checked={invoice.isChecked} type="checkbox" name="" id={"chk" + invoice.id} />
-  //           </td>
-  //           <td>{invoice.student.studentName}</td>
-  //           <td>{invoice.student.studentContactNumber}</td>
-  //           <td>{invoice.feeCategory.categoryName}</td>
-  //           <td>{invoice.invoiceNumber}</td>
-  //           <td>{invoice.amountPaid}</td>
-  //           <td>{invoice.strPaymentDate}</td>
-  //         </tr>
-  //       );
-  //     }
-  //   }
-  //   return retVal;
-  // }
 
   findInvoice = (e: any) => {
     const { name, value } = e.nativeEvent.target;
@@ -286,7 +261,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
                   <a href=""><span className="ti-download"></span></a>
                 </div>
                 <h2 className="fee-orange"><strong>{this.props.data.getInvoiceData.totalUnPaidInvoice}</strong></h2>
-                <h6 className="center btn btn-primary w50 p05 remainder">Send Remainder</h6>
+                <button disabled className="center btn btn-primary w50 p05 remainder">Send Remainder</button>
                 <button className="center btn btn-primary w50 p05 remainder"  id="btnUnPaidInvoice" name="btnUnPaidInvoice" onClick={this.findInvoice}>View Info</button>
               </div>
               <div className="invoiceDashboard">
@@ -296,7 +271,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
                   <a href=""><span className="ti-download"></span></a>
                 </div>
                 <h2 className="fee-red"><strong>{this.props.data.getInvoiceData.totalCanceledInvoice}</strong></h2>
-                <h6 className="btn btn-primary w50 p05 remainder">Send Remainder</h6>
+                <button disabled className="btn btn-primary w50 p05 remainder">Send Remainder</button>
                 <button className="center btn btn-primary w50 p05 remainder"  id="btnCancelledInvoice" name="btnCancelledInvoice" onClick={this.findInvoice}>View Info</button>
               </div>
             </div>
@@ -335,7 +310,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
                       <th>Invoice Number</th>
                       <th>Amount</th>
                       <th>Date</th>
-
+                      <th>Status</th>
                     </tr>
                   </thead>
                   <tbody>
