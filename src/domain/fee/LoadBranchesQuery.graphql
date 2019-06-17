@@ -1,6 +1,15 @@
-query getAllBranches($branchName:String, $collegeId:Long){
-  getAllBranches(branchName:$branchName, collegeId:$collegeId) {
-    id,
-    branchName
+query{
+  createFeeDataCache{
+    colleges{
+      id,
+      shortName
+    },
+    branches{
+      id,
+      branchName,
+      college{
+        id
+      }
+    }
   }
 }

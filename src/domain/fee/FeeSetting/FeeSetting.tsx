@@ -35,7 +35,7 @@ import {
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 type FeeSettingRootProps = RouteComponentProps<{
-  collegeId: string;
+  // collegeId: string;
 }> & {
   data: QueryProps & LoadBranchQueryType;
 }
@@ -64,7 +64,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     this.state = {
       feeSettingData: {
         college: {
-          id: 951
+          id: ""
         },
         branch: {
           id: ""
@@ -161,6 +161,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     this.initPaymentRemainder = this.initPaymentRemainder.bind(this);
     this.getDueDate = this.getDueDate.bind(this);
     this.initDueDate = this.initDueDate.bind(this);
+    this.createColleges = this.createColleges.bind(this);
   }
 
   getDueDate(bid: any, paymentOption: any){
@@ -246,12 +247,25 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     this.initPaymentRemainder(data);
   }
   
-  createBranches(branches: any) {
+  createColleges(colleges: any){
+    let collegessOptions = [<option key={0} value="">Select College</option>];
+    for (let i = 0; i < colleges.length; i++) {
+      collegessOptions.push(
+        <option key={colleges[i].id} value={colleges[i].id}>{colleges[i].shortName}</option>
+      );
+    }
+    return collegessOptions;
+  }
+  createBranches(branches: any, selectedCollegeId: any) {
     let branchesOptions = [<option key={0} value="">Select Branch</option>];
     for (let i = 0; i < branches.length; i++) {
-      branchesOptions.push(
-        <option key={branches[i].id} value={branches[i].id}>{branches[i].branchName}</option>
-      );
+      let clgId = ""+branches[i].college.id;
+      if(selectedCollegeId === clgId){
+        branchesOptions.push(
+          <option key={branches[i].id} value={branches[i].id}>{branches[i].branchName}</option>
+        );
+      }
+      
     }
     return branchesOptions;
   }
@@ -259,7 +273,19 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
   onChange = (e: any) => {
     const { name, value } = e.nativeEvent.target;
     const { feeSettingData } = this.state;
-    if (name === "branch") {
+    if(name === "college"){
+      this.setState({
+        feeSettingData: {
+          ...feeSettingData,
+          college: {
+            id: value
+          },
+          branch: {
+            id: ""
+          }
+        }
+      });
+    }else if (name === "branch") {
       this.setState({
         feeSettingData: {
           ...feeSettingData,
@@ -1232,7 +1258,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
   }
 
   render() {
-    const { data: { getAllBranches, refetch }, addDueDateMutation, updateDueDateMutation, addPaymentRemainderMutation, updatePaymentRemainderMutation, addLateFeeMutation, updateLateFeeMutation, saveAllMutation, getDueDateMutation } = this.props;
+    const { data: { createFeeDataCache, refetch }, addDueDateMutation, updateDueDateMutation, addPaymentRemainderMutation, updatePaymentRemainderMutation, addLateFeeMutation, updateLateFeeMutation, saveAllMutation, getDueDateMutation } = this.props;
     const { feeSettingData, branches } = this.state;
 
     return (
@@ -1249,9 +1275,15 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
             <h4 className="bg-heading p-1">Due Date</h4>
             <div className="border FirstRow p-1">
                 <div>
+                  <label htmlFor="">College</label>
+                  <select required name="college" id="college" onChange={this.onChange} value={feeSettingData.college.id} >
+                      {this.createColleges(this.props.data.createFeeDataCache.colleges)}
+                    </select>
+                </div>
+                <div>
                   <label htmlFor="">Branch</label>
                   <select required name="branch" id="branch" onChange={this.onChange} value={feeSettingData.branch.id} >
-                      {this.createBranches(this.props.data.getAllBranches)}
+                      {this.createBranches(this.props.data.createFeeDataCache.branches, feeSettingData.college.id)}
                     </select>
                 </div>
             </div>

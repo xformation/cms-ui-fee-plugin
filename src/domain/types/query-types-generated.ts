@@ -377,9 +377,18 @@ export type SearchInvoiceData = {
 };
 
 export type LoadBranchQueryType = {
-  getAllBranches: {
-    id: number;
-    branchName: string;
+  createFeeDataCache: {
+    colleges: Array<{
+      id: number;
+      shortName: string;
+    }>;
+    branches: Array<{
+      id: number;
+      branchName: string;
+      college: {
+        id: number;
+      };
+    }>;
   };
 };
 

@@ -5,7 +5,7 @@ import { ReactFunctionOrComponentClass, LoadBranchQueryType } from '../types';
 import withLoadingHandler from '../../components/withLoadingHandler';
 
 type withBranchPageDataLoaderProps = RouteComponentProps<{
-  collegeId: string;
+  // collegeId: string;
 }>;
 
 type TargetComponentProps = {
@@ -14,11 +14,11 @@ type TargetComponentProps = {
 
 const withBranchDataLoader = (TargetComponent: ReactFunctionOrComponentClass<TargetComponentProps>) => {
   return graphql<LoadBranchQueryType, withBranchPageDataLoaderProps, TargetComponentProps>(LoadBranchesQueryGql, {
-    options: ({ match }) => ({
-      variables: {
-        collegeId: 951
-      }
-    })
+    // options: ({ match }) => ({
+    //   variables: {
+    //     collegeId: 1801
+    //   }
+    // })
   })(withLoadingHandler(TargetComponent));
 };
 
