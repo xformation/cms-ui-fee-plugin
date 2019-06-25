@@ -34,13 +34,13 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
     this.state = {
       invoiceData: {
         branch: {
-          id: 1851 //1001
+          id:  1851
         },
         academicYear: {
-          id: 1701 //1051
+          id:  1701
         },
         college: {
-          id: 1801 //951
+          id:  1801
         },
         search: {
           type: ""
@@ -121,6 +121,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
             <td>
               <input onClick={(e: any) => this.onClickCheckbox(i, e)} checked={invoice.isChecked} type="checkbox" name="" id={"chk" + invoice.id} />
             </td>
+            <td>{invoice.student.id}</td>
             <td>{invoice.student.studentName}</td>
             <td>{invoice.student.studentContactNumber}</td>
             <td>{invoice.feeCategory.categoryName}</td>
@@ -304,6 +305,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
                       <th>
                         <input type="checkbox" onClick={(e: any) => this.checkAllStudents(e)} value="checkedall" name="" id="chkCheckedAll" />
                       </th>
+                      <th>Student Id</th>
                       <th>Student Name</th>
                       <th>Primary Contact</th>
                       <th>Fee Category</th>

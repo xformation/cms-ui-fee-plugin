@@ -733,3 +733,14 @@ hr#invoiceHr {
 table#invoicelistpage th {
   text-align: center;
 }
+.markDate.react-datepicker-wrapper {
+  width: 100% !important;
+}
+input#dtPickerSt {
+  width: 130px;
+  margin-right: 10px;
+}
+input#dtPickerNd {
+  width: 130px;
+  margin-right: 10px;
+}

@@ -10,6 +10,7 @@ mutation searchInvoice($invoiceNumber:String, $studentId:Long, $collegeId:Long, 
           categoryName
         },
         student {
+          id
           studentName
           studentContactNumber
         },

@@ -1,3 +1,5 @@
+import {number} from 'prop-types';
+
 export type AddFeeInput = {
   id?: number | null;
   feeParticularsName?: number | null;
@@ -302,6 +304,7 @@ export type SearchInvoiceListType = {
       categoryName: string;
     };
     student: {
+      id: number;
       studentName: string;
       studentContactNumber: string;
     };
@@ -319,6 +322,7 @@ export type SearchInvoiceOnTypeListType = {
       categoryName: string;
     };
     student: {
+      id: number;
       studentName: string;
       studentContactNumber: string;
     };
@@ -483,4 +487,114 @@ export type FindDueDateDataType = {
     paymentDay: number;
     frequency: any;
   };
+};
+
+export type FeeCategoryAddMutationType = {
+  addFeeCategory: Array<{
+    id: number;
+    categoryName: string;
+    description: string;
+    status: any;
+    createdBy: string;
+    createdOn: any;
+    updatedBy: string;
+    updatedOn: any;
+    startDate: any;
+    endDate: any;
+    branch: {
+      id: number;
+      branchName: string;
+    };
+    strCreatedOn: string;
+    strUpdatedOn: string;
+    strStartDate: string;
+    strEndDate: string;
+  }>;
+};
+
+export type LoadFeeSetupCacheType = {
+  createFeeSetupDataCache: {
+    departments: Array<{
+      id: number;
+      name: string;
+      branch: {
+        id: number;
+      };
+      academicyear: {
+        id: number;
+      };
+    }>;
+    batches: Array<{
+      id: number;
+      batch: string;
+      department: {
+        id: number;
+      };
+    }>;
+    studentTypes: Array<{
+      id: number;
+      description: string;
+    }>;
+    genders: Array<{
+      id: number;
+      description: string;
+    }>;
+    feeDetails: Array<{
+      id: number;
+      feeParticularsName: string;
+    }>;
+    feeCategory: Array<{
+      id: number;
+      categoryName: string;
+      description: string;
+      status: any;
+      createdBy: string;
+      createdOn: any;
+      updatedBy: string;
+      updatedOn: any;
+      startDate: any;
+      endDate: any;
+      branch: {
+        id: number;
+        branchName: string;
+      };
+      strCreatedOn: string;
+      strUpdatedOn: string;
+      strStartDate: string;
+      strEndDate: string;
+    }>;
+    facility: Array<{
+      id: number;
+      name: string;
+    }>;
+    transportRoute: Array<{
+      id: number;
+      routeName: string;
+      routeDetails: string;
+      routeMapUrl: string;
+    }>;
+  };
+};
+
+export type FeeCategoryUpdateMutationType = {
+  updateFeeCategory: Array<{
+    id: number;
+    categoryName: string;
+    description: string;
+    status: any;
+    createdBy: string;
+    createdOn: any;
+    updatedBy: string;
+    updatedOn: any;
+    startDate: any;
+    endDate: any;
+    branch: {
+      id: number;
+      branchName: string;
+    };
+    strCreatedOn: string;
+    strUpdatedOn: string;
+    strStartDate: string;
+    strEndDate: string;
+  }>;
 };
