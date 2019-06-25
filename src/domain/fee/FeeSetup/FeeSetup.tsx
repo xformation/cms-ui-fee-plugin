@@ -1,4 +1,4 @@
-import DatePicker from 'react-datepicker'
+import DatePicker from 'react-datepicker';
 import * as moment from 'moment';
 import * as React from 'react';
 import { graphql, MutationFunc, QueryProps, compose } from 'react-apollo';
@@ -15,13 +15,11 @@ import {
 } from '../../types';
 
 
-
-
 // type FeeSetupRootProps ={}//= RouteComponentProps<{
 // // }> & {}
 type FeeSetupRootProps = RouteComponentProps<{
   branchId: string;
-  academicYearId:  string;
+  academicYearId: string;
 }> & {
   data: QueryProps & LoadFeeSetupCacheType;
 };
@@ -47,22 +45,22 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
   constructor(props: any) {
     super(props);
     this.state = {
-      feeSetupData:{
-        categoryName:"",
+      feeSetupData: {
+        categoryName: "",
         description: "",
-        branch:{
-          id:1851
+        branch: {
+          id: 1851
         },
-        feeCategory:{
-          id:""
-        },
-        department:{
+        feeCategory: {
           id: ""
         },
-        batch:{
+        department: {
           id: ""
         },
-        studentType:{
+        batch: {
+          id: ""
+        },
+        studentType: {
           id: ""
         },
         gender: {
@@ -72,10 +70,10 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
           id: ""
         },
         transportRoute: {
-          id:""
+          id: ""
         },
         feeCategoryData: []
-        
+
       },
       count: [],
       toggle: [],
@@ -125,9 +123,9 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
       let id = batches[i].id;
       let dptId = "" + batches[i].department.id;
       // if (dptId == selectedDepartmentId) {
-        batchesOptions.push(
-          <option key={id} value={id}>{batches[i].batch}</option>
-        );
+      batchesOptions.push(
+        <option key={id} value={id}>{batches[i].batch}</option>
+      );
       // }
     }
     return batchesOptions;
@@ -154,7 +152,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     }
     return gendersOptions;
   }
-  createFacility(facility: any){
+  createFacility(facility: any) {
     let facilityOptions = [<option key={0} value="">Select Facility</option>];
     for (let i = 0; i < facility.length; i++) {
       let id = facility[i].id;
@@ -165,7 +163,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     return facilityOptions;
   }
 
-  createTransportRoute(transportRoute: any){
+  createTransportRoute(transportRoute: any) {
     let transportRouteOptions = [<option key={0} value="">Select TransportRoute</option>];
     for (let i = 0; i < transportRoute.length; i++) {
       let id = transportRoute[i].id;
@@ -178,20 +176,20 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
 
   showFeeCategory = (e: any) => {
     e.preventDefault();
-    
+
     let dvCat: any = document.querySelector("#feeCategoryDiv");
     let dvHeadRow: any = document.querySelector("#headerRowDiv");
     dvCat.setAttribute("class", "b-1");
     dvHeadRow.setAttribute("class", "b-1 h5-fee-bg");
-  
+
   }
 
-  reset(){
+  reset() {
     const { feeSetupData } = this.state;
-    let txtCn : any = document.querySelector("#categoryName");
-    let txtDs : any = document.querySelector("#description")
-    let dtPkSt : any = document.querySelector("#dtPickerSt");
-    let dtPkNd : any = document.querySelector("#dtPickerNd");
+    let txtCn: any = document.querySelector("#categoryName");
+    let txtDs: any = document.querySelector("#description")
+    let dtPkSt: any = document.querySelector("#dtPickerSt");
+    let dtPkNd: any = document.querySelector("#dtPickerNd");
     dtPkSt.value = "";
     dtPkNd.value = "";
     txtCn.value = "";
@@ -203,11 +201,11 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     this.setState({
       endDate: "",
       startDate: ""
-      
+
       // feeSetupData : feeSetupData
     });
     this.setState({
-       feeSetupData : feeSetupData
+      feeSetupData: feeSetupData
     });
   }
   // showFeeParticulars= (e: any) => {
@@ -218,8 +216,8 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
 
 
 
-  toggleApplicableTo = (i:any, e: any) => {
-    let {toggle} = this.state;
+  toggleApplicableTo = (i: any, e: any) => {
+    let { toggle } = this.state;
     toggle[i] = !toggle[i];
     this.setState({
       toggle
@@ -264,7 +262,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
                   <input type="text" className="fwidth" />
                 </div>
               </div>
-              <div className="col-md-1"><button onClick={(e:any)=> this.toggleApplicableTo(i, e)} id="btnToggle" className={`fa btn-primary mlb f-12 ${this.state.toggle[i] ? "fa-plus" : "fa-minus"}`} style={{ border: 'none', paddingRight: '17px' }} ></button></div>
+              <div className="col-md-1"><button onClick={(e: any) => this.toggleApplicableTo(i, e)} id="btnToggle" className={`fa btn-primary mlb f-12 ${this.state.toggle[i] ? "fa-plus" : "fa-minus"}`} style={{ border: 'none', paddingRight: '17px' }} ></button></div>
             </div>
             {
               this.createApplicableTo(this.state.count[i], i)
@@ -293,45 +291,45 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     let isHidden = this.state.toggle[index];
     for (let i = 0; i < cnt; i++) {
       retVal.push(
-        <div id={`feeApplicableToDiv-${index}-${i}`} key={`feeApplicableToDiv-${index}-${i}`} className={ isHidden ? "hide":""}>
+        <div id={`feeApplicableToDiv-${index}-${i}`} key={`feeApplicableToDiv-${index}-${i}`} className={isHidden ? "hide" : ""}>
           <div className="m-1 col-md-5 feeAppHead">
             <h5>Applicable To</h5>
           </div>
           <div className="m-1 col-md-5 feeSelect">
             <div>
               <label htmlFor="">Department</label>
-              <select required name={`department-${index}-${i}`} id={`department-${index}-${i}`}  className="gf-form-input max-width-8">
+              <select required name={`department-${index}-${i}`} id={`department-${index}-${i}`} className="gf-form-input max-width-8">
                 {this.createDepartments(this.props.data.createFeeSetupDataCache.departments)}
               </select>
             </div>
             <div>
               <label htmlFor="">Year</label>
-              <select required name={`batch-${index}-${i}`} id={`batch-${index}-${i}`}   className="gf-form-input max-width-8">
+              <select required name={`batch-${index}-${i}`} id={`batch-${index}-${i}`} className="gf-form-input max-width-8">
                 {this.createBatches(this.props.data.createFeeSetupDataCache.batches, feeSetupData.department.id)}
               </select>
             </div>
             <div>
               <label htmlFor="">Student type</label>
-              <select required name={`studentType-${index}-${i}`} id={`studentType-${index}-${i}`}  className="gf-form-input max-width-8">
-                  {this.createStudentTypes(this.props.data.createFeeSetupDataCache.studentTypes)}
+              <select required name={`studentType-${index}-${i}`} id={`studentType-${index}-${i}`} className="gf-form-input max-width-8">
+                {this.createStudentTypes(this.props.data.createFeeSetupDataCache.studentTypes)}
               </select>
             </div>
             <div>
               <label htmlFor="">Gender</label>
-              <select required name={`gender-${index}-${i}`} id={`gender-${index}-${i}`}   className="gf-form-input max-width-8">
-                  {this.createGenders(this.props.data.createFeeSetupDataCache.genders)}
+              <select required name={`gender-${index}-${i}`} id={`gender-${index}-${i}`} className="gf-form-input max-width-8">
+                {this.createGenders(this.props.data.createFeeSetupDataCache.genders)}
               </select>
             </div>
             <div>
               <label htmlFor="">Facility</label>
-              <select required name={`facility-${index}-${i}`} id={`facility-${index}-${i}`}   className="gf-form-input max-width-8">
-                  {this.createFacility(this.props.data.createFeeSetupDataCache.facility)}
+              <select required name={`facility-${index}-${i}`} id={`facility-${index}-${i}`} className="gf-form-input max-width-8">
+                {this.createFacility(this.props.data.createFeeSetupDataCache.facility)}
               </select>
             </div>
             <div>
               <label htmlFor="">Transport Route</label>
-              <select required name={`transportRoute-${index}-${i}`} id={`transportRoute-${index}-${i}`}   className="gf-form-input max-width-8">
-                  {this.createTransportRoute(this.props.data.createFeeSetupDataCache.transportRoute)}
+              <select required name={`transportRoute-${index}-${i}`} id={`transportRoute-${index}-${i}`} className="gf-form-input max-width-8">
+                {this.createTransportRoute(this.props.data.createFeeSetupDataCache.transportRoute)}
               </select>
             </div>
             <div>
@@ -353,7 +351,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     return retVal;
   }
 
-  onChange(e: any){
+  onChange(e: any) {
     const { name, value } = e.nativeEvent.target;
     const { feeSetupData } = this.state;
     // if (name === `department-${index}-${i}`) {
@@ -415,56 +413,56 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     //   });
     // }
     // else{
-      this.setState({
-        feeSetupData: {
-            ...feeSetupData,
-            [name]: value
-        }
-      });
+    this.setState({
+      feeSetupData: {
+        ...feeSetupData,
+        [name]: value
+      }
+    });
     // }
-    
-    
+
+
   }
 
-  handleTxtChange(e: any){
+  handleTxtChange(e: any) {
     const { name, value } = e.nativeEvent.target;
     const { feeSetupData } = this.state;
     this.setState({
       feeSetupData: {
-          ...feeSetupData,
-          [name]: value
+        ...feeSetupData,
+        [name]: value
       }
     });
   }
-  saveFeeCategory(e: any){
+  saveFeeCategory(e: any) {
     const { id, value } = e.nativeEvent.target;
     const { addFeeCategoryMutation } = this.props;
     const { feeSetupData } = this.state;
-    e.preventDefault();    
-    
-    
-    let txtFcNm : any = document.querySelector("#categoryName");
-    if(txtFcNm.value.trim() === ""){
+    e.preventDefault();
+
+
+    let txtFcNm: any = document.querySelector("#categoryName");
+    if (txtFcNm.value.trim() === "") {
       alert("Please provide some value in category name");
       return;
     }
-    let txtFcDs : any = document.querySelector("#description");
-    if(txtFcDs.value.trim() === ""){
+    let txtFcDs: any = document.querySelector("#description");
+    if (txtFcDs.value.trim() === "") {
       alert("Please provide some value in category description");
       return;
     }
-    let chkStatus : any = document.querySelector("#status");
+    let chkStatus: any = document.querySelector("#status");
     let status = "DEACTIVE";
-    if(chkStatus.checked){
+    if (chkStatus.checked) {
       status = "ACTIVE";
     }
     let stDate = null;
-    if(this.state.startDate !== undefined || this.state.startDate !== null || this.state.startDate !== ""){
+    if (this.state.startDate !== undefined || this.state.startDate !== null || this.state.startDate !== "") {
       stDate = moment(this.state.startDate, "YYYY-MM-DD");
     }
     let enDate = null;
-    if(this.state.endDate !== undefined || this.state.endDate !== null || this.state.endDate !== ""){
-        enDate = moment(this.state.endDate, "YYYY-MM-DD");
+    if (this.state.endDate !== undefined || this.state.endDate !== null || this.state.endDate !== "") {
+      enDate = moment(this.state.endDate, "YYYY-MM-DD");
     }
     let addFeeCategoryInput = {
       categoryName: feeSetupData.categoryName,
@@ -475,7 +473,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
       branchId: feeSetupData.branch.id,
       createdBy: "Application"
     };
-    console.log("form data : ",feeSetupData);
+    console.log("form data : ", feeSetupData);
     return addFeeCategoryMutation({
       variables: { input: addFeeCategoryInput }
     }).then(data => {
@@ -492,7 +490,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
         add: true,
         update: false
       });
-      
+
     }).catch((error: any) => {
       alert("Due to some error fee category could not be added");
       console.log('there was an error sending the add fee category mutation result', error);
@@ -500,35 +498,35 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     });
   }
 
-  updateFeeCategory(obj: any){
+  updateFeeCategory(obj: any) {
     // const { id, value } = e.nativeEvent.target;
     const { updateFeeCategoryMutation } = this.props;
     const { feeSetupData } = this.state;
-    
-    let txtFcNm : any = document.querySelector("#categoryName");
-    if(txtFcNm.value.trim() === ""){
+
+    let txtFcNm: any = document.querySelector("#categoryName");
+    if (txtFcNm.value.trim() === "") {
       alert("Please provide some value in category name");
       return;
     }
-    let txtFcDs : any = document.querySelector("#description");
-    if(txtFcDs.value.trim() === ""){
+    let txtFcDs: any = document.querySelector("#description");
+    if (txtFcDs.value.trim() === "") {
       alert("Please provide some value in category description");
       return;
     }
-    let chkStatus : any = document.querySelector("#status");
+    let chkStatus: any = document.querySelector("#status");
     let status = "DEACTIVE";
-    if(chkStatus.checked){
+    if (chkStatus.checked) {
       status = "ACTIVE";
     }
     let stDate = null;
-    if(this.state.startDate !== undefined || this.state.startDate !== null || this.state.startDate !== ""){
+    if (this.state.startDate !== undefined || this.state.startDate !== null || this.state.startDate !== "") {
       stDate = moment(this.state.startDate, "YYYY-MM-DD");
     }
     let enDate = null;
-    if(this.state.endDate !== undefined || this.state.endDate !== null || this.state.endDate !== ""){
-        enDate = moment(this.state.endDate, "YYYY-MM-DD");
+    if (this.state.endDate !== undefined || this.state.endDate !== null || this.state.endDate !== "") {
+      enDate = moment(this.state.endDate, "YYYY-MM-DD");
     }
-    if(feeSetupData.feeCategory.id === ""){
+    if (feeSetupData.feeCategory.id === "") {
       alert("This record has no id. It can be added as a new record.");
       return;
     }
@@ -542,7 +540,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
       branchId: feeSetupData.branch.id,
       updatedBy: "Application"
     };
-    console.log("form data : ",feeSetupData);
+    console.log("form data : ", feeSetupData);
     return updateFeeCategoryMutation({
       variables: { input: updateFeeCategoryInput }
     }).then(data => {
@@ -567,7 +565,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
   }
 
   applyChange = (e: any) => {
-    
+
   }
 
   changeStartDate = (e: any) => {
@@ -586,133 +584,133 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     });
   }
 
-  createFeeCategoryRowFromCache(obj: any){
+  createFeeCategoryRowFromCache(obj: any) {
     // const len = obj.length;
     const retVal = [];
     // for (let p = 0; p < len; p++) {
     //   let v = obj[p];
-      for (let x = 0; x < obj.length; x++) {
-        let k = obj[x];
-        retVal.push(
-          <tr>
-            <td>{k.id}</td>
-            <td>{k.categoryName}</td>
-            <td>{k.description}</td>
-            <td>{k.status}</td>
-            <td>{k.strStartDate}</td>
-            <td>{k.strEndDate}</td>
-            <td>
-              <button className="btn btn-primary" onClick={e => this.editFeeCategory(k)}>Edit</button>
-            </td>
-            <td>
-              <button className="btn btn-primary" onClick={e => this.showDetail(e,k)}>Details</button>
-            </td>
-          </tr>
-        );
-      }
+    for (let x = 0; x < obj.length; x++) {
+      let k = obj[x];
+      retVal.push(
+        <tr>
+          <td>{k.id}</td>
+          <td>{k.categoryName}</td>
+          <td>{k.description}</td>
+          <td>{k.status}</td>
+          <td>{k.strStartDate}</td>
+          <td>{k.strEndDate}</td>
+          <td>
+            <button className="btn btn-primary" onClick={e => this.editFeeCategory(k)}>Edit</button>
+          </td>
+          <td>
+            <button className="btn btn-primary" onClick={e => this.showDetail(e, k)}>Details</button>
+          </td>
+        </tr>
+      );
+    }
     // }
     return retVal;
   }
 
-  createFeeCategoryAddRow(obj: any){
+  createFeeCategoryAddRow(obj: any) {
     const { feeSetupData } = this.state;
     const len = obj.length;
     const retVal = [];
     // let aryLength = 0;
     // for (let p = 0; p < len; p++) {
-      let v = obj[0];
-      if(v.data.addFeeCategory === undefined || v.data.addFeeCategory === null){
-        return;
-      }
-      for (let x = 0; x < v.data.addFeeCategory.length; x++) {
-        let k = v.data.addFeeCategory[x];
-        retVal.push(
-          <tr>
-            <td>{k.id}</td>
-            <td>{k.categoryName}</td>
-            <td>{k.description}</td>
-            <td>{k.status}</td>
-            <td>{k.strStartDate}</td>
-            <td>{k.strEndDate}</td>
-            <td>
-              <button className="btn btn-primary" onClick={e => this.editFeeCategory(k)}>Edit</button>
-            </td>
-            <td>
-              <button className="btn btn-primary" onClick={e => this.showDetail(e,k)}>Details</button>
-            </td>
-          </tr>
-        );
-      }
+    let v = obj[0];
+    if (v.data.addFeeCategory === undefined || v.data.addFeeCategory === null) {
+      return;
+    }
+    for (let x = 0; x < v.data.addFeeCategory.length; x++) {
+      let k = v.data.addFeeCategory[x];
+      retVal.push(
+        <tr>
+          <td>{k.id}</td>
+          <td>{k.categoryName}</td>
+          <td>{k.description}</td>
+          <td>{k.status}</td>
+          <td>{k.strStartDate}</td>
+          <td>{k.strEndDate}</td>
+          <td>
+            <button className="btn btn-primary" onClick={e => this.editFeeCategory(k)}>Edit</button>
+          </td>
+          <td>
+            <button className="btn btn-primary" onClick={e => this.showDetail(e, k)}>Details</button>
+          </td>
+        </tr>
+      );
+    }
     // }
     return retVal;
   }
 
-  createFeeCategoryUpdateRow(obj: any){
+  createFeeCategoryUpdateRow(obj: any) {
     const { feeSetupData } = this.state;
     const len = obj.length;
     const retVal = [];
     let aryLength = 0;
     // for (let p = 0; p < len; p++) {
-      let v = obj[0];
-      if(v.data.updateFeeCategory === undefined || v.data.updateFeeCategory === null){
-        return;
-      }
-      for (let x = 0; x < v.data.updateFeeCategory.length; x++) {
-        let k = v.data.updateFeeCategory[x];
-        retVal.push(
-          <tr>
-            <td>{k.id}</td>
-            <td>{k.categoryName}</td>
-            <td>{k.description}</td>
-            <td>{k.status}</td>
-            <td>{k.strStartDate}</td>
-            <td>{k.strEndDate}</td>
-            <td>
-              <button className="btn btn-primary" onClick={e => this.editFeeCategory(k)}>Edit</button>
-            </td>
-            <td>
-              <button className="btn btn-primary" onClick={e => this.showDetail(e,k)}>Details</button>
-            </td>
-          </tr>
-        );
-      }
+    let v = obj[0];
+    if (v.data.updateFeeCategory === undefined || v.data.updateFeeCategory === null) {
+      return;
+    }
+    for (let x = 0; x < v.data.updateFeeCategory.length; x++) {
+      let k = v.data.updateFeeCategory[x];
+      retVal.push(
+        <tr>
+          <td>{k.id}</td>
+          <td>{k.categoryName}</td>
+          <td>{k.description}</td>
+          <td>{k.status}</td>
+          <td>{k.strStartDate}</td>
+          <td>{k.strEndDate}</td>
+          <td>
+            <button className="btn btn-primary" onClick={e => this.editFeeCategory(k)}>Edit</button>
+          </td>
+          <td>
+            <button className="btn btn-primary" onClick={e => this.showDetail(e, k)}>Details</button>
+          </td>
+        </tr>
+      );
+    }
     // }
-    
-    
+
+
     return retVal;
   }
 
-  editFeeCategory(obj: any){
+  editFeeCategory(obj: any) {
     const { feeSetupData } = this.state;
-    let txtCn : any = document.querySelector("#categoryName");
-    let txtDs : any = document.querySelector("#description");
-    let chkSts : any = document.querySelector("#status");
-    let dtPkSt : any = document.querySelector("#dtPickerSt");
-    let dtPkNd : any = document.querySelector("#dtPickerNd");
+    let txtCn: any = document.querySelector("#categoryName");
+    let txtDs: any = document.querySelector("#description");
+    let chkSts: any = document.querySelector("#status");
+    let dtPkSt: any = document.querySelector("#dtPickerSt");
+    let dtPkNd: any = document.querySelector("#dtPickerNd");
     txtCn.value = obj.categoryName;
     txtDs.value = obj.description;
-    if(obj.status === "ACTIVE"){
+    if (obj.status === "ACTIVE") {
       chkSts.checked = true;
-    }else{
+    } else {
       chkSts.checked = false;
     }
-    let stDate = moment(obj.strStartDate,"DD-MM-YYYY").format("DD/MM/YYYY");
-    let ndDate = moment(obj.strEndDate,"DD-MM-YYYY").format("DD/MM/YYYY");
+    let stDate = moment(obj.strStartDate, "DD-MM-YYYY").format("DD/MM/YYYY");
+    let ndDate = moment(obj.strEndDate, "DD-MM-YYYY").format("DD/MM/YYYY");
     dtPkSt.value = stDate;
     dtPkNd.value = ndDate;
     feeSetupData.feeCategory.id = obj.id;
     feeSetupData.categoryName = obj.categoryName;
     feeSetupData.description = obj.description;
-    
+
     this.setState({
       startDate: moment(stDate, "DD/MM/YYYY"),
       endDate: moment(ndDate, "DD/MM/YYYY"),
-      feeSetupData : feeSetupData
+      feeSetupData: feeSetupData
     });
-    
+
   }
 
-  showDetail(e: any, obj: any){
+  showDetail(e: any, obj: any) {
     let { count, countParticularDiv } = this.state;
     countParticularDiv = 0;
     count = [];
@@ -720,22 +718,22 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
       countParticularDiv,
       count
     });
-    let fCatGrid : any = document.querySelector("#feeCatagoryGrid");
+    let fCatGrid: any = document.querySelector("#feeCatagoryGrid");
     fCatGrid.setAttribute("class", "hide");
 
-    let fCatDtDiv : any = document.querySelector("#feeCatDetailDiv");
+    let fCatDtDiv: any = document.querySelector("#feeCatDetailDiv");
     fCatDtDiv.setAttribute("class", "b-1");
 
-    let svFCatDiv : any = document.querySelector("#saveFeeCatDiv");
+    let svFCatDiv: any = document.querySelector("#saveFeeCatDiv");
     svFCatDiv.setAttribute("class", "hide");
 
-    let bDiv : any = document.querySelector("#backDiv");
+    let bDiv: any = document.querySelector("#backDiv");
     bDiv.setAttribute("class", "");
     this.editFeeCategory(obj);
     this.showParticularDiv(e);
-    
+
   }
-  back(){
+  back() {
     let { count, countParticularDiv } = this.state;
     countParticularDiv = 0;
     count = [];
@@ -743,16 +741,16 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
       countParticularDiv,
       count
     });
-    let fCatGrid : any = document.querySelector("#feeCatagoryGrid");
+    let fCatGrid: any = document.querySelector("#feeCatagoryGrid");
     fCatGrid.setAttribute("class", "b-1");
 
-    let fCatDtDiv : any = document.querySelector("#feeCatDetailDiv");
+    let fCatDtDiv: any = document.querySelector("#feeCatDetailDiv");
     fCatDtDiv.setAttribute("class", "hide");
 
-    let svFCatDiv : any = document.querySelector("#saveFeeCatDiv");
-    svFCatDiv.setAttribute("class", "");
+    let svFCatDiv: any = document.querySelector("#saveFeeCatDiv");
+    svFCatDiv.setAttribute("class", "fee-flex");
 
-    let bDiv : any = document.querySelector("#backDiv");
+    let bDiv: any = document.querySelector("#backDiv");
     bDiv.setAttribute("class", "hide");
   }
   render() {
@@ -770,95 +768,105 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
           {/* <a href="" className="btn btn-primary">Save</a> */}
         </div>
 
-        <div className="stroke-transparent mr-1">&nbsp;</div>
+        {/* <div className="stroke-transparent mr-1">&nbsp;</div> */}
         {/* <button className="btn btn-primary" style={{ width: '155px' }} onClick={this.showFeeCategory}><i className="fa fa-plus"></i> Add Fee Category</button> */}
         <div className="stroke-transparent mr-1">&nbsp;</div>
-        <div id="headerRowDiv" className="b-1 h5-fee-bg"><div className="m-1 row">Create Fee Category</div></div>
+        <div id="headerRowDiv" className="b-1 h5-fee-bg j-between">
+          <div className="m-1 fwidth">Create Fee Category</div>
+
+          <div id="saveFeeCatDiv" className="fee-flex">
+            <button className="btn btn-primary mr-1" id="btnSaveFeeCategory" name="btnSaveFeeCategory" onClick={this.saveFeeCategory} style={{ width: '140px' }}>Add Fee Category</button>
+            <button className="btn btn-primary mr-1" id="btnUpdateFeeCategory" name="btnUpdateFeeCategory" onClick={this.updateFeeCategory} style={{ width: '170px' }}>Update Fee Category</button>
+            <button className="btn btn-primary mr-1" id="btnReset" name="btnReset" onClick={this.reset} >Reset</button>
+          </div>
+          <div id="backDiv" className="hide">
+            <button className="btn btn-primary mr-1" id="btnBack" name="btnBack" onClick={this.back} style={{ padding: "13px" }}>Back</button>
+          </div>
+
+
+
+        </div>
         <div id="feeCategoryDiv" className="b-1">
-          <div className="b1 row m-1">
-              <div >
-                  <div>
-                    <label htmlFor="">Category Name</label>
-                    <input type="text" style={{ width: '300px' }} id="categoryName" name="categoryName" onChange={this.onChange} value={feeSetupData.categoryName}/>
-                  </div>
-              </div>
-              <div className="m-l-2" style={{ width: '72%' }}>
-                  <div>
-                    <label htmlFor="">Description</label>
-                    <input type="text" className="fwidth" id="description" name="description" onChange={this.onChange} value={feeSetupData.description}/>
-                  </div>
-              </div>
+          <div className="b1 row m-1 j-between">
+            <div >
+              <label htmlFor="">Category Name</label>
+              <input type="text" style={{ width: '300px' }} id="categoryName" name="categoryName" onChange={this.onChange} value={feeSetupData.categoryName} />
+            </div>
+
+            <div>
+              <label htmlFor="">Description</label>
+              <input type="text" className="fwidth" style={{ width: '450px' }} id="description" name="description" onChange={this.onChange} value={feeSetupData.description} />
+            </div>
+
+            <div>
+              <label htmlFor="">Start Date</label>
+              <DatePicker selected={this.state.startDate} value={this.state.startDate} onChange={this.changeStartDate} id="dtPickerSt" name="dtPickerSt" />
+            </div>
+
+            <div>
+              <label htmlFor="">End Date</label>
+              <DatePicker selected={this.state.endDate} value={this.state.endDate} onChange={this.changeEndDate} id="dtPickerNd" name="dtPickerNd" />
+            </div>
+
+            <div>
+              <label htmlFor="">Status</label>
+              <label className="switch">
+                {' '}
+                <input type="checkbox" id="status" name="status" defaultChecked /> <span className="slider" />{' '}
+              </label>
+            </div>
+
           </div>
 
           <div className="b1 row m-1">
-              <div >
-                  <div>
-                    <label htmlFor="">Status</label>
-                    <label className="switch">
-                        {' '}
-                    <input type="checkbox" id="status" name="status" defaultChecked /> <span className="slider" />{' '}
-                    </label>
-                  </div>
+
+            {/* <div className="d-flex fwidth justify-content-between pt-2">
+              <p></p>
+              <div id="saveFeeCatDiv">
+                <button className="btn btn-primary mr-1" id="btnSaveFeeCategory" name="btnSaveFeeCategory" onClick={this.saveFeeCategory} style={{ width: '140px' }}>Add Fee Category</button>
+                <button className="btn btn-primary mr-1" id="btnUpdateFeeCategory" name="btnUpdateFeeCategory" onClick={this.updateFeeCategory} style={{ width: '170px' }}>Update Fee Category</button>
+                <button className="btn btn-primary mr-1" id="btnReset" name="btnReset" onClick={this.reset} >Reset</button>
               </div>
-              <div className="m-l-2 markAttendance" >
-                  <div className="markAttendance">
-                    <label htmlFor="">Start Date</label>
-                    <DatePicker selected={this.state.startDate} value={this.state.startDate} onChange={this.changeStartDate} id="dtPickerSt" name="dtPickerSt" />
-                  </div>
+              <div id="backDiv" className="hide">
+                <button className="btn btn-primary mr-1" id="btnBack" name="btnBack" onClick={this.back} style={{ width: '140px' }}>Back</button>
               </div>
-              <div className="m-l-2 markAttendance" >
-                  <div className="markAttendance">
-                    <label htmlFor="">End Date</label>
-                    <DatePicker selected={this.state.endDate} value={this.state.endDate} onChange={this.changeEndDate} id="dtPickerNd" name="dtPickerNd" />
-                  </div>
-              </div>
-              <div className = "d-flex fwidth justify-content-between pt-2">
-                <p></p>
-                <div id="saveFeeCatDiv">
-                  <button className="btn btn-primary mr-1" id="btnSaveFeeCategory" name="btnSaveFeeCategory" onClick={this.saveFeeCategory} style={{ width: '140px' }}>Add Fee Category</button>
-                  <button className="btn btn-primary mr-1" id="btnUpdateFeeCategory" name="btnUpdateFeeCategory" onClick={this.updateFeeCategory} style={{ width: '170px' }}>Update Fee Category</button>
-                  <button className="btn btn-primary mr-1" id="btnReset" name="btnReset" onClick={this.reset} >Reset</button>
-                </div>
-                <div id="backDiv" className="hide">
-                  <button className="btn btn-primary mr-1" id="btnBack" name="btnBack" onClick={this.back} style={{ width: '140px' }}>Back</button>
-                </div>
-                
-              </div>
+
+            </div> */}
           </div>
-          
+
         </div>
         <p></p>
         <div id="feeCatagoryGrid" className="b-1">
-          <table className="fwidth" id="matable">
-              <thead >
-                  <tr>
-                    <th>Category Id</th>
-                    <th>Category Name</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Edit</th>
-                    <th>Details</th>
-                  </tr>
-              </thead>
-              <tbody>
-                { 
-                  feeSetupData.feeCategoryData.length > 0 && this.state.add === true && this.state.update === false && (
+          <table className="fwidth" id="feetable">
+            <thead >
+              <tr>
+                <th>Category Id</th>
+                <th>Category Name</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Edit</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                feeSetupData.feeCategoryData.length > 0 && this.state.add === true && this.state.update === false && (
                   this.createFeeCategoryAddRow(feeSetupData.feeCategoryData)
-                  )
-                }
-                { 
-                  feeSetupData.feeCategoryData.length > 0 && this.state.add === false && this.state.update === true && (
+                )
+              }
+              {
+                feeSetupData.feeCategoryData.length > 0 && this.state.add === false && this.state.update === true && (
                   this.createFeeCategoryUpdateRow(feeSetupData.feeCategoryData)
-                  )
-                }
-                { 
-                  feeSetupData.feeCategoryData.length === 0 && this.state.add === false && this.state.update === false && (
+                )
+              }
+              {
+                feeSetupData.feeCategoryData.length === 0 && this.state.add === false && this.state.update === false && (
                   this.createFeeCategoryRowFromCache(this.props.data.createFeeSetupDataCache.feeCategory)
-                  )
-                }
-              </tbody>
+                )
+              }
+            </tbody>
           </table>
         </div>
         <div id="feeCatDetailDiv" className="hide">
@@ -876,7 +884,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
 export default withFeeSetupCacheDataLoader(
 
   compose(
-  
+
     graphql<FeeCategoryAddMutationType, FeeSetupRootProps>(FeeCategoryAddMutation, {
       name: "addFeeCategoryMutation"
     }),
