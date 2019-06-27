@@ -6,11 +6,13 @@ import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 // import * as AddFeeMutationGql from './FeeSetupMutation.graphql';
 import * as FeeCategoryAddMutation from './FeeCategoryAddMutation.graphql';
 import * as FeeCategoryUpdateMutation from './FeeCategoryUpdateMutation.graphql';
+import * as FeeDetailsAddMutation from './FeeDetailsAddMutation.graphql';
 import withFeeSetupCacheDataLoader from './withFeeSetupCacheDataLoader';
 import {
   LoadFeeSetupCacheType,
   FeeCategoryAddMutationType,
-  FeeCategoryUpdateMutationType
+  FeeCategoryUpdateMutationType,
+  FeeDetailsAddMutationType
 
 } from '../../types';
 
@@ -27,6 +29,7 @@ type FeeSetupRootProps = RouteComponentProps<{
 type FeeSetupPageProps = FeeSetupRootProps & {
   addFeeCategoryMutation: MutationFunc<FeeCategoryAddMutationType>;
   updateFeeCategoryMutation: MutationFunc<FeeCategoryUpdateMutationType>;
+  addFeeDetailsMutation: MutationFunc<FeeDetailsAddMutationType>;
 };
 
 type FeeSetupState = {
@@ -72,7 +75,10 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
         transportRoute: {
           id: ""
         },
-        feeCategoryData: []
+        feeCategoryData: [],
+        particularsName: "",
+        particularsDesc: "",
+        amount: {}
 
       },
       count: [],
@@ -105,6 +111,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     this.createTransportRoute = this.createTransportRoute.bind(this);
     this.handleTxtChange = this.handleTxtChange.bind(this);
     this.applyChange = this.applyChange.bind(this);
+    this.isDatesOverlap = this.isDatesOverlap.bind(this);
   }
 
   createDepartments(departments: any) {
@@ -245,6 +252,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
 
   createParticularDiv(cnt: any) {
     const retVal = [];
+    const { feeSetupData } = this.state;
     for (let i = 0; i < cnt; i++) {
       retVal.push(
         <div id={`feeParticularDiv-${i}`} key={`feeParticularDiv-${i}`}>
@@ -253,13 +261,13 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
               <div className="col-md-5">
                 <div>
                   <label htmlFor="">Fee particulars Name</label>
-                  <input type="text" className="fwidth" />
+                  <input type="text" id={"particularsName"} name={"particularsName"} onChange={this.onChange} value={feeSetupData.particularsName} className="fwidth" />
                 </div>
               </div>
               <div className="col-md-6">
                 <div>
                   <label htmlFor="">Description</label>
-                  <input type="text" className="fwidth" />
+                  <input type="text" id={"particularsDesc"} name={"particularsDesc"} onChange={this.onChange} value={feeSetupData.particularsDesc} className="fwidth" />
                 </div>
               </div>
               <div className="col-md-1"><button onClick={(e: any) => this.toggleApplicableTo(i, e)} id="btnToggle" className={`fa btn-primary mlb f-12 ${this.state.toggle[i] ? "fa-plus" : "fa-minus"}`} style={{ border: 'none', paddingRight: '17px' }} ></button></div>
@@ -334,10 +342,10 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
             </div>
             <div>
               <label htmlFor="">Amount</label>
-              <input type="number" name={`amount-${index}-${i}`} id={`amount-${index}-${i}`} style={{ width: '100px' }} />
+              <input type="number" name={`amount-${index}-${i}`} id={`amount-${index}-${i}`} onChange={this.handleTxtChange} style={{ width: '100px' }} value={feeSetupData.amount[`amount-${index}-${i}`]}/>
             </div>
             <div className="mt-20">
-              <button className="btn btn-primary m-r-1" onClick={this.applyChange} name={`btnApply-${index}-${i}`} id={`btnApply-${index}-${i}`}>Apply</button>
+              <button className="btn btn-primary m-r-1" onClick={e => this.applyChange(e, index, i)} name={`btnApply-${index}-${i}`} id={`btnApply-${index}-${i}`}>Apply</button>
             </div>
             <div className="mt-20">
               <button className="btn btn-primary f-12"><i className="fa fa-trash"></i></button>
@@ -425,14 +433,24 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
   }
 
   handleTxtChange(e: any) {
-    const { name, value } = e.nativeEvent.target;
+    const { id, value } = e.nativeEvent.target;
     const { feeSetupData } = this.state;
+    const key = id;
+    const val = value;
+    e.preventDefault();
+  
+    feeSetupData.amount[key] = val;
     this.setState({
-      feeSetupData: {
-        ...feeSetupData,
-        [name]: value
-      }
+      feeSetupData: feeSetupData
     });
+  }
+
+  isDatesOverlap(startDate: any, endDate: any){
+    if (endDate.isBefore(startDate)) {
+      alert("End date should not be prior to start date.");
+      return true;
+    }
+    return false;
   }
   saveFeeCategory(e: any) {
     const { id, value } = e.nativeEvent.target;
@@ -456,6 +474,11 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     if (chkStatus.checked) {
       status = "ACTIVE";
     }
+    if (this.state.startDate === undefined || this.state.startDate === null || this.state.startDate === "") {
+      alert("Please provide start date");
+      return;
+    }
+    
     let stDate = null;
     if (this.state.startDate !== undefined || this.state.startDate !== null || this.state.startDate !== "") {
       stDate = moment(this.state.startDate, "YYYY-MM-DD");
@@ -464,6 +487,12 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     if (this.state.endDate !== undefined || this.state.endDate !== null || this.state.endDate !== "") {
       enDate = moment(this.state.endDate, "YYYY-MM-DD");
     }
+    if(stDate !== null && enDate !== null){
+      if(this.isDatesOverlap(stDate, enDate)){
+        return;
+      }
+    }
+    
     let addFeeCategoryInput = {
       categoryName: feeSetupData.categoryName,
       description: feeSetupData.description,
@@ -564,8 +593,82 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     });
   }
 
-  applyChange = (e: any) => {
-
+  applyChange = (e: any, index: any, i: any) => {
+      const { id, value } = e.nativeEvent.target;
+      const { addFeeDetailsMutation } = this.props;
+      const { feeSetupData } = this.state;
+      var txtName = feeSetupData.particularsName;
+      var txtDesc = feeSetupData.particularsDesc;
+      var amt = feeSetupData.amount["amount-"+index+"-"+i];
+      if(txtName === undefined || txtName.trim() === ""){
+        alert("Please provide some value in fee perticulars name");
+        return;
+      }
+      if(txtDesc === undefined || txtDesc.trim() === ""){
+        alert("Please provide some value in fee perticulars description");
+        return;
+      }
+      if(amt === undefined || amt.trim() === ""){
+        alert("Please provide some value in amount");
+        return;
+      }
+      let optDpt : any = document.querySelector("#department-"+index+"-"+i);
+      let optBth : any = document.querySelector("#batch-"+index+"-"+i);
+      let optStp : any = document.querySelector("#studentType-"+index+"-"+i);
+      let optGdr : any = document.querySelector("#gender-"+index+"-"+i);
+      let optFct : any = document.querySelector("#facility-"+index+"-"+i);
+      let optTrp : any = document.querySelector("#transportRoute-"+index+"-"+i);
+      // optBth.options[optBth.options.selectedIndex].value
+      let dptVal = null;
+      let bthVal = null;
+      let stpVal = null;
+      let gndVal = null;
+      let fclVal = null;
+      let trtVal = null;
+      if(optDpt.options[optDpt.options.selectedIndex].value !== ""){
+        dptVal = optDpt.options[optDpt.options.selectedIndex].value;
+      }
+      if(optBth.options[optBth.options.selectedIndex].value !== ""){
+        bthVal = optBth.options[optBth.options.selectedIndex].value;
+      }
+      if(optStp.options[optStp.options.selectedIndex].value !== ""){
+        stpVal = optStp.options[optStp.options.selectedIndex].value;
+      }
+      if(optGdr.options[optGdr.options.selectedIndex].value !== ""){
+        gndVal = optGdr.options[optGdr.options.selectedIndex].value;
+      }
+      if(optFct.options[optFct.options.selectedIndex].value !== ""){
+        fclVal = optFct.options[optFct.options.selectedIndex].value;
+      }
+      if(optTrp.options[optTrp.options.selectedIndex].value !== ""){
+        trtVal = optTrp.options[optTrp.options.selectedIndex].value;
+      }
+      let addFeeDetailsInput = {
+        feeParticularsName: txtName,
+        feeParticularDesc: txtDesc,
+        departmentId: dptVal,
+        batchId: bthVal,
+        studentType: stpVal,
+        gender: gndVal,
+        amount: amt,
+        status: "ACTIVE",
+        // branchId: feeSetupData.branch.id,
+        createdBy: "Application",
+        facilityId: fclVal,
+        transportRouteId: trtVal,
+        feeCategoryId: feeSetupData.feeCategory.id
+      };
+      
+      return addFeeDetailsMutation({
+        variables: { input: addFeeDetailsInput }
+      }).then(data => {
+        console.log('Add fee details ::::: ', data);
+        alert("Fee detail applied successfully!");
+      }).catch((error: any) => {
+        alert("Due to some error fee detail could not be applied");
+        console.log('there was an error sending the add fee detail mutation result', error);
+        return Promise.reject(`Could not retrieve add fee detail data: ${error}`);
+      });
   }
 
   changeStartDate = (e: any) => {
@@ -694,17 +797,30 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     } else {
       chkSts.checked = false;
     }
-    let stDate = moment(obj.strStartDate, "DD-MM-YYYY").format("DD/MM/YYYY");
-    let ndDate = moment(obj.strEndDate, "DD-MM-YYYY").format("DD/MM/YYYY");
+    let stDate = "";
+    if(obj.strStartDate !== null && obj.strStartDate !== "") {
+      stDate = moment(obj.strStartDate, "DD-MM-YYYY").format("DD/MM/YYYY");
+    }
+    let ndDate = "";
+    if(obj.strEndDate !== null && obj.strEndDate !== "") {
+      ndDate = moment(obj.strEndDate, "DD-MM-YYYY").format("DD/MM/YYYY");
+    }
     dtPkSt.value = stDate;
     dtPkNd.value = ndDate;
     feeSetupData.feeCategory.id = obj.id;
     feeSetupData.categoryName = obj.categoryName;
     feeSetupData.description = obj.description;
-
+    let nStDt: any;
+    let nEnDt: any;
+    if(stDate !== ""){
+      nStDt = moment(stDate, "DD/MM/YYYY");
+    }
+    if(ndDate !== ""){
+      nEnDt = moment(ndDate, "DD/MM/YYYY");
+    }
     this.setState({
-      startDate: moment(stDate, "DD/MM/YYYY"),
-      endDate: moment(ndDate, "DD/MM/YYYY"),
+      startDate: nStDt,
+      endDate: nEnDt,
       feeSetupData: feeSetupData
     });
 
@@ -890,7 +1006,11 @@ export default withFeeSetupCacheDataLoader(
     }),
     graphql<FeeCategoryUpdateMutationType, FeeSetupRootProps>(FeeCategoryUpdateMutation, {
       name: "updateFeeCategoryMutation"
+    }),
+    graphql<FeeDetailsAddMutationType, FeeSetupRootProps>(FeeDetailsAddMutation, {
+      name: "addFeeDetailsMutation"
     })
+    
   )
 
     (FeeSetup) as any

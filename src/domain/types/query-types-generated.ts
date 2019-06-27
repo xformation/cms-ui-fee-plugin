@@ -598,3 +598,42 @@ export type FeeCategoryUpdateMutationType = {
     strEndDate: string;
   }>;
 };
+
+export type FeeDetailsAddMutationType = {
+  addFeeDetails: {
+    id: number;
+    feeParticularsName: string;
+    feeParticularDesc: string;
+    studentType: any;
+    gender: any;
+    amount: number;
+    status: any;
+    createdBy: string;
+    updatedBy: string;
+    feeCategory: {
+      id: number;
+    };
+    batch: {
+      id: number;
+      batch: string;
+    };
+    facility: {
+      id: number;
+      name: string;
+    };
+    transportRoute: {
+      id: number;
+      routeName: string;
+      routeDetails: string;
+      routeMapUrl: string;
+    };
+    department: {
+      id: number;
+      name: string;
+    };
+    strCreatedOn: string;
+    strUpdatedOn: string;
+    strStartDate: string;
+    strEndDate: string;
+  };
+};
