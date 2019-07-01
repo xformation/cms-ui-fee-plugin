@@ -16,6 +16,7 @@ import {
 
 } from '../../types';
 
+import "react-datepicker/dist/react-datepicker.css";
 
 // type FeeSetupRootProps ={}//= RouteComponentProps<{
 // // }> & {}
@@ -438,7 +439,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     const key = id;
     const val = value;
     e.preventDefault();
-  
+
     feeSetupData.amount[key] = val;
     this.setState({
       feeSetupData: feeSetupData
@@ -478,7 +479,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
       alert("Please provide start date");
       return;
     }
-    
+
     let stDate = null;
     if (this.state.startDate !== undefined || this.state.startDate !== null || this.state.startDate !== "") {
       stDate = moment(this.state.startDate, "YYYY-MM-DD");
@@ -492,7 +493,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
         return;
       }
     }
-    
+
     let addFeeCategoryInput = {
       categoryName: feeSetupData.categoryName,
       description: feeSetupData.description,
@@ -658,7 +659,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
         transportRouteId: trtVal,
         feeCategoryId: feeSetupData.feeCategory.id
       };
-      
+
       return addFeeDetailsMutation({
         variables: { input: addFeeDetailsInput }
       }).then(data => {
@@ -1010,7 +1011,7 @@ export default withFeeSetupCacheDataLoader(
     graphql<FeeDetailsAddMutationType, FeeSetupRootProps>(FeeDetailsAddMutation, {
       name: "addFeeDetailsMutation"
     })
-    
+
   )
 
     (FeeSetup) as any
