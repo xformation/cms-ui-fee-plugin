@@ -329,7 +329,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
                 {this.createGenders(this.props.data.createFeeSetupDataCache.genders)}
               </select>
             </div>
-            <div>
+            {/* <div>
               <label htmlFor="">Facility</label>
               <select required name={`facility-${index}-${i}`} id={`facility-${index}-${i}`} className="gf-form-input max-width-8">
                 {this.createFacility(this.props.data.createFeeSetupDataCache.facility)}
@@ -340,7 +340,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
               <select required name={`transportRoute-${index}-${i}`} id={`transportRoute-${index}-${i}`} className="gf-form-input max-width-8">
                 {this.createTransportRoute(this.props.data.createFeeSetupDataCache.transportRoute)}
               </select>
-            </div>
+            </div> */}
             <div>
               <label htmlFor="">Amount</label>
               <input type="number" name={`amount-${index}-${i}`} id={`amount-${index}-${i}`} onChange={this.handleTxtChange} style={{ width: '100px' }} value={feeSetupData.amount[`amount-${index}-${i}`]}/>
@@ -624,8 +624,8 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
       let bthVal = null;
       let stpVal = null;
       let gndVal = null;
-      let fclVal = null;
-      let trtVal = null;
+      // let fclVal = null;
+      // let trtVal = null;
       if(optDpt.options[optDpt.options.selectedIndex].value !== ""){
         dptVal = optDpt.options[optDpt.options.selectedIndex].value;
       }
@@ -638,12 +638,12 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
       if(optGdr.options[optGdr.options.selectedIndex].value !== ""){
         gndVal = optGdr.options[optGdr.options.selectedIndex].value;
       }
-      if(optFct.options[optFct.options.selectedIndex].value !== ""){
-        fclVal = optFct.options[optFct.options.selectedIndex].value;
-      }
-      if(optTrp.options[optTrp.options.selectedIndex].value !== ""){
-        trtVal = optTrp.options[optTrp.options.selectedIndex].value;
-      }
+      // if(optFct.options[optFct.options.selectedIndex].value !== ""){
+      //   fclVal = optFct.options[optFct.options.selectedIndex].value;
+      // }
+      // if(optTrp.options[optTrp.options.selectedIndex].value !== ""){
+      //   trtVal = optTrp.options[optTrp.options.selectedIndex].value;
+      // }
       let addFeeDetailsInput = {
         feeParticularsName: txtName,
         feeParticularDesc: txtDesc,
@@ -655,8 +655,8 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
         status: "ACTIVE",
         // branchId: feeSetupData.branch.id,
         createdBy: "Application",
-        facilityId: fclVal,
-        transportRouteId: trtVal,
+        // facilityId: fclVal,
+        // transportRouteId: trtVal,
         feeCategoryId: feeSetupData.feeCategory.id
       };
 
