@@ -3,35 +3,39 @@ import * as moment from 'moment';
 import * as React from 'react';
 import { graphql, MutationFunc, QueryProps, compose } from 'react-apollo';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-// import * as AddFeeMutationGql from './FeeSetupMutation.graphql';
-import * as FeeCategoryAddMutation from './FeeCategoryAddMutation.graphql';
-import * as FeeCategoryUpdateMutation from './FeeCategoryUpdateMutation.graphql';
-import * as FeeDetailsAddMutation from './FeeDetailsAddMutation.graphql';
-import withFeeSetupCacheDataLoader from './withFeeSetupCacheDataLoader';
-import {
-  LoadFeeSetupCacheType,
-  FeeCategoryAddMutationType,
-  FeeCategoryUpdateMutationType,
-  FeeDetailsAddMutationType
+import { ADD_FEE_CATEGORY, UPDATE_FEE_CATEGORY, ADD_FEE_DETAILS, CREATE_FEE_SETUP_DATA_CACHE } from '../_queries';
+import withLoadingHandler from '../withLoadingHandler';
 
-} from '../../types';
+// import * as FeeCategoryAddMutation from './FeeCategoryAddMutation.graphql';
+// import * as FeeCategoryUpdateMutation from './FeeCategoryUpdateMutation.graphql';
+// import * as FeeDetailsAddMutation from './FeeDetailsAddMutation.graphql';
+// import withFeeSetupCacheDataLoader from './withFeeSetupCacheDataLoader';
+// import {
+//   LoadFeeSetupCacheType,
+//   FeeCategoryAddMutationType,
+//   FeeCategoryUpdateMutationType,
+//   FeeDetailsAddMutationType
+
+// } from '../../types';
+
+
 
 import "react-datepicker/dist/react-datepicker.css";
 
 // type FeeSetupRootProps ={}//= RouteComponentProps<{
 // // }> & {}
-type FeeSetupRootProps = RouteComponentProps<{
-  branchId: string;
-  academicYearId: string;
-}> & {
-  data: QueryProps & LoadFeeSetupCacheType;
-};
+// type FeeSetupRootProps = RouteComponentProps<{
+//   branchId: string;
+//   academicYearId: string;
+// }> & {
+//   data: QueryProps & LoadFeeSetupCacheType;
+// };
 
-type FeeSetupPageProps = FeeSetupRootProps & {
-  addFeeCategoryMutation: MutationFunc<FeeCategoryAddMutationType>;
-  updateFeeCategoryMutation: MutationFunc<FeeCategoryUpdateMutationType>;
-  addFeeDetailsMutation: MutationFunc<FeeDetailsAddMutationType>;
-};
+// type FeeSetupPageProps = FeeSetupRootProps & {
+//   addFeeCategoryMutation: MutationFunc<FeeCategoryAddMutationType>;
+//   updateFeeCategoryMutation: MutationFunc<FeeCategoryUpdateMutationType>;
+//   addFeeDetailsMutation: MutationFunc<FeeDetailsAddMutationType>;
+// };
 
 type FeeSetupState = {
   feeSetupData: any,
@@ -45,7 +49,7 @@ type FeeSetupState = {
   // branches: any
 }
 
-class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
+class FeeSetup extends React.Component<any, FeeSetupState>{
   constructor(props: any) {
     super(props);
     this.state = {
@@ -506,7 +510,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     console.log("form data : ", feeSetupData);
     return addFeeCategoryMutation({
       variables: { input: addFeeCategoryInput }
-    }).then(data => {
+    }).then((data: any) => {
       console.log('Add fee category ::::: ', data);
       alert("Fee category added successfully!");
       const sdt = data;
@@ -573,7 +577,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     console.log("form data : ", feeSetupData);
     return updateFeeCategoryMutation({
       variables: { input: updateFeeCategoryInput }
-    }).then(data => {
+    }).then((data: any) => {
       console.log('Update fee category ::::: ', data);
       alert("Fee category updated successfully!");
       const sdt = data;
@@ -662,7 +666,7 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
 
       return addFeeDetailsMutation({
         variables: { input: addFeeDetailsInput }
-      }).then(data => {
+      }).then((data: any) => {
         console.log('Add fee details ::::: ', data);
         alert("Fee detail applied successfully!");
       }).catch((error: any) => {
@@ -876,18 +880,10 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
     return (
 
       <section className="plugin-bg-white p-1">
-        <h3 className="bg-heading p-1">
-          <i className="fa fa-university stroke-transparent" aria-hidden="true" /> Admin - Fee Management
-          </h3>
-
-        <div className="bg-heading px-1 dfinline">
+        <div className="bg-heading px-1 dfinline m-b-1">
           <h5 className="mtf-8 dark-gray">Fee Management</h5>
           {/* <a href="" className="btn btn-primary">Save</a> */}
         </div>
-
-        {/* <div className="stroke-transparent mr-1">&nbsp;</div> */}
-        {/* <button className="btn btn-primary" style={{ width: '155px' }} onClick={this.showFeeCategory}><i className="fa fa-plus"></i> Add Fee Category</button> */}
-        <div className="stroke-transparent mr-1">&nbsp;</div>
         <div id="headerRowDiv" className="b-1 h5-fee-bg j-between">
           <div className="m-1 fwidth">Create Fee Category</div>
 
@@ -998,21 +994,20 @@ class FeeSetup extends React.Component<FeeSetupPageProps, FeeSetupState>{
 
 // export default FeeSetup;
 
-export default withFeeSetupCacheDataLoader(
+export default graphql(CREATE_FEE_SETUP_DATA_CACHE, {
+  options: ({ }) => ({
+    variables: {
+      academicYearId: 1701,
+      branchId: 1851
+    }
+  })
+}) (withLoadingHandler(
 
   compose(
-
-    graphql<FeeCategoryAddMutationType, FeeSetupRootProps>(FeeCategoryAddMutation, {
-      name: "addFeeCategoryMutation"
-    }),
-    graphql<FeeCategoryUpdateMutationType, FeeSetupRootProps>(FeeCategoryUpdateMutation, {
-      name: "updateFeeCategoryMutation"
-    }),
-    graphql<FeeDetailsAddMutationType, FeeSetupRootProps>(FeeDetailsAddMutation, {
-      name: "addFeeDetailsMutation"
-    })
-
+    graphql(ADD_FEE_CATEGORY, { name: "addFeeCatefory" }),
+    graphql(UPDATE_FEE_CATEGORY, { name: "updateFeeCatefory" }),
+    graphql(ADD_FEE_DETAILS, { name: "addFeeDetails" }),
   )
 
     (FeeSetup) as any
-);
+));

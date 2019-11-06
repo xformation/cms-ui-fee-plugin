@@ -1,7 +1,0 @@
-
-fragment getinvoicedata on getInvoiceData {
-    totalInvoice
-    totalPaidInvoice
-    totalUnPaidInvoice
-    totalCanceledInvoice
-}

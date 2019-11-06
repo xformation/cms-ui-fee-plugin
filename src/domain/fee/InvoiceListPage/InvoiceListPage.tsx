@@ -1,52 +1,35 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { graphql, QueryProps, MutationFunc, compose } from "react-apollo";
-import * as SearchInvoiceGql from './SearchInvoice.graphql';
-import * as SearchInvoiceOnTypeGql from './SearchInvoiceOnType.graphql';
-import { InvoiceCountQueryType, SearchInvoiceListType, SearchInvoiceOnTypeListType } from '../../types';
-import widthInvoiceDataloader from './withInvoiceDataloader';
-
-const w180 = {
-  width: '180px',
-  marginRight: '10px',
-};
-// Invoice Count
-type InvoiceDataRootProps = RouteComponentProps<{
-  collegeId: string;
-  branchId: string;
-  academicYearId: string;
-}> & {
-  data: QueryProps & InvoiceCountQueryType;
-};
-type InvoiceDataPageProps = InvoiceDataRootProps & {
-  mutate: MutationFunc<SearchInvoiceListType>;
-  getInvoiceOnTypeMutation: MutationFunc<SearchInvoiceOnTypeListType>;
-  
-};
+import { GET_INVOICE_DATA, SEARCH_INVOICE, SEARCH_INVOICE_ONTYPE } from '../_queries';
+import withLoadingHandler from '../withLoadingHandler';
+// import * as SearchInvoiceGql from '../ SearchInvoice.graphql';
+// import * as SearchInvoiceOnTypeGql from './SearchInvoiceOnType.graphql';
+// import { InvoiceCountQueryType, SearchInvoiceListType, SearchInvoiceOnTypeListType } from '../../types';
 
 type InvoiceState = {
   invoiceData: any
 }
 
-class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState> {
+class InvoiceListPage extends React.Component<any, InvoiceState> {
   constructor(props: any) {
     super(props);
     this.state = {
       invoiceData: {
         branch: {
-          id:  1851
+          id: 1851
         },
         academicYear: {
-          id:  1701
+          id: 1701
         },
         college: {
-          id:  1801
+          id: 1801
         },
         search: {
           type: ""
         },
         mutateResult: [],
-        gridResult: []
+        gridResult: [],
       }
     };
     this.checkAllStudents = this.checkAllStudents.bind(this);
@@ -84,11 +67,11 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
       const tempObj = objAry[x];
       let invoiceArray = tempObj.data.searchInvoice;
 
-      if(invoiceData.search.type === "search"){
+      if (invoiceData.search.type === "search") {
         invoiceArray = tempObj.data.searchInvoice;
-     }else if(invoiceData.search.type === "grid") {
+      } else if (invoiceData.search.type === "grid") {
         invoiceArray = tempObj.data.searchInvoiceOnType;
-     }
+      }
 
       const length = invoiceArray.length;
       if (length === 0) {
@@ -99,7 +82,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
     }
     return retVal;
   }
-  
+
   createInvoiceRows(objAry: any) {
     const { invoiceData } = this.state;
     const mutateResLength = objAry.length;
@@ -107,17 +90,17 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
     for (let x = 0; x < mutateResLength; x++) {
       const tempObj = objAry[x];
       let invoiceArray;
-      if(invoiceData.search.type === "search"){
-         invoiceArray = tempObj.data.searchInvoice;
-      }else if(invoiceData.search.type === "grid") {
-         invoiceArray = tempObj.data.searchInvoiceOnType;
+      if (invoiceData.search.type === "search") {
+        invoiceArray = tempObj.data.searchInvoice;
+      } else if (invoiceData.search.type === "grid") {
+        invoiceArray = tempObj.data.searchInvoiceOnType;
       }
-      
+
       const length = invoiceArray.length;
       for (let i = 0; i < length; i++) {
         const invoice = invoiceArray[i];
         retVal.push(
-          <tr >
+          <tr key={invoice.student.id}>
             <td>
               <input onClick={(e: any) => this.onClickCheckbox(i, e)} checked={invoice.isChecked} type="checkbox" name="" id={"chk" + invoice.id} />
             </td>
@@ -133,47 +116,48 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
         );
       }
     }
-    
+
     return retVal;
   }
 
 
   findInvoice = (e: any) => {
     const { name, value } = e.nativeEvent.target;
-    const { getInvoiceOnTypeMutation } = this.props;
+    const { searchInvoiceOnType } = this.props;
     const { invoiceData } = this.state;
     e.preventDefault();
-    
+
     let invType = "";
-    if(name === "btnTotalInvoice"){
+    if (name === "btnTotalInvoice") {
       invType = "TOTAL"
-    }else if(name === "btnPaidInvoice"){
+    } else if (name === "btnPaidInvoice") {
       invType = "PAID"
-    }else if(name === "btnUnPaidInvoice"){
+    } else if (name === "btnUnPaidInvoice") {
       invType = "UNPAID"
-    }else if(name === "btnCancelledInvoice"){
+    } else if (name === "btnCancelledInvoice") {
       invType = "CANCELED"
     }
-    let btn: any = document.querySelector("#"+name);
+    let btn: any = document.querySelector("#" + name);
     btn.setAttribute("disabled", true);
-    return getInvoiceOnTypeMutation({
+    return searchInvoiceOnType({
       variables: {
         invoiceType: invType,
         collegeId: invoiceData.college.id,
         branchId: invoiceData.branch.id,
         academicYearId: invoiceData.academicYear.id,
       },
-    }).then(data => {
+    }).then((data: any) => {
       btn.removeAttribute("disabled");
       const sdt = data;
       invoiceData.gridResult = [];
       invoiceData.gridResult.push(sdt);
+
       console.log('Invoice Grid :  ', invoiceData.gridResult);
       invoiceData.search.type = "grid";
       this.setState({
         invoiceData: invoiceData
       });
-      
+
     }).catch((error: any) => {
       btn.removeAttribute("disabled");
       console.log('there was an error sending the invoice mutation result ', error);
@@ -183,10 +167,10 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
 
   onClick = (e: any) => {
     const { name, value } = e.nativeEvent.target;
-    const { mutate } = this.props;
+    const { searchInvoice } = this.props;
     const { invoiceData } = this.state;
     e.preventDefault();
-    
+
     let invNumber: any = document.querySelector("#invoiceNumber");
     let stId: any = document.querySelector("#studentId");
     let stIdVal = stId.value;
@@ -195,7 +179,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
     }
     let btn: any = document.querySelector("#btnFind");
     btn.setAttribute("disabled", true);
-    return mutate({
+    return searchInvoice({
       variables: {
         invoiceNumber: invNumber.value,
         studentId: stIdVal,
@@ -203,7 +187,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
         branchId: invoiceData.branch.id,
         academicYearId: invoiceData.academicYear.id,
       },
-    }).then(data => {
+    }).then((data: any) => {
       btn.removeAttribute("disabled");
       const sdt = data
       console.log('Invoice result :  ', sdt);
@@ -213,7 +197,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
       this.setState({
         invoiceData: invoiceData
       });
-      
+
     }).catch((error: any) => {
       btn.removeAttribute("disabled");
       console.log('there was an error sending the invoice mutation result ', error);
@@ -227,10 +211,6 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
     return (
 
       <section className="customCss">
-        <h3 className="bg-heading p-1 m-b-0">
-          <i className="fa fa-university stroke-transparent mr-1" aria-hidden="true" />{' '}
-          Admin - Fee Management
-          </h3>
         <div className="plugin-bg-white p-1">
           <div className="m-b-1 dflex bg-heading">
             <h4 className="ptl-06">Invoices</h4>
@@ -244,7 +224,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
                   <a href=""><span className="ti-download"></span></a>
                 </div>
                 <h2 className="fee-blue"><strong>{this.props.data.getInvoiceData.totalInvoice}</strong></h2>
-                <button className="center btn btn-primary w50 p05 remainder"  id="btnTotalInvoice" name="btnTotalInvoice" onClick={this.findInvoice}>View Info</button>
+                <button className="center btn btn-primary w50 p05 remainder" id="btnTotalInvoice" name="btnTotalInvoice" onClick={this.findInvoice}>View Info</button>
               </div>
               <div className="invoiceDashboard">
                 <div className="invoiceHeader">
@@ -253,7 +233,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
                   <a href=""><span className="ti-download"></span></a>
                 </div>
                 <h2 className="fee-green"><strong>{this.props.data.getInvoiceData.totalPaidInvoice}</strong></h2>
-                <button className="center btn btn-primary w50 p05 remainder"  id="btnPaidInvoice" name="btnPaidInvoice" onClick={this.findInvoice}>View Info</button>
+                <button className="center btn btn-primary w50 p05 remainder" id="btnPaidInvoice" name="btnPaidInvoice" onClick={this.findInvoice}>View Info</button>
               </div>
               <div className="invoiceDashboard">
                 <div className="invoiceHeader">
@@ -263,7 +243,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
                 </div>
                 <h2 className="fee-orange"><strong>{this.props.data.getInvoiceData.totalUnPaidInvoice}</strong></h2>
                 <button disabled className="center btn btn-primary w50 p05 remainder">Send Remainder</button>
-                <button className="center btn btn-primary w50 p05 remainder"  id="btnUnPaidInvoice" name="btnUnPaidInvoice" onClick={this.findInvoice}>View Info</button>
+                <button className="center btn btn-primary w50 p05 remainder" id="btnUnPaidInvoice" name="btnUnPaidInvoice" onClick={this.findInvoice}>View Info</button>
               </div>
               <div className="invoiceDashboard">
                 <div className="invoiceHeader">
@@ -273,7 +253,7 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
                 </div>
                 <h2 className="fee-red"><strong>{this.props.data.getInvoiceData.totalCanceledInvoice}</strong></h2>
                 <button disabled className="btn btn-primary w50 p05 remainder">Send Remainder</button>
-                <button className="center btn btn-primary w50 p05 remainder"  id="btnCancelledInvoice" name="btnCancelledInvoice" onClick={this.findInvoice}>View Info</button>
+                <button className="center btn btn-primary w50 p05 remainder" id="btnCancelledInvoice" name="btnCancelledInvoice" onClick={this.findInvoice}>View Info</button>
               </div>
             </div>
             <hr id="invoiceHr" />
@@ -317,25 +297,25 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
                   </thead>
                   <tbody>
                     {
-                      invoiceData.search.type === "search"  && (
+                      invoiceData.search.type === "search" && (
                         this.createInvoiceRows(this.state.invoiceData.mutateResult)
                       )
                     }
                     {
-                      invoiceData.search.type === "grid"  && (
+                      invoiceData.search.type === "grid" && (
                         this.createInvoiceRows(this.state.invoiceData.gridResult)
                       )
                     }
-                    
+
                   </tbody>
                 </table>
                 {
-                  invoiceData.search.type === "search"  && (
+                  invoiceData.search.type === "search" && (
                     this.createNoRecordMessage(this.state.invoiceData.mutateResult)
                   )
                 }
                 {
-                  invoiceData.search.type === "grid"  && (
+                  invoiceData.search.type === "grid" && (
                     this.createNoRecordMessage(this.state.invoiceData.gridResult)
                   )
                 }
@@ -350,17 +330,35 @@ class InvoiceListPage extends React.Component<InvoiceDataPageProps, InvoiceState
   }
 }
 
-export default widthInvoiceDataloader(
+// export default widthInvoiceDataloader(
 
+//   compose(
+//     graphql<SearchInvoiceListType, InvoiceDataRootProps>(SearchInvoiceGql, {
+//       name: "mutate"
+//     }),
+//     graphql<SearchInvoiceOnTypeListType, InvoiceDataRootProps>(SearchInvoiceOnTypeGql, {
+//       name: "getInvoiceOnTypeMutation"
+//     })
+
+
+//   )
+//     (InvoiceListPage) as any
+// );
+
+export default graphql(GET_INVOICE_DATA, {
+  options: ({ }) => ({
+    variables: {
+      // collegeId: match.params.collegeId,
+      // academicYearId: match.params.academicYearId,
+      collegeId: 1801,
+      academicYearId: 1701,
+      branchId: 1851
+    }
+  })
+})(withLoadingHandler(
   compose(
-    graphql<SearchInvoiceListType, InvoiceDataRootProps>(SearchInvoiceGql, {
-      name: "mutate"
-    }),
-    graphql<SearchInvoiceOnTypeListType, InvoiceDataRootProps>(SearchInvoiceOnTypeGql, {
-      name: "getInvoiceOnTypeMutation"
-    })
-    
-
+    graphql(SEARCH_INVOICE_ONTYPE, { name: "searchInvoiceOnType" }),
+    graphql(SEARCH_INVOICE, { name: "searchInvoice" })
   )
     (InvoiceListPage) as any
-);
+));

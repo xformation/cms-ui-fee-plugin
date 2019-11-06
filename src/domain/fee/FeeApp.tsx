@@ -5,30 +5,17 @@ import { ApolloProvider } from 'react-apollo';
 
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-import { createGraphQLClient } from '../../createGraphQLClient';
-import InvoiceListPage from './InvoiceListPage';
-import FeeSetup from './FeeSetup';
+import { gQLClient } from '..//../graphQLClient';
+// import InvoiceListPage from './InvoiceListPage';
 
-const graphQLClient = createGraphQLClient();
 
 export default function init() {
   setTimeout(function () {
     ReactDOM.render(
-      <ApolloProvider client={graphQLClient}>
-        <BrowserRouter>
-          <Switch>
-            <Route
-              path="/plugins/ems-fee/page/invoice"
-              component={InvoiceListPage}
-            />
-            <Route
-              path="/plugins/ems-fee/page/feesetup"
-              component={FeeSetup}
-            />
-          </Switch>
-        </BrowserRouter>
+      <ApolloProvider client={gQLClient}>
+        {/* <FeeSetup /> */}
       </ApolloProvider>,
-      document.getElementById('mount')
+      document.getElementById('mountFeeInvoiceTab')
     );
-  }, 50);
+  }, 10);
 }
