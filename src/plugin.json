@@ -23,10 +23,31 @@
   "includes": [
     {
       "type": "page",
-      "name": "feestab",
+      "name": "Home",
+      "addToNav": false,
+      "defaultNav": false,
+      "component": "WelcomePage"
+    },
+    {
+      "type": "page",
+      "name": "Invoice",
+      "addToNav": true,
+      "defaultNav": false,
+      "component": "Invoice"
+    },
+    {
+      "type": "page",
+      "name": "FeeSetup",
       "addToNav": true,
       "defaultNav": true,
-      "component": "FeesTab"
+      "component": "FeeSetup"
+    },
+    {
+      "type": "page",
+      "name": "FeeSetting",
+      "addToNav": true,
+      "defaultNav": false,
+      "component": "FeeSetting"
     }
   ],
   "dependencies": {

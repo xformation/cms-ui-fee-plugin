@@ -1,0 +1,11 @@
+
+mutation updateLateFee($input: UpdateLateFeeInput!){
+  updateLateFee(input:$input){
+    lateFee{
+      id
+    }
+  }
+}
+
+
+

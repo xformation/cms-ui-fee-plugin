@@ -1,0 +1,29 @@
+
+mutation getFeeSettingData($branchId: Long){
+  getFeeSettingData(branchId:$branchId){
+    lateFeeId,
+    isAutoLateFee,
+    lateFeeDays,
+    chargeType,
+    fixedCharges,
+    percentCharges,
+    lateFeeFrequency,
+    lateFeeRepeatDays,
+
+    prId,
+    isAutoRemainder,
+    isFirstPaymentRemainder,
+    firstPaymentRemainderDays,
+    isSecondPaymentRemainder,
+    secondPaymentRemainderDays,
+    isOverDuePaymentRemainder,
+    overDuePaymentRemainderAfterDueDateOrUntilPaid,
+    overDuePaymentRemainderDays,
+    isRemainderRecipients,
+    remainderRecipients
+
+  }
+}
+
+
+

@@ -1,0 +1,10 @@
+mutation updatePaymentRemainder($input: UpdatePaymentRemainderInput!){
+    updatePaymentRemainder(input: $input){
+      paymentRemainder{
+        id
+      }
+    }
+}
+
+
+

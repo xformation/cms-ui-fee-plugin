@@ -1,0 +1,15 @@
+query{
+  createFeeDataCache{
+    colleges{
+      id,
+      shortName
+    },
+    branches{
+      id,
+      branchName,
+      college{
+        id
+      }
+    }
+  }
+}

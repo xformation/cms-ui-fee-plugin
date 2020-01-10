@@ -1,0 +1,10 @@
+mutation saveDueDatePaymentRemLateFee($inputd: UpdateDueDateInput, $inputp: UpdatePaymentRemainderInput, $inputl: UpdateLateFeeInput) {
+  saveDueDatePaymentRemLateFee(inputd:$inputd, inputp:$inputp, inputl:$inputl){
+    
+      statusDesc
+    
+  }
+}
+
+
+
