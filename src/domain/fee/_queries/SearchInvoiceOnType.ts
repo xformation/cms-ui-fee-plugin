@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const SEARCH_INVOICE_ONTYPE = gql`
-  mutation searchInvoiceOnType(
+  query searchInvoiceOnType(
     $invoiceType: String
     $collegeId: Long
     $branchId: Long
@@ -23,7 +23,7 @@ export const SEARCH_INVOICE_ONTYPE = gql`
       student {
         id
         studentName
-        studentContactNumber
+        studentPrimaryCellNumber
       }
       paymentStatus
     }

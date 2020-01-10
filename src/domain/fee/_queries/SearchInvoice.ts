@@ -25,7 +25,7 @@ export const SEARCH_INVOICE = gql`
       student {
         id
         studentName
-        studentContactNumber
+        studentPrimaryCellNumber
       }
       paymentStatus
     }

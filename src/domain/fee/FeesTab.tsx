@@ -1,11 +1,11 @@
 import * as React from 'react';
 // import { graphql, QueryProps, MutationFunc, compose } from 'react-apollo';
 import { TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
-import InvoiceListPage from '../InvoiceListPage/InvoiceListPage';
-import FeeSetup from '../FeeSetup/FeeSetup';
-import FeeSetting from '../FeeSetting/FeeSetting';
+import InvoiceListPage from './InvoiceListPage';
+import FeeSetup from './FeeSetup/FeeSetup';
+import FeeSetting from './FeeSetting/FeeSetting';
 import { FaUserGraduate } from 'react-icons/fa';
-import './tabs.css';
+import '../../css/tabs.css';
 
 
 export default class FeesTab extends React.Component<any, any> {

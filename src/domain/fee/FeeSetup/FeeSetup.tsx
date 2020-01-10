@@ -57,7 +57,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
         categoryName: "",
         description: "",
         branch: {
-          id: 1851
+          id: 1951
         },
         feeCategory: {
           id: ""
@@ -998,7 +998,7 @@ export default graphql(CREATE_FEE_SETUP_DATA_CACHE, {
   options: ({ }) => ({
     variables: {
       academicYearId: 1701,
-      branchId: 1851
+      branchId: 1951
     }
   })
 }) (withLoadingHandler(

@@ -1,4 +1,4 @@
-import init from '../domain/fee/FeesTab/FeesTabApp';
+import init from '../domain/fee/FeesTabApp';
 
 export class FeesTab {
   static templateUrl = '/partials/feestab.html';
