@@ -1,65 +1,67 @@
 import * as React from 'react';
 import { graphql, QueryProps, MutationFunc, compose } from 'react-apollo';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import * as DueDateAddMutationGql from './DueDateAddMutation.graphql';
-import * as DueDateUpdateMutationGql from './DueDateUpdateMutation.graphql';
-import * as PaymentRemainderAddMutationGql from './PaymentRemainderAddMutation.graphql';
-import * as PaymentRemainderUpdateMutationGql from './PaymentRemainderUpdateMutation.graphql';
-import * as LateFeeAddMutationGql from './LateFeeAddMutation.graphql';
-import * as LateFeeUpdateMutationGql from './LateFeeUpdateMutation.graphql';
-import * as SaveAllMutationGql from './SaveAllMutation.graphql';
-import * as FeeSettingsDataGql from './FeeSettingsData.graphql';
-import * as FindDueDateDataGql from './FindDueDateData.graphql';
-// import * as AddFeeMutationGql from './FeeSetupMutation.graphql';
-import withBranchDataLoader from "../withBranchDataLoader";
+import { CREATE_FEE_DATA_CACHE, ADD_DUE_DATE, UPDATE_DUE_DATE, GET_FEE_SETTING_DUE_DATE_DATA, GET_FEE_SETTING_DATA, ADD_LATE_FEE, UPDATE_LATE_FEE, ADD_PAYMENT_REMAINDER, UPDATE_PAYMENT_REMAINDER, SAVE_ALL } from '../_queries';
+import withLoadingHandler from '../withLoadingHandler';
 
-import {
-  LoadBranchQueryType,
-  DueDateAddMutationType,
-  DueDateUpdateMutationType,
-  PaymentRemainderAddMutationType,
-  PaymentRemainderUpdateMutationType,
-  LateFeeAddMutationType,
-  LateFeeUpdateMutationType,
-  SaveAllMutationType,
-  FeeSettingsType,
-  FindDueDateDataType,
-  AddFeeMutation,
-  AddFeeInput,
-  AddFeeMutationVariables,
-  // FeeData,
-} from '../../types';
+// import * as DueDateAddMutationGql from './DueDateAddMutation.graphql';
+// import * as DueDateUpdateMutationGql from './DueDateUpdateMutation.graphql';
+// import * as PaymentRemainderAddMutationGql from './PaymentRemainderAddMutation.graphql';
+// import * as PaymentRemainderUpdateMutationGql from './PaymentRemainderUpdateMutation.graphql';
+// import * as LateFeeAddMutationGql from './LateFeeAddMutation.graphql';
+// import * as LateFeeUpdateMutationGql from './LateFeeUpdateMutation.graphql';
+// import * as SaveAllMutationGql from './SaveAllMutation.graphql';
+// import * as FeeSettingsDataGql from './FeeSettingsData.graphql';
+// import * as FindDueDateDataGql from './FindDueDateData.graphql';
+// import withBranchDataLoader from "../withBranchDataLoader";
+
+// import {
+//   LoadBranchQueryType,
+//   DueDateAddMutationType,
+//   DueDateUpdateMutationType,
+//   PaymentRemainderAddMutationType,
+//   PaymentRemainderUpdateMutationType,
+//   LateFeeAddMutationType,
+//   LateFeeUpdateMutationType,
+//   SaveAllMutationType,
+//   FeeSettingsType,
+//   FindDueDateDataType,
+//   AddFeeMutation,
+//   AddFeeInput,
+//   AddFeeMutationVariables,
+//   // FeeData,
+// } from '../../types';
 
 // import withLoadingHandler from '../../../components/withLoadingHandler';
 
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
-type FeeSettingRootProps = RouteComponentProps<{
-  // collegeId: string;
-}> & {
-  data: QueryProps & LoadBranchQueryType;
-}
+// type FeeSettingRootProps = RouteComponentProps<{
+//   // collegeId: string;
+// }> & {
+//   data: QueryProps & LoadBranchQueryType;
+// }
 
-type FeeSettingPageProps = FeeSettingRootProps & {
-  addDueDateMutation: MutationFunc<DueDateAddMutationType>;
-  updateDueDateMutation: MutationFunc<DueDateUpdateMutationType>;
-  addPaymentRemainderMutation: MutationFunc<PaymentRemainderAddMutationType>;
-  updatePaymentRemainderMutation: MutationFunc<PaymentRemainderUpdateMutationType>;
-  addLateFeeMutation: MutationFunc<LateFeeAddMutationType>;
-  updateLateFeeMutation: MutationFunc<LateFeeUpdateMutationType>;
-  saveAllMutation: MutationFunc<SaveAllMutationType>;
-  getFeeSettingsDataMutation: MutationFunc<FeeSettingsType>;
-  getDueDateMutation: MutationFunc<FindDueDateDataType>;
+// type FeeSettingPageProps = FeeSettingRootProps & {
+//   addDueDateMutation: MutationFunc<DueDateAddMutationType>;
+//   updateDueDateMutation: MutationFunc<DueDateUpdateMutationType>;
+//   addPaymentRemainderMutation: MutationFunc<PaymentRemainderAddMutationType>;
+//   updatePaymentRemainderMutation: MutationFunc<PaymentRemainderUpdateMutationType>;
+//   addLateFeeMutation: MutationFunc<LateFeeAddMutationType>;
+//   updateLateFeeMutation: MutationFunc<LateFeeUpdateMutationType>;
+//   saveAllMutation: MutationFunc<SaveAllMutationType>;
+//   getFeeSettingsDataMutation: MutationFunc<FeeSettingsType>;
+//   getDueDateMutation: MutationFunc<FindDueDateDataType>;
   
-};
+// };
 
 type FeeSettingState = {
   feeSettingData: any,
   branches: any
 }
 
-class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
-  constructor(props: FeeSettingPageProps) {
+class FeeSetting extends React.Component<any, FeeSettingState>{
+  constructor(props: any) {
     super(props);
     this.state = {
       feeSettingData: {
@@ -171,7 +173,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     }
     return getDueDateMutation({
       variables: { branchId: bid, paymentType: paymentOption },
-    }).then(data => {
+    }).then((data: any) => {
       console.log('DueDate data ::::: ', data);
       let ddd = data.data.getFeeSettingDueDateData;
       this.initDueDate(ddd);
@@ -232,7 +234,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     }
     return getFeeSettingsDataMutation({
       variables: { branchId: bid },
-    }).then(data => {
+    }).then((data: any) => {
       console.log('FeeSettings data ::::: ', data);
       let fsdt = data.data.getFeeSettingData;
       this.initPage(fsdt);
@@ -695,7 +697,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
         if(selId === null  || selId === -1){
             return addDueDateMutation({
               variables: { input: addDueDateInput },
-            }).then(data => {
+            }).then((data: any) => {
 
               if(data.data.addDueDate.dueDate.paymentMethod === "INSTALLMENTS"){
                 feeSettingData.ddIds.key_installment = data.data.addDueDate.dueDate.id;
@@ -716,7 +718,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
         }else{
             return updateDueDateMutation({
               variables: { input: updateDueDateInput },
-            }).then(data => {
+            }).then((data: any) => {
               // feeSettingData.dueDate.id = data.data.updateDueDate.dueDate.id;
               if(data.data.updateDueDate.dueDate.paymentMethod === "INSTALLMENTS"){
                 feeSettingData.ddIds.key_installment = data.data.updateDueDate.dueDate.id;
@@ -984,7 +986,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       if(feeSettingData.paymentRemainder.id === null || feeSettingData.paymentRemainder.id === ""){
         return addPaymentRemainderMutation({
           variables: { input: addPmtRemInput },
-        }).then(data => {
+        }).then((data: any) => {
           feeSettingData.paymentRemainder.id = data.data.addPaymentRemainder.paymentRemainder.id;
           console.log('Add payment remainder result ::::: ', data);
           alert("Payment remainder added successfully!");
@@ -995,7 +997,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       }else{
         return updatePaymentRemainderMutation({
           variables: { input: updatePmtRemInput },
-        }).then(data => {
+        }).then((data: any) => {
           feeSettingData.paymentRemainder.id = data.data.updatePaymentRemainder.paymentRemainder.id;
           console.log('Update payment remainder result ::::: ', data);
           alert("Payment remainder updated successfully!");
@@ -1184,7 +1186,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       if(feeSettingData.lateFee.id === null || feeSettingData.lateFee.id === ""){
         return addLateFeeMutation({
           variables: { input: addLateFeeInput },
-        }).then(data => {
+        }).then((data: any) => {
           feeSettingData.lateFee.id = data.data.addLateFee.lateFee.id;
           console.log('Add late fee result ::::: ', data);
           alert("Late fee added successfully!");
@@ -1195,7 +1197,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
       }else{
         return updateLateFeeMutation({
           variables: { input: updateLateFeeInput },
-        }).then(data => {
+        }).then((data: any) => {
           feeSettingData.lateFee.id = data.data.updateLateFee.lateFee.id;
           console.log('Update late fee result ::::: ', data);
           alert("Late fee updated successfully!");
@@ -1235,7 +1237,7 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
     
     return saveAllMutation({
       variables: { inputd: ddInput,  inputp: prInput, inputl: lfInput}
-    }).then(data => {
+    }).then((data: any) => {
       let msg = data.data.saveDueDatePaymentRemLateFee.statusDesc;
       let msgAry = msg.split(",");
       if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
@@ -1258,18 +1260,14 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
   }
 
   render() {
-    const { data: { createFeeDataCache, refetch }, addDueDateMutation, updateDueDateMutation, addPaymentRemainderMutation, updatePaymentRemainderMutation, addLateFeeMutation, updateLateFeeMutation, saveAllMutation, getDueDateMutation } = this.props;
+    const { data: { createFeeDataCache, refetch }, addDueDate, updateDueDate, addPaymentRemainder, updatePaymentRemainder, addLateFee, updateLateFee, saveAll, getDueDate} = this.props;
     const { feeSettingData, branches } = this.state;
 
     return (
       <section className="plugin-bg-white p-1">
-        <h3 className="bg-heading p-1">
-          <i className="fa fa-university stroke-transparent" aria-hidden="true" /> Admin - Fee Management
-        </h3>
-        <div className="bg-heading px-1 dfinline">
+        <div className="bg-heading px-1 dfinline m-b-1">
           <h5 className="mtf-8 dark-gray">Fee Settngs</h5>
         </div>
-        
         <div className="b-1 feeCategory">
           <form action="" className="grid">
             <h4 className="bg-heading p-1">Due Date</h4>
@@ -1522,40 +1520,60 @@ class FeeSetting extends React.Component<FeeSettingPageProps, FeeSettingState>{
 }
 
 
-export default withBranchDataLoader(
+// export default withBranchDataLoader(
 
-  compose(
+//   compose(
   
-    graphql<DueDateAddMutationType, FeeSettingRootProps>(DueDateAddMutationGql, {
-      name: "addDueDateMutation",
-    }),
-    graphql<DueDateUpdateMutationType, FeeSettingRootProps>(DueDateUpdateMutationGql, {
-      name: "updateDueDateMutation",
-    }),
-    graphql<PaymentRemainderAddMutationType, FeeSettingRootProps>(PaymentRemainderAddMutationGql, {
-      name: "addPaymentRemainderMutation",
-    }),
-    graphql<PaymentRemainderUpdateMutationType, FeeSettingRootProps>(PaymentRemainderUpdateMutationGql, {
-      name: "updatePaymentRemainderMutation",
-    }),
-    graphql<LateFeeAddMutationType, FeeSettingRootProps>(LateFeeAddMutationGql, {
-      name: "addLateFeeMutation",
-    }),
-    graphql<LateFeeUpdateMutationType, FeeSettingRootProps>(LateFeeUpdateMutationGql, {
-      name: "updateLateFeeMutation",
-    }),    
-    graphql<SaveAllMutationType, FeeSettingRootProps>(SaveAllMutationGql, {
-      name: "saveAllMutation",
-    }),
-    graphql<FeeSettingsType, FeeSettingRootProps>(FeeSettingsDataGql, {
-      name: "getFeeSettingsDataMutation",
-    }),
-    graphql<FindDueDateDataType, FeeSettingRootProps>(FindDueDateDataGql, {
-      name: "getDueDateMutation",
-    }),
+//     graphql<DueDateAddMutationType, FeeSettingRootProps>(DueDateAddMutationGql, {
+//       name: "addDueDateMutation",
+//     }),
+//     graphql<DueDateUpdateMutationType, FeeSettingRootProps>(DueDateUpdateMutationGql, {
+//       name: "updateDueDateMutation",
+//     }),
+//     graphql<PaymentRemainderAddMutationType, FeeSettingRootProps>(PaymentRemainderAddMutationGql, {
+//       name: "addPaymentRemainderMutation",
+//     }),
+//     graphql<PaymentRemainderUpdateMutationType, FeeSettingRootProps>(PaymentRemainderUpdateMutationGql, {
+//       name: "updatePaymentRemainderMutation",
+//     }),
+//     graphql<LateFeeAddMutationType, FeeSettingRootProps>(LateFeeAddMutationGql, {
+//       name: "addLateFeeMutation",
+//     }),
+//     graphql<LateFeeUpdateMutationType, FeeSettingRootProps>(LateFeeUpdateMutationGql, {
+//       name: "updateLateFeeMutation",
+//     }),    
+//     graphql<SaveAllMutationType, FeeSettingRootProps>(SaveAllMutationGql, {
+//       name: "saveAllMutation",
+//     }),
+//     graphql<FeeSettingsType, FeeSettingRootProps>(FeeSettingsDataGql, {
+//       name: "getFeeSettingsDataMutation",
+//     }),
+//     graphql<FindDueDateDataType, FeeSettingRootProps>(FindDueDateDataGql, {
+//       name: "getDueDateMutation",
+//     }),
    
     
-  )
+//   )
 
+//     (FeeSetting) as any
+// );
+
+export default graphql(CREATE_FEE_DATA_CACHE, {
+  options: ({ }) => ({
+    variables: {
+    }
+  })
+}) (withLoadingHandler(
+  compose(
+    graphql(ADD_DUE_DATE, { name: "addDueDate" }),
+    graphql(UPDATE_DUE_DATE, { name: "updateDueDate" }),
+    graphql(ADD_PAYMENT_REMAINDER, { name: "addPaymentRemainder" }),
+    graphql(UPDATE_PAYMENT_REMAINDER, { name: "updatePaymentRemainder" }),
+    graphql(ADD_LATE_FEE, { name: "addLateFee" }),
+    graphql(UPDATE_LATE_FEE, { name: "updateLateFee" }),
+    graphql(GET_FEE_SETTING_DATA, { name: "getFeeSettingsData" }),
+    graphql(GET_FEE_SETTING_DUE_DATE_DATA, { name: "getFeeSettingDueDateData" }),
+    graphql(SAVE_ALL, { name: "saveAll" })
+  )
     (FeeSetting) as any
-);
+));

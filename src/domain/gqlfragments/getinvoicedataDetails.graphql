@@ -1,4 +1,0 @@
-
-fragment getinvoicedataDetails on getInvoiceData {
-  ...getinvoicedata
-}
