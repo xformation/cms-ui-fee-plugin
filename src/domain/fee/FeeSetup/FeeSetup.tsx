@@ -457,17 +457,18 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
     }
     return false;
   }
-  saveFeeCategory(e: any) {
-    const { id, value } = e.nativeEvent.target;
-    const { addFeeCategoryMutation } = this.props;
+
+   saveFeeCategory(e: any) {
+     const { id, value } = e.nativeEvent.target;
+     const { addFeeCategory } = this.props;
     const { feeSetupData } = this.state;
     e.preventDefault();
-
-
+     feeSetupData.errorMessage = "";
+  
     let txtFcNm: any = document.querySelector("#categoryName");
     if (txtFcNm.value.trim() === "") {
-      alert("Please provide some value in category name");
-      return;
+     alert("Please provide some value in category name");
+    return;
     }
     let txtFcDs: any = document.querySelector("#description");
     if (txtFcDs.value.trim() === "") {
@@ -508,7 +509,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
       createdBy: "Application"
     };
     console.log("form data : ", feeSetupData);
-    return addFeeCategoryMutation({
+    return addFeeCategory({
       variables: { input: addFeeCategoryInput }
     }).then((data: any) => {
       console.log('Add fee category ::::: ', data);
@@ -534,7 +535,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
 
   updateFeeCategory(obj: any) {
     // const { id, value } = e.nativeEvent.target;
-    const { updateFeeCategoryMutation } = this.props;
+    const { updateFeeCategory } = this.props;
     const { feeSetupData } = this.state;
 
     let txtFcNm: any = document.querySelector("#categoryName");
@@ -575,7 +576,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
       updatedBy: "Application"
     };
     console.log("form data : ", feeSetupData);
-    return updateFeeCategoryMutation({
+    return updateFeeCategory({
       variables: { input: updateFeeCategoryInput }
     }).then((data: any) => {
       console.log('Update fee category ::::: ', data);
@@ -600,7 +601,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
 
   applyChange = (e: any, index: any, i: any) => {
       const { id, value } = e.nativeEvent.target;
-      const { addFeeDetailsMutation } = this.props;
+      const { addFeeDetails } = this.props;
       const { feeSetupData } = this.state;
       var txtName = feeSetupData.particularsName;
       var txtDesc = feeSetupData.particularsDesc;
@@ -664,7 +665,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
         feeCategoryId: feeSetupData.feeCategory.id
       };
 
-      return addFeeDetailsMutation({
+      return addFeeDetails({
         variables: { input: addFeeDetailsInput }
       }).then((data: any) => {
         console.log('Add fee details ::::: ', data);
@@ -875,7 +876,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
     bDiv.setAttribute("class", "hide");
   }
   render() {
-    const { data: { createFeeSetupDataCache, refetch }, addFeeCategoryMutation, updateFeeCategoryMutation } = this.props;
+    const { data: { createFeeSetupDataCache, refetch }, addFeeCategory, updateFeeCategoryMutation } = this.props;
     const { feeSetupData } = this.state;
     return (
 
@@ -1004,8 +1005,8 @@ export default graphql(CREATE_FEE_SETUP_DATA_CACHE, {
 }) (withLoadingHandler(
 
   compose(
-    graphql(ADD_FEE_CATEGORY, { name: "addFeeCatefory" }),
-    graphql(UPDATE_FEE_CATEGORY, { name: "updateFeeCatefory" }),
+    graphql(ADD_FEE_CATEGORY, { name: "addFeeCategory" }),
+    graphql(UPDATE_FEE_CATEGORY, { name: "updateFeeCategory" }),
     graphql(ADD_FEE_DETAILS, { name: "addFeeDetails" }),
   )
 

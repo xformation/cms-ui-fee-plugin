@@ -167,11 +167,11 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
   }
 
   getDueDate(bid: any, paymentOption: any){
-    const { getDueDateMutation } = this.props;
+    const { getFeeSettingDueDateData } = this.props;
     if(bid === ""){
       bid = -1;
     }
-    return getDueDateMutation({
+    return getFeeSettingDueDateData({
       variables: { branchId: bid, paymentType: paymentOption },
     }).then((data: any) => {
       console.log('DueDate data ::::: ', data);
@@ -228,11 +228,11 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
 
   }
   getFeeSettingsData(bid: any){
-    const { getFeeSettingsDataMutation } = this.props;
+    const { getFeeSettingsData } = this.props;
     if(bid === ""){
       bid = -1;
     }
-    return getFeeSettingsDataMutation({
+    return getFeeSettingsData({
       variables: { branchId: bid },
     }).then((data: any) => {
       console.log('FeeSettings data ::::: ', data);
@@ -621,7 +621,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
 
   saveDueDate = (e: any) => {
     const { id } = e.nativeEvent.target;
-    const { addDueDateMutation, updateDueDateMutation } = this.props;
+    const { addDueDate, updateDueDate } = this.props;
     const { feeSettingData } = this.state;
     e.preventDefault();
 
@@ -695,7 +695,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
 
     if(id === "btnSaveDueDate"){
         if(selId === null  || selId === -1){
-            return addDueDateMutation({
+            return addDueDate({
               variables: { input: addDueDateInput },
             }).then((data: any) => {
 
@@ -716,7 +716,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
               return Promise.reject(`Could not retrieve add due date data: ${error}`);
             });
         }else{
-            return updateDueDateMutation({
+            return updateDueDate({
               variables: { input: updateDueDateInput },
             }).then((data: any) => {
               // feeSettingData.dueDate.id = data.data.updateDueDate.dueDate.id;
@@ -873,7 +873,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
 
   savePaymentRem= (e: any) => {
     const { id } = e.nativeEvent.target;
-    const { addPaymentRemainderMutation, updatePaymentRemainderMutation } = this.props;
+    const { addPaymentRemainder, updatePaymentRemainder } = this.props;
     const { feeSettingData } = this.state;
     e.preventDefault();
     let txtfpd : any = document.querySelector("#txtFpPmtDays");
@@ -984,7 +984,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
 
     if(id === "btnSavePmtRem"){
       if(feeSettingData.paymentRemainder.id === null || feeSettingData.paymentRemainder.id === ""){
-        return addPaymentRemainderMutation({
+        return addPaymentRemainder({
           variables: { input: addPmtRemInput },
         }).then((data: any) => {
           feeSettingData.paymentRemainder.id = data.data.addPaymentRemainder.paymentRemainder.id;
@@ -995,7 +995,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
           return Promise.reject(`Could not retrieve add payment remainder data: ${error}`);
         });
       }else{
-        return updatePaymentRemainderMutation({
+        return updatePaymentRemainder({
           variables: { input: updatePmtRemInput },
         }).then((data: any) => {
           feeSettingData.paymentRemainder.id = data.data.updatePaymentRemainder.paymentRemainder.id;
@@ -1075,7 +1075,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
 
   saveLateFee= (e: any) => {
     const { id } = e.nativeEvent.target;
-    const { addLateFeeMutation, updateLateFeeMutation } = this.props;
+    const { addLateFee, updateLateFee } = this.props;
     const { feeSettingData } = this.state;
     e.preventDefault();
     let txtLtFdays : any = document.querySelector("#txtLtFDays");
@@ -1184,7 +1184,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
 
     if(id === "btnSaveLateFee"){
       if(feeSettingData.lateFee.id === null || feeSettingData.lateFee.id === ""){
-        return addLateFeeMutation({
+        return addLateFee({
           variables: { input: addLateFeeInput },
         }).then((data: any) => {
           feeSettingData.lateFee.id = data.data.addLateFee.lateFee.id;
@@ -1195,7 +1195,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
           return Promise.reject(`Could not retrieve add late fee data: ${error}`);
         });
       }else{
-        return updateLateFeeMutation({
+        return updateLateFee({
           variables: { input: updateLateFeeInput },
         }).then((data: any) => {
           feeSettingData.lateFee.id = data.data.updateLateFee.lateFee.id;
@@ -1219,7 +1219,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
 
   saveAll= (e: any) => {
     const { id } = e.nativeEvent.target;
-    const { saveAllMutation } = this.props;
+    const { saveDueDatePaymentRemLateFee } = this.props;
     const { feeSettingData } = this.state;
     let ddInput = this.saveDueDate(e);
     if(ddInput == null || ddInput === undefined){
@@ -1235,7 +1235,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
     }
     
     
-    return saveAllMutation({
+    return saveDueDatePaymentRemLateFee({
       variables: { inputd: ddInput,  inputp: prInput, inputl: lfInput}
     }).then((data: any) => {
       let msg = data.data.saveDueDatePaymentRemLateFee.statusDesc;
@@ -1260,7 +1260,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
   }
 
   render() {
-    const { data: { createFeeDataCache, refetch }, addDueDate, updateDueDate, addPaymentRemainder, updatePaymentRemainder, addLateFee, updateLateFee, saveAll, getDueDate} = this.props;
+    const { data: { createFeeDataCache, refetch }, addDueDate, updateDueDate, addPaymentRemainder, updatePaymentRemainder, addLateFee, updateLateFee, saveDueDatePaymentRemLateFee, getDueDate} = this.props;
     const { feeSettingData, branches } = this.state;
 
     return (
@@ -1573,7 +1573,7 @@ export default graphql(CREATE_FEE_DATA_CACHE, {
     graphql(UPDATE_LATE_FEE, { name: "updateLateFee" }),
     graphql(GET_FEE_SETTING_DATA, { name: "getFeeSettingsData" }),
     graphql(GET_FEE_SETTING_DUE_DATE_DATA, { name: "getFeeSettingDueDateData" }),
-    graphql(SAVE_ALL, { name: "saveAll" })
+    graphql(SAVE_ALL, { name: "saveDueDatePaymentRemLateFee" })
   )
     (FeeSetting) as any
 ));
