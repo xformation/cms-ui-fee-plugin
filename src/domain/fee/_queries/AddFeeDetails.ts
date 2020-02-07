@@ -15,10 +15,7 @@ export const ADD_FEE_DETAILS = gql`
       feeCategory {
         id
       }
-      batch {
-        id
-        batch
-      }
+      batchId
       facility {
         id
         name
@@ -29,10 +26,7 @@ export const ADD_FEE_DETAILS = gql`
         routeDetails
         routeMapUrl
       }
-      department {
-        id
-        name
-      }
+      departmentId
       strCreatedOn
       strUpdatedOn
       strStartDate

@@ -4,16 +4,56 @@ import { withApollo } from 'react-apollo';
 
 import { SEARCH_INVOICE_ONTYPE } from '../_queries/SearchInvoiceOnType';
 import {InvoiceListPage} from './InvoiceListPage'
-import { checkServerIdentity } from 'tls';
+import wsCmsBackendServiceSingletonClient from '../../../wsCmsBackendServiceClient';
 
-class Invoice extends React.Component<any,any> {
-    constructor(props: any) {
+
+export interface InvoiceProps extends React.HTMLAttributes<HTMLElement>{
+    [data: string]: any;
+    user?: any,
+}
+
+class Invoice<T = {[data: string]: any}> extends React.Component<InvoiceProps, any> {
+    constructor(props: InvoiceProps)  {
         super(props);
         this.state = {
             activeTab: 0,
-            invoiceList: null
+            invoiceList: null,
+            branchId: null,
+            academicYearId: null,
+            departmentId: null,
+            user: this.props.user
         };
         this.toggleTab = this.toggleTab.bind(this); 
+        this.registerSocket = this.registerSocket.bind(this);
+    }
+
+    async componentDidMount(){
+        await this.registerSocket();
+    }
+
+    registerSocket() {
+        const socket = wsCmsBackendServiceSingletonClient.getInstance();
+
+        socket.onmessage = (response: any) => {
+            let message = JSON.parse(response.data);
+            console.log("1. message received from server ::: ", message);
+            this.setState({
+                branchId: message.selectedBranchId,
+                academicYearId: message.selectedAcademicYearId,
+                departmentId: message.selectedDepartmentId,
+            });
+            console.log("1. branchId: ",this.state.branchId);
+            console.log("1. ayId: ",this.state.academicYearId);  
+        }
+    
+        socket.onopen = () => {
+           console.log("1. Opening websocekt connection on invoice index.tsx. User : ",this.state.user);
+           socket.send(this.state.user.login);
+        }
+    
+        window.onbeforeunload = () => {
+            console.log("1. Closing websocekt connection on invoice index.tsx");
+        }
     }
 
     async toggleTab (tabNo: any, inType: any) {
@@ -21,18 +61,13 @@ class Invoice extends React.Component<any,any> {
             invoiceList: null,
             activeTab: tabNo,            
         });
-        
-        let bid = 1951; 
-        let aid = 1701;
-        let cid = 1851;
 
         if(tabNo === 0 || tabNo === 1 || tabNo === 2 || tabNo === 3 ){
             const { data } = await this.props.client.query({
                 query: SEARCH_INVOICE_ONTYPE,
                 variables: { 
-                    branchId: bid,
-                    academicYearId: aid,
-                    collegeId: cid,
+                    branchId: this.state.branchId,
+                    academicYearId:  this.state.academicYearId,
                     invoiceType: inType
                  },
                  fetchPolicy: 'no-cache'
@@ -47,7 +82,7 @@ class Invoice extends React.Component<any,any> {
         });
     }
     render(){
-        const { activeTab, invoiceList} = this.state;
+        const { activeTab, invoiceList,user} = this.state;
         return(
             <section className="tab-container row vertical-tab-container">
             <Nav tabs className="pl-3 pl-3 mb-4 mt-4 col-sm-2">
@@ -76,28 +111,28 @@ class Invoice extends React.Component<any,any> {
                 <TabContent activeTab={activeTab} className="col-sm-9 border-left p-t-1"> 
                     <TabPane tabId={0}>
                         {
-                            invoiceList !== null && (
+                          user !== null && invoiceList !== null && (
                                 <InvoiceListPage type="Total Invoice" totalRecords={invoiceList.searchInvoiceOnType.length} data={invoiceList.searchInvoiceOnType}></InvoiceListPage>
                             )
                         } 
                     </TabPane>
                     <TabPane tabId={1}>
                         {
-                            invoiceList !== null && (
+                          user !== null && invoiceList !== null && (
                                 <InvoiceListPage type="Total Paid Invoice" totalRecords={invoiceList.searchInvoiceOnType.length} data={invoiceList.searchInvoiceOnType}></InvoiceListPage>
                             )
                         } 
                     </TabPane>
                     <TabPane tabId={2}>
                         {
-                            invoiceList !== null && (
+                           user !== null && invoiceList !== null && (
                                 <InvoiceListPage type="Total Unpaid Invoice" totalRecords={invoiceList.searchInvoiceOnType.length} data={invoiceList.searchInvoiceOnType}></InvoiceListPage>
                             )
                         } 
                     </TabPane>
                     <TabPane tabId={3}>
                         {
-                            invoiceList !== null && (
+                           user !== null && invoiceList !== null && (
                                 <InvoiceListPage type="Total Cancelled Invoice" totalRecords={invoiceList.searchInvoiceOnType.length} data={invoiceList.searchInvoiceOnType}></InvoiceListPage>
                             )
                         } 

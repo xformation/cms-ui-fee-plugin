@@ -1,10 +1,11 @@
 import DatePicker from 'react-datepicker';
 import * as moment from 'moment';
 import * as React from 'react';
-import { graphql, MutationFunc, QueryProps, compose } from 'react-apollo';
+import { graphql, MutationFunc, QueryProps, compose, withApollo } from 'react-apollo';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { ADD_FEE_CATEGORY, UPDATE_FEE_CATEGORY, ADD_FEE_DETAILS, CREATE_FEE_SETUP_DATA_CACHE } from '../_queries';
 import withLoadingHandler from '../withLoadingHandler';
+import wsCmsBackendServiceSingletonClient from '../../../wsCmsBackendServiceClient';
 
 // import * as FeeCategoryAddMutation from './FeeCategoryAddMutation.graphql';
 // import * as FeeCategoryUpdateMutation from './FeeCategoryUpdateMutation.graphql';
@@ -46,40 +47,45 @@ type FeeSetupState = {
   endDate: any,
   add: any,
   update: any
+  user: any;
+  feeFilterCacheList: any;
   // branches: any
+  branchId: any;
+  academicYearId: any;
+  departmentId: any;
 }
 
-class FeeSetup extends React.Component<any, FeeSetupState>{
-  constructor(props: any) {
+export interface FeeProps extends React.HTMLAttributes<HTMLElement> {
+  [data: string]: any;
+  user?: any;
+  feeFilterCacheList?: any;
+  
+}
+
+class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
+  constructor(props: FeeProps) {
     super(props);
     this.state = {
+      user: this.props.user,
+      feeFilterCacheList: this.props.feeFilterCacheList,
+      branchId: null,
+      academicYearId: null,
+      departmentId: null,
       feeSetupData: {
         categoryName: "",
         description: "",
-        branch: {
-          id: 1951
-        },
-        feeCategory: {
-          id: ""
-        },
-        department: {
-          id: ""
-        },
-        batch: {
-          id: ""
-        },
-        studentType: {
-          id: ""
-        },
-        gender: {
-          id: ""
-        },
-        facility: {
-          id: ""
-        },
-        transportRoute: {
-          id: ""
-        },
+        // branch: {
+        //   id: 1951
+        // },
+        feeCategory: {id: ''},
+        // department: {
+        //   id: ""
+        // },
+        batch: {id: '' },
+        studentType: {  id: '' },
+        gender: {   id: '' },
+        facility: { id: ''},
+        transportRoute: { id: '' },
         feeCategoryData: [],
         particularsName: "",
         particularsDesc: "",
@@ -94,6 +100,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
       add: false,
       update: false
     }
+    this.registerSocket = this.registerSocket.bind(this);
     this.createApplicableTo = this.createApplicableTo.bind(this);
     this.createParticularDiv = this.createParticularDiv.bind(this);
     this.saveFeeCategory = this.saveFeeCategory.bind(this);
@@ -119,51 +126,106 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
     this.isDatesOverlap = this.isDatesOverlap.bind(this);
   }
 
+  async componentDidMount(){
+    await this.registerSocket();
+  }
+
+  registerSocket() {
+    const socket = wsCmsBackendServiceSingletonClient.getInstance();
+
+    socket.onmessage = (response: any) => {
+        let message = JSON.parse(response.data);
+        console.log("FeeSetUp. message received from server ::: ", message);
+        this.setState({
+            branchId: message.selectedBranchId,
+            academicYearId: message.selectedAcademicYearId,
+            departmentId: message.selectedDepartmentId,
+        });
+        console.log("FeeSetUp. branchId: ",this.state.branchId);
+        console.log("FeeSetUp. departmentId: ",this.state.departmentId);  
+        console.log("FeeSetUp. ayId: ",this.state.academicYearId);  
+    }
+
+    socket.onopen = () => {
+        console.log("FeeSetUp. Opening websocekt connection to cmsbackend. User : ",this.state.user.login);
+        socket.send(this.state.user.login);
+    }
+
+    window.onbeforeunload = () => {
+        console.log("FeeSetUp. Closing websocket connection with cms backend service");
+    }
+  }
+
   createDepartments(departments: any) {
-    let departmentsOptions = [<option key={0} value="">Select department</option>];
+    let departmentsOptions = [
+      <option key={0} value="">
+        Select Department
+      </option>,
+    ];
     for (let i = 0; i < departments.length; i++) {
       departmentsOptions.push(
-        <option key={departments[i].id} value={departments[i].id}>{departments[i].name}</option>
+        <option key={departments[i].id} value={departments[i].id}>
+          {departments[i].name}
+        </option>
       );
     }
     return departmentsOptions;
   }
 
   createBatches(batches: any, selectedDepartmentId: any) {
-    let batchesOptions = [<option key={0} value="">Select Year</option>];
+    let batchesOptions = [
+      <option key={0} value="">
+        Select Year
+      </option>,
+    ];
     for (let i = 0; i < batches.length; i++) {
       let id = batches[i].id;
-      let dptId = "" + batches[i].department.id;
-      // if (dptId == selectedDepartmentId) {
-      batchesOptions.push(
-        <option key={id} value={id}>{batches[i].batch}</option>
-      );
-      // }
+      let dptId = '' + batches[i].department.id;
+      if (dptId == selectedDepartmentId) {
+        batchesOptions.push(
+          <option key={id} value={id}>
+            {batches[i].batch}
+          </option>
+        );
+      }
     }
     return batchesOptions;
   }
 
   createStudentTypes(studentTypes: any) {
-    let studentTypesOptions = [<option key={0} value="">Select Student Type</option>];
+    let studentTypesOptions = [
+      <option key={0} value="">
+        Select studentType
+      </option>,
+    ];
     for (let i = 0; i < studentTypes.length; i++) {
       let id = studentTypes[i].id;
       studentTypesOptions.push(
-        <option key={id} value={studentTypes[i].description}>{studentTypes[i].description}</option>
+        <option key={id} value={studentTypes[i].description}>
+          {studentTypes[i].description}
+        </option>
       );
     }
     return studentTypesOptions;
   }
 
   createGenders(genders: any) {
-    let gendersOptions = [<option key={0} value="">Select Gender</option>];
+    let gendersOptions = 
+    [
+    <option key={0} value="">
+      Select Gender
+    </option>];
     for (let i = 0; i < genders.length; i++) {
       let id = genders[i].id;
       gendersOptions.push(
-        <option key={id} value={genders[i].description}>{genders[i].description}</option>
+        <option key={id} value={genders[i].description}>
+          {genders[i].description}
+        </option>
       );
     }
     return gendersOptions;
   }
+  
   createFacility(facility: any) {
     let facilityOptions = [<option key={0} value="">Select Facility</option>];
     for (let i = 0; i < facility.length; i++) {
@@ -299,7 +361,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
   }
 
   createApplicableTo(cnt: any, index: any, ) {
-    const { feeSetupData } = this.state;
+    const { feeSetupData ,feeFilterCacheList,departmentId} = this.state;
     const retVal = [];
     let isHidden = this.state.toggle[index];
     for (let i = 0; i < cnt; i++) {
@@ -309,28 +371,29 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
             <h5>Applicable To</h5>
           </div>
           <div className="m-1 col-md-5 feeSelect">
-            <div>
+            {/* <div>
               <label htmlFor="">Department</label>
               <select required name={`department-${index}-${i}`} id={`department-${index}-${i}`} className="gf-form-input max-width-8">
-                {this.createDepartments(this.props.data.createFeeSetupDataCache.departments)}
+                {this.createDepartments(feeFilterCacheList.departments)}
               </select>
-            </div>
+            </div> */}
+
             <div>
               <label htmlFor="">Year</label>
               <select required name={`batch-${index}-${i}`} id={`batch-${index}-${i}`} className="gf-form-input max-width-8">
-                {this.createBatches(this.props.data.createFeeSetupDataCache.batches, feeSetupData.department.id)}
+                {this.createBatches(feeFilterCacheList.batches, departmentId)}
               </select>
             </div>
             <div>
               <label htmlFor="">Student type</label>
               <select required name={`studentType-${index}-${i}`} id={`studentType-${index}-${i}`} className="gf-form-input max-width-8">
-                {this.createStudentTypes(this.props.data.createFeeSetupDataCache.studentTypes)}
+                {this.createStudentTypes(feeFilterCacheList.studentTypes)}
               </select>
             </div>
             <div>
               <label htmlFor="">Gender</label>
               <select required name={`gender-${index}-${i}`} id={`gender-${index}-${i}`} className="gf-form-input max-width-8">
-                {this.createGenders(this.props.data.createFeeSetupDataCache.genders)}
+                {this.createGenders(feeFilterCacheList.genders)}
               </select>
             </div>
             {/* <div>
@@ -458,10 +521,10 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
     return false;
   }
 
-   saveFeeCategory(e: any) {
+   async saveFeeCategory(e: any) {
      const { id, value } = e.nativeEvent.target;
      const { addFeeCategory } = this.props;
-    const { feeSetupData } = this.state;
+    const { feeSetupData,branchId } = this.state;
     e.preventDefault();
      feeSetupData.errorMessage = "";
   
@@ -505,12 +568,15 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
       status: status,
       startDate: stDate,
       endDate: enDate,
-      branchId: feeSetupData.branch.id,
+      branchId: branchId,
       createdBy: "Application"
     };
     console.log("form data : ", feeSetupData);
-    return addFeeCategory({
-      variables: { input: addFeeCategoryInput }
+    await this.props.client.mutate({
+      mutation: ADD_FEE_CATEGORY,
+      variables: { 
+          input: addFeeCategoryInput
+      },
     }).then((data: any) => {
       console.log('Add fee category ::::: ', data);
       alert("Fee category added successfully!");
@@ -533,10 +599,11 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
     });
   }
 
-  updateFeeCategory(obj: any) {
+  
+  async updateFeeCategory(obj: any) {
     // const { id, value } = e.nativeEvent.target;
     const { updateFeeCategory } = this.props;
-    const { feeSetupData } = this.state;
+    const { feeSetupData ,branchId} = this.state;
 
     let txtFcNm: any = document.querySelector("#categoryName");
     if (txtFcNm.value.trim() === "") {
@@ -572,12 +639,15 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
       status: status,
       startDate: stDate,
       endDate: enDate,
-      branchId: feeSetupData.branch.id,
+      branchId: branchId,
       updatedBy: "Application"
     };
     console.log("form data : ", feeSetupData);
-    return updateFeeCategory({
-      variables: { input: updateFeeCategoryInput }
+    await this.props.client.mutate({
+      mutation: UPDATE_FEE_CATEGORY,
+      variables: { 
+          input: updateFeeCategoryInput
+      },
     }).then((data: any) => {
       console.log('Update fee category ::::: ', data);
       alert("Fee category updated successfully!");
@@ -599,10 +669,10 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
     });
   }
 
-  applyChange = (e: any, index: any, i: any) => {
+  applyChange = async (e: any, index: any, i: any) => {
       const { id, value } = e.nativeEvent.target;
       const { addFeeDetails } = this.props;
-      const { feeSetupData } = this.state;
+      const { feeSetupData,departmentId } = this.state;
       var txtName = feeSetupData.particularsName;
       var txtDesc = feeSetupData.particularsDesc;
       var amt = feeSetupData.amount["amount-"+index+"-"+i];
@@ -618,7 +688,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
         alert("Please provide some value in amount");
         return;
       }
-      let optDpt : any = document.querySelector("#department-"+index+"-"+i);
+      // let optDpt : any = document.querySelector("#department-"+index+"-"+i);
       let optBth : any = document.querySelector("#batch-"+index+"-"+i);
       let optStp : any = document.querySelector("#studentType-"+index+"-"+i);
       let optGdr : any = document.querySelector("#gender-"+index+"-"+i);
@@ -631,9 +701,9 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
       let gndVal = null;
       // let fclVal = null;
       // let trtVal = null;
-      if(optDpt.options[optDpt.options.selectedIndex].value !== ""){
-        dptVal = optDpt.options[optDpt.options.selectedIndex].value;
-      }
+      // if(optDpt.options[optDpt.options.selectedIndex].value !== ""){
+      //   dptVal = optDpt.options[optDpt.options.selectedIndex].value;
+      // }
       if(optBth.options[optBth.options.selectedIndex].value !== ""){
         bthVal = optBth.options[optBth.options.selectedIndex].value;
       }
@@ -652,7 +722,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
       let addFeeDetailsInput = {
         feeParticularsName: txtName,
         feeParticularDesc: txtDesc,
-        departmentId: dptVal,
+        departmentId: departmentId,
         batchId: bthVal,
         studentType: stpVal,
         gender: gndVal,
@@ -665,8 +735,11 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
         feeCategoryId: feeSetupData.feeCategory.id
       };
 
-      return addFeeDetails({
-        variables: { input: addFeeDetailsInput }
+      await this.props.client.mutate({
+        mutation: ADD_FEE_DETAILS,
+        variables: { 
+            input: addFeeDetailsInput
+        },
       }).then((data: any) => {
         console.log('Add fee details ::::: ', data);
         alert("Fee detail applied successfully!");
@@ -855,6 +928,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
     this.showParticularDiv(e);
 
   }
+
   back() {
     let { count, countParticularDiv } = this.state;
     countParticularDiv = 0;
@@ -876,8 +950,8 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
     bDiv.setAttribute("class", "hide");
   }
   render() {
-    const { data: { createFeeSetupDataCache, refetch }, addFeeCategory, updateFeeCategoryMutation } = this.props;
-    const { feeSetupData } = this.state;
+    const {  addFeeCategory, updateFeeCategoryMutation } = this.props;
+    const { feeSetupData ,feeFilterCacheList} = this.state;
     return (
 
       <section className="plugin-bg-white p-1">
@@ -977,7 +1051,7 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
               }
               {
                 feeSetupData.feeCategoryData.length === 0 && this.state.add === false && this.state.update === false && (
-                  this.createFeeCategoryRowFromCache(this.props.data.createFeeSetupDataCache.feeCategory)
+                  this.createFeeCategoryRowFromCache(feeFilterCacheList.feeCategory)
                 )
               }
             </tbody>
@@ -995,20 +1069,5 @@ class FeeSetup extends React.Component<any, FeeSetupState>{
 
 // export default FeeSetup;
 
-export default graphql(CREATE_FEE_SETUP_DATA_CACHE, {
-  options: ({ }) => ({
-    variables: {
-      academicYearId: 1701,
-      branchId: 1951
-    }
-  })
-}) (withLoadingHandler(
-
-  compose(
-    graphql(ADD_FEE_CATEGORY, { name: "addFeeCategory" }),
-    graphql(UPDATE_FEE_CATEGORY, { name: "updateFeeCategory" }),
-    graphql(ADD_FEE_DETAILS, { name: "addFeeDetails" }),
-  )
-
-    (FeeSetup) as any
-));
+// 
+export default withApollo(FeeSetup)

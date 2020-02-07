@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const CREATE_FEE_SETUP_DATA_CACHE = gql`
-  query createFeeSetupDataCache($branchId: String!, $academicYearId: String!) {
+  query createFeeSetupDataCache($branchId: Long, $academicYearId: Long) {
     createFeeSetupDataCache(branchId: $branchId, academicYearId: $academicYearId) {
       departments {
         id
@@ -42,11 +42,8 @@ export const CREATE_FEE_SETUP_DATA_CACHE = gql`
         updatedBy
         updatedOn
         startDate
+        branchId
         endDate
-        branch {
-          id
-          branchName
-        }
         strCreatedOn
         strUpdatedOn
         strStartDate

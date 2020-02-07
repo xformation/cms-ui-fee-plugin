@@ -13,10 +13,7 @@ export const ADD_FEE_CATEGORY = gql`
       updatedOn
       startDate
       endDate
-      branch {
-        id
-        branchName
-      }
+      branchId
       strCreatedOn
       strUpdatedOn
       strStartDate
