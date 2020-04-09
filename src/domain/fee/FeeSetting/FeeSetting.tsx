@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { graphql, QueryProps, MutationFunc, compose } from 'react-apollo';
+import { graphql, QueryProps, MutationFunc, compose, withApollo } from 'react-apollo';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { CREATE_FEE_DATA_CACHE, ADD_DUE_DATE, UPDATE_DUE_DATE, GET_FEE_SETTING_DUE_DATE_DATA, GET_FEE_SETTING_DATA, ADD_LATE_FEE, UPDATE_LATE_FEE, ADD_PAYMENT_REMAINDER, UPDATE_PAYMENT_REMAINDER, SAVE_ALL } from '../_queries';
 import withLoadingHandler from '../withLoadingHandler';
-
+import wsCmsBackendServiceSingletonClient from '../../../wsCmsBackendServiceClient';
+import { commonFunctions } from '../_utilites/common.functions';
+import { FaCodeBranch } from 'react-icons/fa';
 // import * as DueDateAddMutationGql from './DueDateAddMutation.graphql';
 // import * as DueDateUpdateMutationGql from './DueDateUpdateMutation.graphql';
 // import * as PaymentRemainderAddMutationGql from './PaymentRemainderAddMutation.graphql';
@@ -57,20 +59,34 @@ import withLoadingHandler from '../withLoadingHandler';
 
 type FeeSettingState = {
   feeSettingData: any,
-  branches: any
+  branches: any,
+  user: any;
+  branchId: any;
+  academicYearId: any;
+  departmentId: any;
 }
 
-class FeeSetting extends React.Component<any, FeeSettingState>{
-  constructor(props: any) {
+export interface FeeSettingProps extends React.HTMLAttributes<HTMLElement> {
+  [data: string]: any;
+  user?: any;
+}
+
+
+class FeeSetting extends React.Component<FeeSettingProps, FeeSettingState>{
+  constructor(props: FeeSettingProps) {
     super(props);
     this.state = {
+      user: this.props.user,
+      branchId: null,
+      academicYearId: null,
+      departmentId: null,
       feeSettingData: {
-        college: {
-          id: ""
-        },
-        branch: {
-          id: ""
-        },
+        // college: {
+        //   id: ""
+        // },
+        // branch: {
+        //   id: ""
+        // },
         paymentOption: {
           id: ""
         },
@@ -155,7 +171,9 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
       },
       branches: []
     };
-    this.createBranches = this.createBranches.bind(this);
+    this.registerSocket = this.registerSocket.bind(this);
+    // this.getCollege = this.getCollege.bind(this);
+    // this.createBranches = this.createBranches.bind(this);
     this.checkFeeCheckbox = this.checkFeeCheckbox.bind(this);
     this.getFeeSettingsData = this.getFeeSettingsData.bind(this);
     this.initPage = this.initPage.bind(this);
@@ -163,16 +181,64 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
     this.initPaymentRemainder = this.initPaymentRemainder.bind(this);
     this.getDueDate = this.getDueDate.bind(this);
     this.initDueDate = this.initDueDate.bind(this);
-    this.createColleges = this.createColleges.bind(this);
+    this.saveDueDate = this.saveDueDate.bind(this);
+    this.savePaymentRem = this.savePaymentRem.bind(this);
+    this.saveLateFee = this.saveLateFee.bind(this);
+    this.saveAll = this.saveAll.bind(this);
+
+    // this.createColleges = this.createColleges.bind(this);
   }
 
-  getDueDate(bid: any, paymentOption: any){
-    const { getFeeSettingDueDateData } = this.props;
+  async componentDidMount(){
+    await this.registerSocket();
+    // await this.getCollege();
+  }
+
+  registerSocket() {
+    const socket = wsCmsBackendServiceSingletonClient.getInstance();
+
+    socket.onmessage = (response: any) => {
+        let message = JSON.parse(response.data);
+        console.log("FeeSetting. message received from server ::: ", message);
+        this.setState({
+            branchId: message.selectedBranchId,
+            academicYearId: message.selectedAcademicYearId,
+            departmentId: message.selectedDepartmentId,
+        });
+        console.log("FeeSetting. branchId: ",this.state.branchId);
+        console.log("FeeSetting. departmentId: ",this.state.departmentId);  
+        console.log("FeeSetting. ayId: ",this.state.academicYearId);  
+    }
+
+    socket.onopen = () => {
+        console.log("FeeSetting. Opening websocekt connection to cmsbackend. User : ",this.state.user.login);
+        socket.send(this.state.user.login);
+    }
+
+    window.onbeforeunload = () => {
+        console.log("FeeSetting. Closing websocket connection with cms backend service");
+    }
+  }
+
+  // getCollege() {
+  //   const requestOptions = commonFunctions.getRequestOptions("GET", {});
+  //   return fetch(`http://localhost:9091/api/college`, requestOptions)
+  //       .then(response => response.json())
+  //       .then(data =>{
+  //         console.log(data);
+  //       })
+  // }
+  
+  async getDueDate(bid: any, paymentOption: any){
+    const { getFeeSettingDueDateData,branchId } = this.props;
     if(bid === ""){
       bid = -1;
     }
-    return getFeeSettingDueDateData({
-      variables: { branchId: bid, paymentType: paymentOption },
+    await this.props.client.mutate({
+      mutation: GET_FEE_SETTING_DUE_DATE_DATA,
+      variables: { 
+        branchId: branchId, paymentType: paymentOption ,
+      },
     }).then((data: any) => {
       console.log('DueDate data ::::: ', data);
       let ddd = data.data.getFeeSettingDueDateData;
@@ -227,13 +293,16 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
     });
 
   }
-  getFeeSettingsData(bid: any){
+  async getFeeSettingsData(bid: any){
     const { getFeeSettingsData } = this.props;
     if(bid === ""){
       bid = -1;
     }
-    return getFeeSettingsData({
-      variables: { branchId: bid },
+    await this.props.client.mutate({
+      mutation: GET_FEE_SETTING_DATA,
+      variables: { 
+         branchId: bid ,
+      },
     }).then((data: any) => {
       console.log('FeeSettings data ::::: ', data);
       let fsdt = data.data.getFeeSettingData;
@@ -249,55 +318,58 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
     this.initPaymentRemainder(data);
   }
   
-  createColleges(colleges: any){
-    let collegessOptions = [<option key={0} value="">Select College</option>];
-    for (let i = 0; i < colleges.length; i++) {
-      collegessOptions.push(
-        <option key={colleges[i].id} value={colleges[i].id}>{colleges[i].shortName}</option>
-      );
-    }
-    return collegessOptions;
-  }
-  createBranches(branches: any, selectedCollegeId: any) {
-    let branchesOptions = [<option key={0} value="">Select Branch</option>];
-    for (let i = 0; i < branches.length; i++) {
-      let clgId = ""+branches[i].college.id;
-      if(selectedCollegeId === clgId){
-        branchesOptions.push(
-          <option key={branches[i].id} value={branches[i].id}>{branches[i].branchName}</option>
-        );
-      }
+  // createColleges(colleges: any){
+  //   let collegessOptions = [<option key={0} value="">Select College</option>];
+  //   for (let i = 0; i < colleges.length; i++) {
+  //     collegessOptions.push(
+  //       <option key={colleges[i].id} value={colleges[i].id}>{colleges[i].id}</option>
+  //     );
+  //   }
+  //   return collegessOptions;
+  // }
+
+  
+  // createBranches(branches: any, selectedCollegeId: any) {
+  //   let branchesOptions = [<option key={0} value="">Select Branch</option>];
+  //   for (let i = 0; i < branches.length; i++) {
+  //     let clgId = ""+branches[i].college.id;
+  //     if(selectedCollegeId === clgId){
+  //       branchesOptions.push(
+  //         <option key={branches[i].id} value={branches[i].id}>{branches[i].branchName}</option>
+  //       );
+  //     }
       
-    }
-    return branchesOptions;
-  }
+  //   }
+  //   return branchesOptions;
+  // }
   
   onChange = (e: any) => {
     const { name, value } = e.nativeEvent.target;
-    const { feeSettingData } = this.state;
-    if(name === "college"){
-      this.setState({
-        feeSettingData: {
-          ...feeSettingData,
-          college: {
-            id: value
-          },
-          branch: {
-            id: ""
-          }
-        }
-      });
-    }else if (name === "branch") {
-      this.setState({
-        feeSettingData: {
-          ...feeSettingData,
-          branch: {
-            id: value
-          }
-        }
-      });
-      this.getFeeSettingsData(value);
-    }else if (name === "paymentOption") {
+    const { feeSettingData ,branchId} = this.state;
+    // if(name === "college"){
+    //   this.setState({
+    //     feeSettingData: {
+    //       ...feeSettingData,
+    //       college: {
+    //         id: value
+    //       },
+    //       branch: {
+    //         id: ""
+    //       }
+    //     }
+    //   });
+    // }else if (name === "branch") {
+    //   this.setState({
+    //     feeSettingData: {
+    //       ...feeSettingData,
+    //       branch: {
+    //         id: value
+    //       }
+    //     }
+    //   });
+    //   this.getFeeSettingsData(value);
+    // }
+    if (name === "paymentOption") {
       let ins: any = document.querySelector("#installments");
       let dd : any = document.querySelector("#dayOfInstallment");
       let fr : any = document.querySelector("#frequency");
@@ -325,7 +397,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
             // }
           }
         });
-        this.getDueDate(feeSettingData.branch.id, value);
+        this.getDueDate(branchId, value);
       }else{
         ins.removeAttribute("disabled");
         dd.removeAttribute("disabled");
@@ -338,7 +410,7 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
             }
           }
         });
-        this.getDueDate(feeSettingData.branch.id, value);
+        this.getDueDate(branchId, value);
       }
       
     }else if (name === "installments") {
@@ -616,16 +688,17 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
           }
         }
       });
+       this.getFeeSettingsData(value);
     }
   }
 
-  saveDueDate = (e: any) => {
+  saveDueDate = async (e: any) => {
     const { id } = e.nativeEvent.target;
     const { addDueDate, updateDueDate } = this.props;
-    const { feeSettingData } = this.state;
+    const { feeSettingData,branchId } = this.state;
     e.preventDefault();
 
-    if(feeSettingData.branch.id === ""){
+    if(branchId === ""){
       alert("Please select branch");
       return;
     }else if(feeSettingData.paymentOption.id === ""){
@@ -665,8 +738,8 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
     }
 
     let addDueDateInput = {
-      branchId: feeSettingData.branch.id,
-      collegeId: feeSettingData.college.id,
+      branchId: branchId,
+      // collegeId: feeSettingData.college.id,
       paymentMethod: feeSettingData.paymentOption.id,
       installments: feeSettingData.installments.id,
       dayDesc: dayDescription,
@@ -684,8 +757,8 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
 
     let updateDueDateInput = {
       id: selId,
-      branchId: feeSettingData.branch.id,
-      collegeId: feeSettingData.college.id,
+      branchId: branchId,
+      // collegeId: feeSettingData.college.id,
       paymentMethod: feeSettingData.paymentOption.id,
       installments: feeSettingData.installments.id,
       dayDesc: dayDescription,
@@ -695,9 +768,12 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
 
     if(id === "btnSaveDueDate"){
         if(selId === null  || selId === -1){
-            return addDueDate({
-              variables: { input: addDueDateInput },
-            }).then((data: any) => {
+          await this.props.client.mutate({
+            mutation: ADD_DUE_DATE,
+            variables: { 
+                input: addDueDateInput
+            },
+          }).then((data: any) => {
 
               if(data.data.addDueDate.dueDate.paymentMethod === "INSTALLMENTS"){
                 feeSettingData.ddIds.key_installment = data.data.addDueDate.dueDate.id;
@@ -716,9 +792,12 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
               return Promise.reject(`Could not retrieve add due date data: ${error}`);
             });
         }else{
-            return updateDueDate({
-              variables: { input: updateDueDateInput },
-            }).then((data: any) => {
+          await this.props.client.mutate({
+            mutation: UPDATE_DUE_DATE,
+            variables: { 
+                input: updateDueDateInput
+            },
+          }).then((data: any) => {
               // feeSettingData.dueDate.id = data.data.updateDueDate.dueDate.id;
               if(data.data.updateDueDate.dueDate.paymentMethod === "INSTALLMENTS"){
                 feeSettingData.ddIds.key_installment = data.data.updateDueDate.dueDate.id;
@@ -871,14 +950,14 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
     });
   }
 
-  savePaymentRem= (e: any) => {
+  savePaymentRem= async (e: any) => {
     const { id } = e.nativeEvent.target;
     const { addPaymentRemainder, updatePaymentRemainder } = this.props;
-    const { feeSettingData } = this.state;
+    const { feeSettingData,branchId } = this.state;
     e.preventDefault();
     let txtfpd : any = document.querySelector("#txtFpPmtDays");
     let txtscd : any = document.querySelector("#txtScPmtDays");
-    if(feeSettingData.branch.id === ""){
+    if(branchId === ""){
       alert("Please select branch");
       return;
     }
@@ -958,8 +1037,8 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
       overDuePaymentRemainderAfterDueDateOrUntilPaid: odP,
       isRemainderRecipients: isRr,
       remainderRecipients: rr,
-      collegeId: feeSettingData.college.id,
-      branchId: feeSettingData.branch.id
+      // collegeId: feeSettingData.college.id,
+      branchId: branchId
     };
 
     let selPrId = -1;
@@ -978,14 +1057,17 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
       overDuePaymentRemainderAfterDueDateOrUntilPaid: odP,
       isRemainderRecipients: isRr,
       remainderRecipients: rr,
-      collegeId: feeSettingData.college.id,
-      branchId: feeSettingData.branch.id
+      // collegeId: feeSettingData.college.id,
+      branchId: branchId
     };
 
     if(id === "btnSavePmtRem"){
       if(feeSettingData.paymentRemainder.id === null || feeSettingData.paymentRemainder.id === ""){
-        return addPaymentRemainder({
-          variables: { input: addPmtRemInput },
+        await this.props.client.mutate({
+          mutation: ADD_PAYMENT_REMAINDER,
+          variables: { 
+              input: addPmtRemInput
+          },
         }).then((data: any) => {
           feeSettingData.paymentRemainder.id = data.data.addPaymentRemainder.paymentRemainder.id;
           console.log('Add payment remainder result ::::: ', data);
@@ -995,8 +1077,11 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
           return Promise.reject(`Could not retrieve add payment remainder data: ${error}`);
         });
       }else{
-        return updatePaymentRemainder({
-          variables: { input: updatePmtRemInput },
+        await this.props.client.mutate({
+          mutation: UPDATE_PAYMENT_REMAINDER,
+          variables: { 
+              input: updatePmtRemInput
+          },
         }).then((data: any) => {
           feeSettingData.paymentRemainder.id = data.data.updatePaymentRemainder.paymentRemainder.id;
           console.log('Update payment remainder result ::::: ', data);
@@ -1073,17 +1158,17 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
     });
   }
 
-  saveLateFee= (e: any) => {
+  saveLateFee= async (e: any) => {
     const { id } = e.nativeEvent.target;
     const { addLateFee, updateLateFee } = this.props;
-    const { feeSettingData } = this.state;
+    const { feeSettingData,branchId } = this.state;
     e.preventDefault();
     let txtLtFdays : any = document.querySelector("#txtLtFDays");
     let txtFlFee : any = document.querySelector("#txtFixedLateFee");
     let txtPlFee : any = document.querySelector("#txtPercentLateFee");
     let txtLtFRpdays : any = document.querySelector("#txtLtFeeRptDays");
 
-    if(feeSettingData.branch.id === ""){
+    if(branchId === ""){
       alert("Please select branch");
       return;
     }
@@ -1161,8 +1246,8 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
       percentCharges: prChrg,
       lateFeeFrequency: ltFeeFrq,
       lateFeeRepeatDays: lfFeeRd,
-      collegeId: feeSettingData.college.id,
-      branchId: feeSettingData.branch.id
+      // collegeId: feeSettingData.college.id,
+      branchId: branchId
     };
 
     let selLfId = -1;
@@ -1178,14 +1263,17 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
       percentCharges: prChrg,
       lateFeeFrequency: ltFeeFrq,
       lateFeeRepeatDays: lfFeeRd,
-      collegeId: feeSettingData.college.id,
-      branchId: feeSettingData.branch.id
+      // collegeId: feeSettingData.college.id,
+      branchId: branchId
     };
 
     if(id === "btnSaveLateFee"){
       if(feeSettingData.lateFee.id === null || feeSettingData.lateFee.id === ""){
-        return addLateFee({
-          variables: { input: addLateFeeInput },
+        await this.props.client.mutate({
+          mutation: ADD_LATE_FEE,
+          variables: { 
+              input: addLateFeeInput
+          },
         }).then((data: any) => {
           feeSettingData.lateFee.id = data.data.addLateFee.lateFee.id;
           console.log('Add late fee result ::::: ', data);
@@ -1195,8 +1283,11 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
           return Promise.reject(`Could not retrieve add late fee data: ${error}`);
         });
       }else{
-        return updateLateFee({
-          variables: { input: updateLateFeeInput },
+        await this.props.client.mutate({
+          mutation: UPDATE_LATE_FEE,
+          variables: { 
+              input: updateLateFeeInput
+          },
         }).then((data: any) => {
           feeSettingData.lateFee.id = data.data.updateLateFee.lateFee.id;
           console.log('Update late fee result ::::: ', data);
@@ -1217,9 +1308,9 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
 
   }
 
-  saveAll= (e: any) => {
+  saveAll= async (e: any) => {
     const { id } = e.nativeEvent.target;
-    const { saveDueDatePaymentRemLateFee } = this.props;
+    const { saveDueDatePaymentRemLateFee  } = this.props;
     const { feeSettingData } = this.state;
     let ddInput = this.saveDueDate(e);
     if(ddInput == null || ddInput === undefined){
@@ -1235,10 +1326,18 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
     }
     
     
-    return saveDueDatePaymentRemLateFee({
-      variables: { inputd: ddInput,  inputp: prInput, inputl: lfInput}
+    await this.props.client.mutate({
+      mutation: SAVE_ALL,
+      variables: { 
+        variables: { 
+           inputd: ddInput, 
+           inputp: prInput, 
+           inputl: lfInput
+          }
+      },
     }).then((data: any) => {
       let msg = data.data.saveDueDatePaymentRemLateFee.statusDesc;
+      console.log("MSG ::::",msg);
       let msgAry = msg.split(",");
       if(feeSettingData.paymentOption.id === "INSTALLMENTS"){
         feeSettingData.ddIds.key_installment = msgAry[0].split(":")[1].trim();
@@ -1259,32 +1358,33 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
     });
   }
 
+
   render() {
-    const { data: { createFeeDataCache, refetch }, addDueDate, updateDueDate, addPaymentRemainder, updatePaymentRemainder, addLateFee, updateLateFee, saveDueDatePaymentRemLateFee, getDueDate} = this.props;
+    const {  addDueDate, updateDueDate, addPaymentRemainder, updatePaymentRemainder, addLateFee, updateLateFee, saveDueDatePaymentRemLateFee, getDueDate} = this.props;
     const { feeSettingData, branches } = this.state;
 
     return (
       <section className="plugin-bg-white p-1">
         <div className="bg-heading px-1 dfinline m-b-1">
-          <h5 className="mtf-8 dark-gray">Fee Settngs</h5>
+          <h5 className="mtf-8 dark-gray">Fee Settings</h5>
         </div>
         <div className="b-1 feeCategory">
           <form action="" className="grid">
             <h4 className="bg-heading p-1">Due Date</h4>
-            <div className="border FirstRow p-1">
+            {/* <div className="border FirstRow p-1">
                 <div>
                   <label htmlFor="">College</label>
-                  <select required name="college" id="college" onChange={this.onChange} value={feeSettingData.college.id} >
-                      {this.createColleges(this.props.data.createFeeDataCache.colleges)}
-                    </select>
+                  <select required name="branch" id="branch" onChange={this.onChange} value={feeSettingData.branch.id} >
+                  <option value="">Select College</option>
+                  </select>
                 </div>
                 <div>
                   <label htmlFor="">Branch</label>
                   <select required name="branch" id="branch" onChange={this.onChange} value={feeSettingData.branch.id} >
-                      {this.createBranches(this.props.data.createFeeDataCache.branches, feeSettingData.college.id)}
+                      {this.createBranches(feeSettingFilterCacheList.branches)}
                     </select>
                 </div>
-            </div>
+            </div> */}
             <div className="border FirstRow p-1">
               <div>
                 <label htmlFor="">Payment Method</label>
@@ -1508,9 +1608,9 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
                 <button className="btn btn-primary" type="button" id="btnSaveLateFee" name="btnSaveLateFee" onClick={this.saveLateFee} style={{width: '188px'}}>Save Late Fee</button>
               </div>
             </div>
-            <div className="feeFlexEnd">
+            {/* <div className="feeFlexEnd">
                 <button className="btn btn-primary" type="button" id="btnSaveAll" name="btnSaveAll"  onClick={this.saveAll} style={{width: '188px'}}>Save All</button>
-            </div>
+            </div> */}
           </form>
         </div>
 
@@ -1558,22 +1658,23 @@ class FeeSetting extends React.Component<any, FeeSettingState>{
 //     (FeeSetting) as any
 // );
 
-export default graphql(CREATE_FEE_DATA_CACHE, {
-  options: ({ }) => ({
-    variables: {
-    }
-  })
-}) (withLoadingHandler(
-  compose(
-    graphql(ADD_DUE_DATE, { name: "addDueDate" }),
-    graphql(UPDATE_DUE_DATE, { name: "updateDueDate" }),
-    graphql(ADD_PAYMENT_REMAINDER, { name: "addPaymentRemainder" }),
-    graphql(UPDATE_PAYMENT_REMAINDER, { name: "updatePaymentRemainder" }),
-    graphql(ADD_LATE_FEE, { name: "addLateFee" }),
-    graphql(UPDATE_LATE_FEE, { name: "updateLateFee" }),
-    graphql(GET_FEE_SETTING_DATA, { name: "getFeeSettingsData" }),
-    graphql(GET_FEE_SETTING_DUE_DATE_DATA, { name: "getFeeSettingDueDateData" }),
-    graphql(SAVE_ALL, { name: "saveDueDatePaymentRemLateFee" })
-  )
-    (FeeSetting) as any
-));
+// export default graphql(CREATE_FEE_DATA_CACHE, {
+//   options: ({ }) => ({
+//     variables: {
+//     }
+//   })
+// }) (withLoadingHandler(
+//   compose(
+//     graphql(ADD_DUE_DATE, { name: "addDueDate" }),
+//     graphql(UPDATE_DUE_DATE, { name: "updateDueDate" }),
+//     graphql(ADD_PAYMENT_REMAINDER, { name: "addPaymentRemainder" }),
+//     graphql(UPDATE_PAYMENT_REMAINDER, { name: "updatePaymentRemainder" }),
+//     graphql(ADD_LATE_FEE, { name: "addLateFee" }),
+//     graphql(UPDATE_LATE_FEE, { name: "updateLateFee" }),
+//     graphql(GET_FEE_SETTING_DATA, { name: "getFeeSettingsData" }),
+//     graphql(GET_FEE_SETTING_DUE_DATE_DATA, { name: "getFeeSettingDueDateData" }),
+//     graphql(SAVE_ALL, { name: "saveDueDatePaymentRemLateFee" })
+//   )
+//     (FeeSetting) as any
+// ));
+export default withApollo(FeeSetting)

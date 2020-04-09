@@ -153,7 +153,11 @@ export interface FeeProps extends React.HTMLAttributes<HTMLElement>{
           
           </TabPane>
           <TabPane tabId={2}>
-            <FeeSetting />
+          {
+              user !== null && (
+                <FeeSetting user={user}  />
+              )
+            }
           </TabPane>
         </TabContent>
       </section>

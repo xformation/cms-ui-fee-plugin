@@ -37,7 +37,7 @@ export class InvoiceListPage<T = {[data: string]: any}> extends React.Component<
             <td>{invoice.student.id}</td>
             <td>{invoice.student.studentName}</td>
             <td>{invoice.student.studentPrimaryCellNumber}</td>
-            <td>{invoice.feeCategory.categoryName}</td>
+            {/* <td>{invoice.feeCategory.categoryName}</td> */}
             <td>{invoice.invoiceNumber}</td>
             <td>{invoice.amountPaid}</td>
             <td>{invoice.strPaymentDate}</td>
@@ -68,7 +68,7 @@ export class InvoiceListPage<T = {[data: string]: any}> extends React.Component<
                                 <th>Student ID</th>
                                 <th>Student Name</th>
                                 <th>Primary Contact</th>
-                                <th>Fee Category</th>
+                                {/* <th>Fee Category</th> */}
                                 <th>Invoice Number</th>
                                 <th>Amount</th>
                                 <th>Date</th>
