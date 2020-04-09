@@ -147,8 +147,8 @@ class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
     }
 
     socket.onopen = () => {
-        console.log("FeeSetUp. Opening websocekt connection to cmsbackend. User : ",this.state.user.login);
-        socket.send(this.state.user.login);
+        console.log("FeeSetUp. Opening websocekt connection to cmsbackend. User : ",new URLSearchParams(location.search).get("signedInUser"));
+        socket.send(new URLSearchParams(location.search).get("signedInUser"));
     }
 
     window.onbeforeunload = () => {
@@ -522,12 +522,15 @@ class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
   }
 
    async saveFeeCategory(e: any) {
-     const { id, value } = e.nativeEvent.target;
-     const { addFeeCategory } = this.props;
+    const { id, value } = e.nativeEvent.target;
+    const { addFeeCategory } = this.props;
     const { feeSetupData,branchId } = this.state;
     e.preventDefault();
-     feeSetupData.errorMessage = "";
-  
+    feeSetupData.errorMessage = "";
+    if(!branchId){
+      alert("Please select branch from preferences");
+      return;
+    }
     let txtFcNm: any = document.querySelector("#categoryName");
     if (txtFcNm.value.trim() === "") {
      alert("Please provide some value in category name");
@@ -605,6 +608,11 @@ class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
     const { updateFeeCategory } = this.props;
     const { feeSetupData ,branchId} = this.state;
 
+    if(!branchId){
+      alert("Please select branch from preferences");
+      return;
+    }
+    
     let txtFcNm: any = document.querySelector("#categoryName");
     if (txtFcNm.value.trim() === "") {
       alert("Please provide some value in category name");

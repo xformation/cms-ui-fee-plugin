@@ -62,8 +62,8 @@ export interface FeeProps extends React.HTMLAttributes<HTMLElement>{
     }
 
     socket.onopen = () => {
-        console.log("Fee Index. Opening websocekt connection to cmsbackend. User : ",this.state.user.login);
-        socket.send(this.state.user.login);
+        console.log("Fee Index. Opening websocekt connection to cmsbackend. User : ",new URLSearchParams(location.search).get("signedInUser"));
+        socket.send(new URLSearchParams(location.search).get("signedInUser"));
     }
 
     window.onbeforeunload = () => {
@@ -105,8 +105,8 @@ export interface FeeProps extends React.HTMLAttributes<HTMLElement>{
       <section className="tab-container">
         <div className="tab-flex p-1">
           {/* <img src="../../img/students.png" alt="" /> */}
-          <h5><FaUserGraduate className="m-1 fa-2x" /></h5>
-          <h5 className="p-1">Fee</h5>
+          <h5><FaUserGraduate className="m-1 fa-2x" />Fee</h5>
+          {/* <h5 className="p-1">Fee</h5> */}
         </div>
         <Nav tabs className="pl-3 pl-3 mb-4 mt-4 boxShadow">
           <NavItem className="cursor-pointer">
