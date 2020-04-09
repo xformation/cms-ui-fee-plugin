@@ -63,7 +63,7 @@ export interface FeeProps extends React.HTMLAttributes<HTMLElement>{
 
     socket.onopen = () => {
         console.log("Fee Index. Opening websocekt connection to cmsbackend. User : ",new URLSearchParams(location.search).get("signedInUser"));
-        socket.send(new URLSearchParams(location.search).get("signedInUser"));
+        socket.send(new URLSearchParams(location.search).get("signedInUser")); 
     }
 
     window.onbeforeunload = () => {

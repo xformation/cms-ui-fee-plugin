@@ -148,7 +148,7 @@ class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
 
     socket.onopen = () => {
         console.log("FeeSetUp. Opening websocekt connection to cmsbackend. User : ",new URLSearchParams(location.search).get("signedInUser"));
-        socket.send(new URLSearchParams(location.search).get("signedInUser"));
+        socket.send(new URLSearchParams(location.search).get("signedInUser")); 
     }
 
     window.onbeforeunload = () => {
