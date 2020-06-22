@@ -9,9 +9,6 @@ export const CREATE_FEE_SETUP_DATA_CACHE = gql`
         branch {
           id
         }
-        academicyear {
-          id
-        }
       }
       batches {
         id
@@ -22,12 +19,8 @@ export const CREATE_FEE_SETUP_DATA_CACHE = gql`
       }
       studentTypes {
         id
-        description
       }
-      genders {
-        id
-        description
-      }
+      genders
       feeDetails {
         id
         feeParticularsName
@@ -52,12 +45,6 @@ export const CREATE_FEE_SETUP_DATA_CACHE = gql`
       facility {
         id
         name
-      }
-      transportRoute {
-        id
-        routeName
-        routeDetails
-        routeMapUrl
       }
     }
   }

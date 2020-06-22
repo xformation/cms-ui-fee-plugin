@@ -82,8 +82,8 @@ class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
         //   id: ""
         // },
         batch: {id: '' },
-        studentType: {  id: '' },
-        gender: {   id: '' },
+        studentType: "",
+        gender: "",
         facility: { id: ''},
         transportRoute: { id: '' },
         feeCategoryData: [],
@@ -117,8 +117,8 @@ class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
     this.updateFeeCategory = this.updateFeeCategory.bind(this);
     this.createDepartments = this.createDepartments.bind(this);
     this.createBatches = this.createBatches.bind(this);
-    this.createStudentTypes = this.createStudentTypes.bind(this);
-    this.createGenders = this.createGenders.bind(this);
+    // this.createStudentTypes = this.createStudentTypes.bind(this);
+    // this.createGenders = this.createGenders.bind(this);
     this.createFacility = this.createFacility.bind(this);
     this.createTransportRoute = this.createTransportRoute.bind(this);
     this.handleTxtChange = this.handleTxtChange.bind(this);
@@ -192,39 +192,39 @@ class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
     return batchesOptions;
   }
 
-  createStudentTypes(studentTypes: any) {
-    let studentTypesOptions = [
-      <option key={0} value="">
-        Select studentType
-      </option>,
-    ];
-    for (let i = 0; i < studentTypes.length; i++) {
-      let id = studentTypes[i].id;
-      studentTypesOptions.push(
-        <option key={id} value={studentTypes[i].description}>
-          {studentTypes[i].description}
-        </option>
-      );
-    }
-    return studentTypesOptions;
-  }
+  // createStudentTypes(studentTypes: any) {
+  //   let studentTypesOptions = [
+  //     <option key={0} value="">
+  //       Select studentType
+  //     </option>,
+  //   ];
+  //   for (let i = 0; i < studentTypes.length; i++) {
+  //     let id = studentTypes[i].id;
+  //     studentTypesOptions.push(
+  //       <option key={id} value={studentTypes[i].description}>
+  //         {studentTypes[i].description}
+  //       </option>
+  //     );
+  //   }
+  //   return studentTypesOptions;
+  // }
 
-  createGenders(genders: any) {
-    let gendersOptions = 
-    [
-    <option key={0} value="">
-      Select Gender
-    </option>];
-    for (let i = 0; i < genders.length; i++) {
-      let id = genders[i].id;
-      gendersOptions.push(
-        <option key={id} value={genders[i].description}>
-          {genders[i].description}
-        </option>
-      );
-    }
-    return gendersOptions;
-  }
+  // createGenders(genders: any) {
+  //   let gendersOptions = 
+  //   [
+  //   <option key={0} value="">
+  //     Select Gender
+  //   </option>];
+  //   for (let i = 0; i < genders.length; i++) {
+  //     let id = genders[i].id;
+  //     gendersOptions.push(
+  //       <option key={id} value={genders[i].description}>
+  //         {genders[i].description}
+  //       </option>
+  //     );
+  //   }
+  //   return gendersOptions;
+  // }
   
   createFacility(facility: any) {
     let facilityOptions = [<option key={0} value="">Select Facility</option>];
@@ -386,15 +386,35 @@ class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
             </div>
             <div>
               <label htmlFor="">Student type</label>
-              <select required name={`studentType-${index}-${i}`} id={`studentType-${index}-${i}`} className="gf-form-input max-width-8">
-                {this.createStudentTypes(feeFilterCacheList.studentTypes)}
+              <select
+                name="studentType"
+                id="studentType"
+                onChange={this.onChange}
+                value={feeSetupData.studentType}
+              >
+                <option value="">Select StudentType</option>
+                <option value="REGULAR">REGULAR</option>
+                <option value="STAFF_CONCESSION">STAFF_CONCESSION</option>
+                <option value="BENEFITS">BENEFITS</option>
+                <option value="SCHOLARSHIP">SCHOLARSHIP</option>
+                <option value="OTHER_BENEFITS">OTHER_BENEFITS</option>
               </select>
+         
             </div>
             <div>
               <label htmlFor="">Gender</label>
-              <select required name={`gender-${index}-${i}`} id={`gender-${index}-${i}`} className="gf-form-input max-width-8">
-                {this.createGenders(feeFilterCacheList.genders)}
+              <select
+                name="gender"
+                id="gender"
+                onChange={this.onChange}
+                value={feeSetupData.gender}
+              >
+                <option value="">Select Gender</option>
+                <option value="MALE">MALE</option>
+                <option value="FEMALE">FEMALE</option>
+                <option value="OTHER">OTHER</option>
               </select>
+         
             </div>
             {/* <div>
               <label htmlFor="">Facility</label>
@@ -683,6 +703,8 @@ class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
       const { feeSetupData,departmentId } = this.state;
       var txtName = feeSetupData.particularsName;
       var txtDesc = feeSetupData.particularsDesc;
+      var txtStTy = feeSetupData.studentType;
+      var txtGen  = feeSetupData.gender;
       var amt = feeSetupData.amount["amount-"+index+"-"+i];
       if(txtName === undefined || txtName.trim() === ""){
         alert("Please provide some value in fee perticulars name");
@@ -692,21 +714,29 @@ class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
         alert("Please provide some value in fee perticulars description");
         return;
       }
+      if(txtStTy === undefined){
+        alert("Please Select Student Type");
+        return;
+      }
+      if(txtGen === undefined){
+        alert("Please Select Gender");
+        return;
+      }
       if(amt === undefined || amt.trim() === ""){
         alert("Please provide some value in amount");
         return;
       }
       // let optDpt : any = document.querySelector("#department-"+index+"-"+i);
       let optBth : any = document.querySelector("#batch-"+index+"-"+i);
-      let optStp : any = document.querySelector("#studentType-"+index+"-"+i);
-      let optGdr : any = document.querySelector("#gender-"+index+"-"+i);
+      // let optStp : any = document.querySelector("#studentType-"+index+"-"+i);
+      // let optGdr : any = document.querySelector("#gender-"+index+"-"+i);
       let optFct : any = document.querySelector("#facility-"+index+"-"+i);
       let optTrp : any = document.querySelector("#transportRoute-"+index+"-"+i);
       // optBth.options[optBth.options.selectedIndex].value
       let dptVal = null;
       let bthVal = null;
-      let stpVal = null;
-      let gndVal = null;
+      // let stpVal = null;
+      // let gndVal = null;
       // let fclVal = null;
       // let trtVal = null;
       // if(optDpt.options[optDpt.options.selectedIndex].value !== ""){
@@ -715,12 +745,12 @@ class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
       if(optBth.options[optBth.options.selectedIndex].value !== ""){
         bthVal = optBth.options[optBth.options.selectedIndex].value;
       }
-      if(optStp.options[optStp.options.selectedIndex].value !== ""){
-        stpVal = optStp.options[optStp.options.selectedIndex].value;
-      }
-      if(optGdr.options[optGdr.options.selectedIndex].value !== ""){
-        gndVal = optGdr.options[optGdr.options.selectedIndex].value;
-      }
+      // if(optStp.options[optStp.options.selectedIndex].value !== ""){
+      //   stpVal = optStp.options[optStp.options.selectedIndex].value;
+      // }
+      // if(optGdr.options[optGdr.options.selectedIndex].value !== ""){
+      //   gndVal = optGdr.options[optGdr.options.selectedIndex].value;
+      // }
       // if(optFct.options[optFct.options.selectedIndex].value !== ""){
       //   fclVal = optFct.options[optFct.options.selectedIndex].value;
       // }
@@ -732,8 +762,8 @@ class FeeSetup extends React.Component<FeeProps, FeeSetupState>{
         feeParticularDesc: txtDesc,
         departmentId: departmentId,
         batchId: bthVal,
-        studentType: stpVal,
-        gender: gndVal,
+        studentType: txtStTy,
+        gender: txtGen,
         amount: amt,
         status: "ACTIVE",
         // branchId: feeSetupData.branch.id,

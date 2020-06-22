@@ -1,7 +1,7 @@
 const secSrvUrl = 'http://localhost:8094';
 const apiUrl = 'http://localhost:8080/api';
 
-const graphqlUrl = 'http://localhost:8080';
+const graphqlUrl = 'http://localhost:9095';
 const loggedInUserUrl = 'http://localhost:3000';
 const webSockWithCmsBackendUrl = 'ws://localhost:4000/websocket/tracker/websocket';
 
